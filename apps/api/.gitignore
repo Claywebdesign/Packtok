@@ -1,0 +1,25 @@
+# API specific ignores
+uploads/
+logs/
+*.log
+
+# Environment files specific to API
+.env.development
+.env.staging
+.env.production
+
+# API build output
+dist/
+
+# Database files
+*.sqlite3
+*.db
+
+# Session storage
+sessions/
+
+# Generated OpenAPI specs
+openapi.json
+swagger.json
+
+

@@ -1,0 +1,16 @@
+# Next.js specific
+.next/
+out/
+build/
+
+# Environment files
+.env*.local
+
+# Vercel
+.vercel
+
+# Static files
+public/uploads/
+
+# Build outputs
+dist/
