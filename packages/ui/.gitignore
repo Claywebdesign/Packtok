@@ -1,6 +1,5 @@
 # Build outputs
 dist/
-lib/
 
 # TypeScript
 *.tsbuildinfo
