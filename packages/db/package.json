@@ -1,0 +1,22 @@
+{
+  "name": "@packtok/db",
+  "version": "0.0.0",
+  "private": true,
+  "main": "./src/index.ts",
+  "types": "./src/index.ts",
+  "scripts": {
+    "generate": "prisma generate",
+    "migrate:dev": "prisma migrate dev",
+    "studio": "prisma studio"
+  },
+  "dependencies": {
+    "@prisma/client": "^6.10.1",
+    "@packtok/utils": "workspace:*"
+  },
+  "devDependencies": {
+    "prisma": "^6.10.1",
+    "typescript": "^5.8.3",
+    "prettier": "^3.6.0",
+    "@types/node": "^24.0.3"
+  }
+}

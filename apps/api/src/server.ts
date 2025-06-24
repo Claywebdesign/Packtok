@@ -1,3 +1,4 @@
+import { prisma } from "@packtok/db";
 import { API_ROUTES, HTTP_STATUS } from "@packtok/utils";
 import cors from "cors";
 import express from "express";
@@ -14,6 +15,19 @@ app.use(express.json());
 // Health check route
 app.get("/health", (req, res) => {
   res.status(HTTP_STATUS.OK).json({ status: "OK", message: "API is running" });
+});
+
+// Example users route using the shared Prisma Client
+app.get("/users", async (req, res) => {
+  try {
+    const users = await prisma.user.findMany();
+    res.status(HTTP_STATUS.OK).json(users);
+  } catch (error) {
+    console.error("Error fetching users:", error);
+    res
+      .status(HTTP_STATUS.INTERNAL_SERVER_ERROR)
+      .json({ message: "Unable to fetch users" });
+  }
 });
 
 // API routes will be mounted here
