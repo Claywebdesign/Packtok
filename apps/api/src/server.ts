@@ -1,39 +1,61 @@
-import { prisma } from "@packtok/db";
-import { API_ROUTES, HTTP_STATUS } from "@packtok/utils";
+import cookieParser from "cookie-parser";
 import cors from "cors";
-import express from "express";
+import express, {
+  ErrorRequestHandler,
+  Express,
+  Request,
+  Response,
+} from "express";
 import helmet from "helmet";
+import pinoHttp from "pino-http";
+import config from "./config";
+import adminRouter from "./routers/admin.routes";
+import authRouter from "./routers/auth.routes";
+import { ApiError } from "./utils/apiError";
+import logger from "./utils/logger";
 
-const app = express();
-const PORT = process.env.API_PORT || 3001;
+const app: Express = express();
 
-// Middleware
+app.use(pinoHttp({ logger }));
+app.use(cors({ origin: config.corsOrigin, credentials: true }));
 app.use(helmet());
-app.use(cors());
-app.use(express.json());
+app.use(express.json({ limit: "16kb" }));
+app.use(express.urlencoded({ extended: true, limit: "16kb" }));
+app.use(cookieParser());
 
-// Health check route
-app.get("/health", (req, res) => {
-  res.status(HTTP_STATUS.OK).json({ status: "OK", message: "API is running" });
+app.get("/healthcheck", (req: Request, res: Response): void => {
+  res.status(200).send("OK");
 });
 
-// Example users route using the shared Prisma Client
-app.get("/users", async (req, res) => {
-  try {
-    const users = await prisma.user.findMany();
-    res.status(HTTP_STATUS.OK).json(users);
-  } catch (error) {
-    console.error("Error fetching users:", error);
-    res
-      .status(HTTP_STATUS.INTERNAL_SERVER_ERROR)
-      .json({ message: "Unable to fetch users" });
+// API Routes
+app.use("/api/v1/auth", authRouter);
+app.use("/api/v1/admins", adminRouter);
+
+// Global Error Handler
+const errorHandler: ErrorRequestHandler = (err, req, res, _next) => {
+  if (err instanceof ApiError) {
+    res.status((err as ApiError).statusCode).json({
+      success: false,
+      message: err.message,
+    });
+    return;
   }
-});
 
-// API routes will be mounted here
-// app.use("/api", routes);
+  logger.error(err);
+  res.status(500).json({
+    success: false,
+    message: "Internal Server Error",
+  });
+};
 
-app.listen(PORT, () => {
-  console.log(`🚀 Server running on port ${PORT}`);
-  console.log(`📝 API Routes available:`, Object.keys(API_ROUTES));
-});
+app.use(errorHandler);
+
+// Start the HTTP server only when this file is executed directly (e.g. pnpm dev)
+if (require.main === module) {
+  const port = Number(config.port);
+  app.listen(port, () => {
+    logger.info(`API server listening on port ${port}`);
+  });
+}
+
+export default app;

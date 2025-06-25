@@ -7,16 +7,22 @@
   "scripts": {
     "generate": "prisma generate",
     "migrate:dev": "prisma migrate dev",
-    "studio": "prisma studio"
+    "studio": "prisma studio",
+    "seed": "tsx prisma/seed.ts"
   },
   "dependencies": {
+    "@packtok/utils": "workspace:*",
     "@prisma/client": "^6.10.1",
-    "@packtok/utils": "workspace:*"
+    "bcrypt": "^6.0.0"
   },
   "devDependencies": {
-    "prisma": "^6.10.1",
-    "typescript": "^5.8.3",
+    "@types/node": "^24.0.3",
     "prettier": "^3.6.0",
-    "@types/node": "^24.0.3"
+    "prisma": "^6.10.1",
+    "tsx": "^4.20.3",
+    "typescript": "^5.8.3"
+  },
+  "prisma": {
+    "seed": "tsx prisma/seed.ts"
   }
 }

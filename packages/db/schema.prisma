@@ -7,11 +7,68 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+// ENUMS for Role-Based Access Control
+enum Role {
+  NORMAL_USER
+  VENDOR
+  ADMIN
+  SUPER_ADMIN
+}
+
+enum Permission {
+  MANAGE_CONSULTANCY
+  MANAGE_MANPOWER
+  MANAGE_BIDDING
+  CREATE_ADMINS
+}
+
+// Core User Model
 model User {
-  id        String   @id @default(uuid())
-  email     String   @unique
-  name      String?
-  password  String
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id           String    @id @default(cuid())
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+  name         String
+  email        String    @unique
+  phone_number String?   @unique
+  password     String
+  verified     Boolean   @default(false)
+  role         Role      @default(NORMAL_USER)
+  otp          Otp?
+  refreshTokens RefreshToken[]
+  adminPermissions AdminPermission[]
+
+  @@map("users")
+}
+
+// Model for One-Time Password (OTP) verification
+model Otp {
+  id        String   @id @default(cuid())
+  hashedOtp String
+  expiresAt DateTime
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId    String   @unique
+
+  @@map("otps")
+}
+
+// Model for storing hashed refresh tokens for session management
+model RefreshToken {
+  id          String   @id @default(cuid())
+  hashedToken String   @unique
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId      String
+
+  @@map("refresh_tokens")
+}
+
+// Join table for assigning specific permissions to ADMIN users
+model AdminPermission {
+  user       User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId     String
+  permission Permission
+
+  @@id([userId, permission])
+  @@map("admin_permissions")
 }
