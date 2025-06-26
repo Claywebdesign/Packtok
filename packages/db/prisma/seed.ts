@@ -1,23 +1,32 @@
 // packages/db/prisma/seed.ts
-import bcrypt from "bcrypt";
+import { createClient } from "@supabase/supabase-js";
 import { prisma, Role } from "../src/index";
 
-async function main() {
-  const superAdminEmail = "founder@packtok.io";
+const supabase = createClient(
+  process.env.SUPABASE_URL!,
+  process.env.SUPABASE_SERVICE_ROLE_KEY!,
+  { auth: { autoRefreshToken: false, persistSession: false } }
+);
 
-  const existing = await prisma.user.findUnique({
-    where: { email: superAdminEmail },
+async function main() {
+  const email = "founder@packtok.io";
+  if (await prisma.user.findUnique({ where: { email } })) return;
+
+  const { data, error } = await supabase.auth.admin.createUser({
+    email,
+    password: "ChangeMe!",
+    email_confirm: true,
+    user_metadata: { name: "Founder" },
   });
-  if (existing) return;
+  if (error || !data.user) throw error;
 
   await prisma.user.create({
     data: {
+      id: data.user.id,
       name: "Founder",
-      email: superAdminEmail,
-      password: await bcrypt.hash("ChangeMe!", 12),
-      verified: true,
+      email,
       role: Role.SUPER_ADMIN,
     },
-  });
+  } as any);
 }
 main();

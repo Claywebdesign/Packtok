@@ -1,11 +1,14 @@
 import { Permission, Role, User, prisma } from "@packtok/db";
-import bcrypt from "bcrypt";
 import { ApiError } from "../utils/apiError";
-
-const BCRYPT_SALT_ROUNDS = parseInt(process.env.BCRYPT_SALT_ROUNDS || "12", 10);
+import supabase from "../utils/supabaseClient";
 
 export const createAdminUser = async (
-  adminData: Omit<User, "id" | "createdAt" | "updatedAt" | "verified" | "role">,
+  adminData: {
+    name: string;
+    email: string;
+    phone_number?: string;
+    password: string;
+  },
   permissions: Permission[]
 ): Promise<User> => {
   const existingUser = await prisma.user.findUnique({
@@ -15,25 +18,38 @@ export const createAdminUser = async (
     throw new ApiError(409, "User with this email already exists");
   }
 
-  const hashedPassword = await bcrypt.hash(
-    adminData.password,
-    BCRYPT_SALT_ROUNDS
-  );
+
+  const { data, error } = await supabase.auth.admin.createUser({
+    email: adminData.email,
+    password: adminData.password,
+    email_confirm: true, // for admin we want to confirm email immediately
+    phone: adminData.phone_number,
+    user_metadata: {
+      name: adminData.name,
+    },
+  });
+
+  if (error || !data.user) {
+    throw new ApiError(500, `Supabase user creation failed: ${error?.message}`);
+  }
+
 
   const newAdmin = await prisma.user.create({
     data: {
-      ...adminData,
-      password: hashedPassword,
+      id: data.user.id, // Supabase UUID
+      name: adminData.name,
+      email: adminData.email,
+      phone_number: adminData.phone_number,
       role: Role.ADMIN,
-      verified: true, // Admins are created as verified
     },
   });
+
 
   if (permissions && permissions.length > 0) {
     await prisma.adminPermission.createMany({
       data: permissions.map((permission) => ({
         userId: newAdmin.id,
-        permission: permission,
+        permission,
       })),
     });
   }

@@ -24,43 +24,17 @@ enum Permission {
 
 // Core User Model
 model User {
-  id           String    @id @default(cuid())
+  id           String    @id // Supabase auth.users UUID
   createdAt    DateTime  @default(now())
   updatedAt    DateTime  @updatedAt
   name         String
   email        String    @unique
-  phone_number String?   @unique
-  password     String
-  verified     Boolean   @default(false)
+  phone_number String?
   role         Role      @default(NORMAL_USER)
   otp          Otp?
-  refreshTokens RefreshToken[]
   adminPermissions AdminPermission[]
 
   @@map("users")
-}
-
-// Model for One-Time Password (OTP) verification
-model Otp {
-  id        String   @id @default(cuid())
-  hashedOtp String
-  expiresAt DateTime
-  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  userId    String   @unique
-
-  @@map("otps")
-}
-
-// Model for storing hashed refresh tokens for session management
-model RefreshToken {
-  id          String   @id @default(cuid())
-  hashedToken String   @unique
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  userId      String
-
-  @@map("refresh_tokens")
 }
 
 // Join table for assigning specific permissions to ADMIN users
@@ -71,4 +45,14 @@ model AdminPermission {
 
   @@id([userId, permission])
   @@map("admin_permissions")
+}
+
+model Otp {
+  id        String   @id @default(cuid())
+  hashedOtp String
+  expiresAt DateTime
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId    String   @unique
+
+  @@map("otps")
 }
