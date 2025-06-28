@@ -1,14 +1,12 @@
 {
-  "extends": "@packtok/typescript-config/base.json",
+  "extends": "../../tsconfig.base.json",
   "compilerOptions": {
     "outDir": "dist",
     "noEmit": false,
     "module": "commonjs",
     "target": "es2020",
     "moduleResolution": "node",
-    "forceConsistentCasingInFileNames": true,
     "baseUrl": ".",
-    "allowJs": true,
     "paths": {
       "@packtok/*": ["../../packages/*/src"]
     }
