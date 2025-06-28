@@ -1,0 +1,3 @@
+{
+  "extends": "@packtok/typescript-config/base.json"
+}
