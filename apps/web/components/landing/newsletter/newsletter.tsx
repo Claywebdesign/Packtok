@@ -1,7 +1,7 @@
 import Image from "next/image";
 import newsletterLeft from "@/assets/newsletter-left.png";
 import newsletterRight from "@/assets/newsletter-right.png";
-import { Button } from "@packtok/ui/components/button";
+import { Button } from "@packtok/ui";
 
 export default function Newsletter() {
   return (

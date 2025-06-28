@@ -2,8 +2,8 @@
 import Image from "next/image";
 import Link from "next/link";
 import { navbarLinks } from "@/constant/index";
-import { Button } from "@packtok/ui/components/button";
-import { cn } from "@packtok/ui/lib/utils";
+import { Button } from "@packtok/ui";
+import { cn } from "@packtok/ui";
 import { Menu, Search, ShoppingBag, UserCircle, X } from "lucide-react";
 import { useEffect, useState } from "react";
 import logo from "@/assets/navbar-logo.png";
@@ -56,10 +56,7 @@ export default function Navbar() {
           <div className="hidden md:flex items-center space-x-8">
             {navbarLinks.map((link, idx) => (
               <Button variant="link" key={idx} asChild>
-                <Link
-                  href={link.href}
-                  className="text-gray-700 hover:text-gray-900"
-                >
+                <Link href={link.href} className="text-gray-700 hover:text-gray-900">
                   {link.title}
                 </Link>
               </Button>
@@ -95,8 +92,8 @@ export default function Navbar() {
                   asChild
                   className="w-full justify-start"
                 >
-                  <Link
-                    href={link.href}
+                  <Link 
+                    href={link.href} 
                     onClick={handleLinkClick}
                     className="block px-3 py-2 text-gray-700 hover:text-gray-900"
                   >
@@ -104,7 +101,7 @@ export default function Navbar() {
                   </Link>
                 </Button>
               ))}
-
+              
               {/* Mobile Icons */}
               <div className="flex items-center justify-center space-x-6 pt-4 pb-2">
                 <Search className="h-6 w-6 text-gray-700 cursor-pointer" />

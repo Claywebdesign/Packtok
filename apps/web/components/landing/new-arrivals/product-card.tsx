@@ -1,6 +1,4 @@
-import { Card, CardContent } from "@packtok/ui/components/card";
-import { Badge } from "@packtok/ui/components/badge";
-import { Button } from "@packtok/ui/components/button";
+import { Card, CardContent, Button, Badge } from "@packtok/ui";
 import StarRating from "./star-rating";
 import machinery from "@/assets/machinery.png";
 import Image from "next/image";

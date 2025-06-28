@@ -2,16 +2,16 @@
 
 import { contactFormSchema } from "@/schemas/contact-form-schema";
 import {
+  Button,
   Form,
   FormControl,
   FormField,
   FormItem,
   FormLabel,
   FormMessage,
-} from "@packtok/ui/components/form";
-import { Button } from "@packtok/ui/components/button";
-import { Input } from "@packtok/ui/components/input";
-import { Textarea } from "@packtok/ui/components/textarea";
+  Input,
+  Textarea,
+} from "@packtok/ui";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";

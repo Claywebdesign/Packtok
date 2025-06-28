@@ -1,11 +1,9 @@
 {
-  "extends": "@packtok/typescript-config/react-library.json",
   "compilerOptions": {
-    "baseUrl": ".",
+    "baseUrl": "src",
+    "jsx": "react-jsx",
     "paths": {
-      "@packtok/ui/*": ["./src/*"]
+      "@/*": ["./*"]
     }
-  },
-  "include": ["."],
-  "exclude": ["node_modules", "dist"]
+  }
 }
