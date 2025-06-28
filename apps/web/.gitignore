@@ -9,8 +9,5 @@ build/
 # Vercel
 .vercel
 
-# Static files
-public/uploads/
-
 # Build outputs
 dist/
