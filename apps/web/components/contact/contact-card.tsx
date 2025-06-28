@@ -1,4 +1,4 @@
-import { Card, CardContent, CardHeader, CardTitle } from "@packtok/ui";
+import { Card, CardContent, CardHeader, CardTitle } from "@packtok/ui/components/card";
 import { ReactNode } from "react";
 
 type ContactCardProps = {

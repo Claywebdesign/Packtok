@@ -2,8 +2,8 @@
 import Image from "next/image";
 import Link from "next/link";
 import { navbarLinks } from "@/constant/index";
-import { Button } from "@packtok/ui";
-import { cn } from "@packtok/ui";
+import { Button } from "@packtok/ui/components/button";
+import { cn } from "@packtok/ui/lib/utils";
 import { Menu, Search, ShoppingBag, UserCircle, X } from "lucide-react";
 import { useEffect, useState } from "react";
 import logo from "@/assets/navbar-logo.png";

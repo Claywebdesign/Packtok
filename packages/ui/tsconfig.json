@@ -1,9 +1,14 @@
 {
+  "extends": "../../tsconfig.base.json",
   "compilerOptions": {
-    "baseUrl": "src",
+    "baseUrl": ".",
     "jsx": "react-jsx",
+    "declaration": true,
+    "declarationMap": true,
     "paths": {
-      "@/*": ["./*"]
+      "@packtok/ui/*": ["./src/*"]
     }
-  }
+  },
+  "include": ["."],
+  "exclude": ["node_modules", "dist"]
 }

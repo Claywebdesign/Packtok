@@ -11,11 +11,11 @@
     "prefix": ""
   },
   "aliases": {
-    "components": "@/components",
-    "utils": "@/lib/utils",
-    "ui": "@/components/ui",
-    "lib": "@/lib",
-    "hooks": "@/hooks"
+    "components": "@packtok/ui/components",
+    "utils": "@packtok/ui/lib/utils",
+    "hooks": "@packtok/ui/hooks",
+    "lib": "@packtok/ui/lib",
+    "ui": "@packtok/ui/components"
   },
   "iconLibrary": "lucide"
 }
