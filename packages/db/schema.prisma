@@ -38,6 +38,7 @@ enum ProductCondition {
 enum MarketplaceProductStatus {
   AVAILABLE
   OUT_OF_STOCK
+  DRAFT
   SOLD
 }
 
@@ -130,7 +131,6 @@ model MarketplaceProduct {
   id             String   @id @default(cuid())
   createdAt      DateTime @default(now())
   updatedAt      DateTime @updatedAt
-
   title          String
   description    String   @db.Text
   price          Decimal  @db.Decimal(12, 2)

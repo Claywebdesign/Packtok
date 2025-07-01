@@ -11,6 +11,9 @@ import pinoHttp from "pino-http";
 import config from "./config";
 import adminRouter from "./routers/admin.routes";
 import authRouter from "./routers/auth.routes";
+import categoryRouter from "./routers/category.routes";
+import productRouter from "./routers/product.routes";
+import quoteRouter from "./routers/quote.routes";
 import { ApiError } from "./utils/apiError";
 import logger from "./utils/logger";
 
@@ -27,9 +30,12 @@ app.get("/healthcheck", (req: Request, res: Response): void => {
   res.status(200).send("OK");
 });
 
-// API Routes
+// API Routes 
 app.use("/api/v1/auth", authRouter);
 app.use("/api/v1/admins", adminRouter);
+app.use("/api/v1/products", productRouter);
+app.use("/api/v1/quotes", quoteRouter);
+app.use("/api/v1/categories", categoryRouter);
 
 // Global Error Handler
 const errorHandler: ErrorRequestHandler = (err, req, res, _next) => {
