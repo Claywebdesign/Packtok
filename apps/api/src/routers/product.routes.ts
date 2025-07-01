@@ -2,7 +2,7 @@ import { Router } from "express";
 import {
   getProduct,
   listProducts,
-submitProduct,
+  submitProduct,
 } from "../controllers/product.controller";
 import { authMiddleware } from "../middlewares/auth.middleware";
 import { productMediaUpload } from "../middlewares/upload.middleware";
@@ -14,9 +14,3 @@ router.get("/:id", getProduct);
 router.post("/submit", authMiddleware, productMediaUpload, submitProduct);
 
 export default router;
-
-
-
-
-
-

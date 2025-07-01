@@ -18,7 +18,6 @@ export const createAdminUser = async (
     throw new ApiError(409, "User with this email already exists");
   }
 
-
   const { data, error } = await supabase.auth.admin.createUser({
     email: adminData.email,
     password: adminData.password,
@@ -33,7 +32,6 @@ export const createAdminUser = async (
     throw new ApiError(500, `Supabase user creation failed: ${error?.message}`);
   }
 
-
   const newAdmin = await prisma.user.create({
     data: {
       id: data.user.id, // Supabase UUID
@@ -43,7 +41,6 @@ export const createAdminUser = async (
       role: Role.ADMIN,
     },
   });
-
 
   if (permissions && permissions.length > 0) {
     await prisma.adminPermission.createMany({

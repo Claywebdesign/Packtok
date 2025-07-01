@@ -31,7 +31,6 @@ const sanitizePriceForPublic = (
   return copy;
 };
 
-
 const ensureCategory = async (
   categoryId: string | undefined,
   categoryName: string | undefined

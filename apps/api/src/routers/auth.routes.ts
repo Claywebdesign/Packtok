@@ -20,5 +20,3 @@ router.post("/verify-otp", verifyUserOtp);
 router.get("/me", authMiddleware, getCurrentUser);
 
 export default router;
-
-

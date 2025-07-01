@@ -35,12 +35,10 @@ export const authMiddleware = asyncHandler(
 
     const userId = decodedToken.sub;
 
-
     let user: any = await prisma.user.findUnique({
       where: { id: userId },
       include: { adminPermissions: true },
     });
-
 
     if (!user) {
       user = await prisma.user.create({

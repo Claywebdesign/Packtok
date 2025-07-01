@@ -1,4 +1,4 @@
-import { Prisma, QuoteStatus,prisma } from "@packtok/db";
+import { Prisma, QuoteStatus, prisma } from "@packtok/db";
 import { ApiError } from "../utils/apiError";
 
 export const createQuoteRequest = async (
