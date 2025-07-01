@@ -1,13 +1,11 @@
 generator client {
   provider = "prisma-client-js"
 }
-
 datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
 }
 
-// ENUMS for Role-Based Access Control
 enum Role {
   NORMAL_USER
   VENDOR
@@ -22,22 +20,81 @@ enum Permission {
   CREATE_ADMINS
 }
 
-// Core User Model
+enum ProductType {
+  MACHINERY
+  SPARE_PARTS
+  CONSUMABLES
+  RAW_MATERIALS
+}
+
+enum ProductCondition {
+  NEW
+  USED
+}
+
+enum MarketplaceProductStatus {
+  AVAILABLE
+  OUT_OF_STOCK
+  SOLD
+}
+
+enum UserSubmissionStatus {
+  PENDING_APPROVAL
+  APPROVED
+  REJECTED
+}
+
+enum QuoteStatus {
+  PENDING
+  REVIEWED
+  COMPLETED
+  CANCELLED
+}
+
+enum ServiceType {
+  MAINTENANCE
+  CONSULTANCY
+  TURNKEY_PROJECT
+  BUSINESS_ACQUISITION
+  UNUSED_RAW_MATERIALS
+  EMPLOYMENT
+}
+
+enum ServiceInquiryStatus {
+  SUBMITTED
+  IN_PROGRESS
+  RESOLVED
+  CLOSED
+}
+
+enum MachineType {
+  MONO_CARTON
+  MASTER_CARTON
+  BOTH // For versatile machines that can be configured for both
+  OTHER
+}
+
 model User {
-  id           String    @id // Supabase auth.users UUID
-  createdAt    DateTime  @default(now())
-  updatedAt    DateTime  @updatedAt
-  name         String
-  email        String    @unique
-  phone_number String?
-  role         Role      @default(NORMAL_USER)
-  otp          Otp?
+  id             String        @id // Supabase auth.users UUID
+  createdAt      DateTime      @default(now())
+  updatedAt      DateTime      @updatedAt
+  name           String
+  email          String        @unique
+  phone_number   String?
+  role           Role          @default(NORMAL_USER)
+  otp            Otp?
   adminPermissions AdminPermission[]
+
+  // --- Relations ---
+  quoteRequests    QuoteRequest[]
+  serviceInquiries ServiceInquiry[]
+
+  createdProducts  MarketplaceProduct[] @relation("ProductsCreatedByUser")
+
 
   @@map("users")
 }
 
-// Join table for assigning specific permissions to ADMIN users
 model AdminPermission {
   user       User       @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId     String
@@ -55,4 +112,96 @@ model Otp {
   userId    String   @unique
 
   @@map("otps")
+}
+
+model Category {
+  id        String   @id @default(cuid())
+  name      String   @unique
+  createdAt DateTime @default(now())
+  products  MarketplaceProduct[]
+
+  @@map("categories")
+}
+
+model MarketplaceProduct {
+  id             String   @id @default(cuid())
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  title          String
+  description    String   @db.Text
+  price          Decimal  @db.Decimal(12, 2)
+  quantity       Int      @default(1)
+  productType    ProductType
+  machineType    MachineType?
+  images         String[]
+  pdfUrl         String?
+  specifications Json
+  condition      ProductCondition
+  status         MarketplaceProductStatus @default(AVAILABLE)
+  additionalInfo String?  @db.Text
+  manufacturer   String?
+  model          String?
+  year           Int?
+
+  // --- Relations ---
+  category       Category @relation(fields: [categoryId], references: [id])
+  categoryId     String
+
+
+  // This field is now mandatory and universally tracks the creator of the product.
+  createdByUser  User     @relation("ProductsCreatedByUser", fields: [createdById], references: [id])
+  createdById    String
+
+
+  // This field remains. Its presence or absence tells us if this was a user submission.
+  submissionStatus UserSubmissionStatus?
+
+  quoteRequests  QuoteRequest[]
+
+  @@map("marketplace_products")
+}
+
+model QuoteRequest {
+  id             String      @id @default(cuid())
+  createdAt      DateTime    @default(now())
+  updatedAt      DateTime    @updatedAt
+
+  companyName    String
+  address        String
+  message        String      @db.Text
+  additionalInfo String?     @db.Text
+  status         QuoteStatus @default(PENDING)
+
+  // --- Relations ---
+  user           User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId         String
+
+  product        MarketplaceProduct @relation(fields: [productId], references: [id], onDelete: Cascade)
+  productId      String
+
+  @@map("quote_requests")
+}
+
+model ServiceInquiry {
+  id          String      @id @default(cuid())
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+  serviceType ServiceType
+  details     String      @db.Text
+  address     String?
+  machineType MachineType? // For machines
+  productType ProductType? // For products
+  quantity    Int? // For products
+  peopleCount Int? // For services
+  budget      Decimal? @db.Decimal(12, 2) // For products
+  additionalInfo String? @db.Text
+
+  status      ServiceInquiryStatus @default(SUBMITTED)
+
+  // --- Relations ---
+  user        User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId      String
+
+  @@map("service_inquiries")
 }
