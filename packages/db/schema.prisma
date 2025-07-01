@@ -137,7 +137,10 @@ model MarketplaceProduct {
   quantity       Int      @default(1)
   productType    ProductType
   machineType    MachineType?
-  images         String[]
+  images         String[]  // this will be array of images of the product in different angles
+  imagesThumbnail String? // this will be main  image of the product
+  videoUrl       String?
+  videoThumbnail String?
   pdfUrl         String?
   specifications Json
   condition      ProductCondition
