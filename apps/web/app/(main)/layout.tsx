@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { Poppins } from "next/font/google";
 import "@packtok/ui/globals.css";
-import { Navbar } from "@/components";
+import { Footer, Navbar } from "@/components";
 import React from "react";
 
 const poppins = Poppins({
@@ -24,6 +24,7 @@ export default function RootLayout({
       <body className={poppins.className}>
         <Navbar />
         {children}
+        <Footer />
       </body>
     </html>
   );

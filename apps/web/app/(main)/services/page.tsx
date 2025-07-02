@@ -1,4 +1,4 @@
-import { CategoryList, Footer, Newsletter, PageHeader } from "@/components";
+import { CategoryList, Newsletter, PageHeader } from "@/components";
 import { serviceCategories } from "@/constant";
 
 export default function Services() {
@@ -13,7 +13,6 @@ export default function Services() {
         <CategoryList categoryDataList={serviceCategories} />
       </div>
       <Newsletter />
-      <Footer />
     </main>
   );
 }
