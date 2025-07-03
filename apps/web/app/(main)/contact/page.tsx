@@ -1,6 +1,6 @@
 import { Mail, MapPin, Phone } from "lucide-react";
 import industrial from "@/assets/industrial.png";
-import { ContactCard, ContactForm, Footer, SplitSection } from "@/components";
+import { ContactCard, ContactForm, SplitSection } from "@/components";
 
 export default function Page() {
   return (
@@ -70,7 +70,6 @@ export default function Page() {
           </div>
         </div>
       </div>
-      <Footer />
     </main>
   );
 }

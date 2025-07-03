@@ -1,8 +1,9 @@
+import { Footer, Navbar } from "@/components";
+import "@packtok/ui/globals.css";
 import type { Metadata } from "next";
 import { Poppins } from "next/font/google";
-import "@packtok/ui/globals.css";
-import { Navbar } from "@/components";
 import React from "react";
+import Providers from "./providers";
 
 const poppins = Poppins({
   subsets: ["latin"],
@@ -22,8 +23,11 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={poppins.className}>
-        <Navbar />
-        {children}
+        <Providers>
+          <Navbar />
+          {children}
+          <Footer />
+        </Providers>
       </body>
     </html>
   );

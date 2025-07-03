@@ -1,4 +1,4 @@
-import { Card, CardContent} from "@packtok/ui/components/card";
+import { Card, CardContent } from "@packtok/ui/components/card";
 import { Badge } from "@packtok/ui/components/badge";
 import { Button } from "@packtok/ui/components/button";
 import StarRating from "./star-rating";

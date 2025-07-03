@@ -1,4 +1,4 @@
-import { CategoryList, Footer, Newsletter, PageHeader } from "@/components";
+import { CategoryList, Newsletter, PageHeader } from "@/components";
 import { marketplaceCategories } from "@/constant";
 
 export default function Page() {
@@ -13,7 +13,6 @@ export default function Page() {
         <CategoryList categoryDataList={marketplaceCategories} />
       </div>
       <Newsletter />
-      <Footer />
     </main>
   );
 }
