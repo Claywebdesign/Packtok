@@ -13,8 +13,11 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import Link from "next/link";
 import { SignInFormData, signInSchema } from "@/schemas/signin-schema";
+import { useLogin } from "@/hooks/useLogin";
 
 export default function SignInForm() {
+  const { mutate, isPending } = useLogin();
+
   const form = useForm<SignInFormData>({
     resolver: zodResolver(signInSchema),
     defaultValues: {
@@ -24,7 +27,7 @@ export default function SignInForm() {
   });
 
   const onSubmit = (data: SignInFormData) => {
-    console.log("Sign in data:", data);
+    mutate(data);
   };
 
   return (
@@ -75,12 +78,8 @@ export default function SignInForm() {
           </Link>
         </div>
 
-        <Button
-          type="submit"
-          className="w-full"
-          disabled={form.formState.isSubmitting}
-        >
-          {form.formState.isSubmitting ? "Signing In..." : "Sign In"}
+        <Button type="submit" className="w-full" disabled={isPending}>
+          {isPending ? "Signing In..." : "Sign In"}
         </Button>
       </form>
     </Form>

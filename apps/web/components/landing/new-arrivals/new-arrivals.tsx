@@ -42,25 +42,26 @@ const newArrivalsData = [
 
 export default function NewArrivals() {
   return (
-      <section className="py-10 w-[85%] mx-auto">
-        <div className="container mx-auto px-4">
-          {/* Section Header - Left Aligned */}
-          <div className="mb-12 flex md:flex-row flex-col justify-between md:items-center items-left ">
-            <h2 className="text-3xl md:text-5xl text-gray-900">
-              New Arrivals
-            </h2>
-            <Link href={"/marketplace"} className="items-center flex border-b w-fit">
-              More Products <ArrowRight size={20} />
-            </Link>
-          </div>
-
-          {/* Horizontally Scrollable Product List */}
-          <div className="flex gap-6 md:gap-8 overflow-x-auto pb-8 -mx-4 px-4 no-scrollbar">
-            {newArrivalsData.map((product) => (
-              <ProductCard key={product.id} product={product} />
-            ))}
-          </div>
+    <section className="py-10 w-[85%] mx-auto">
+      <div className="container mx-auto px-4">
+        {/* Section Header - Left Aligned */}
+        <div className="mb-12 flex md:flex-row flex-col justify-between md:items-center items-left ">
+          <h2 className="text-3xl md:text-5xl text-gray-900">New Arrivals</h2>
+          <Link
+            href={"/marketplace"}
+            className="items-center flex border-b w-fit"
+          >
+            More Products <ArrowRight size={20} />
+          </Link>
         </div>
-      </section>
+
+        {/* Horizontally Scrollable Product List */}
+        <div className="flex gap-6 md:gap-8 overflow-x-auto pb-8 -mx-4 px-4 no-scrollbar">
+          {newArrivalsData.map((product) => (
+            <ProductCard key={product.id} product={product} />
+          ))}
+        </div>
+      </div>
+    </section>
   );
 }

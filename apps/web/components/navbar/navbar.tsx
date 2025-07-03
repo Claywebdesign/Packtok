@@ -1,16 +1,22 @@
 "use client";
-import Image from "next/image";
-import Link from "next/link";
+import logo from "@/assets/navbar-logo.png";
+import LogoutButton from "@/components/auth/logout-button";
 import { navbarLinks } from "@/constant/index";
+import { useCurrentUser } from "@/hooks/useCurrentUser";
+import { useAuthStore } from "@/store/auth-store";
 import { Button } from "@packtok/ui/components/button";
 import { cn } from "@packtok/ui/lib/utils";
-import { Menu, Search, ShoppingBag, UserCircle, X } from "lucide-react";
+import { Menu, Search, ShoppingBag, X } from "lucide-react";
+import Image from "next/image";
+import Link from "next/link";
 import { useEffect, useState } from "react";
-import logo from "@/assets/navbar-logo.png";
 
 export default function Navbar() {
   const [toggle, setToggle] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+
+  const accessToken = useAuthStore((s) => s.accessToken);
+  const { data: user } = useCurrentUser();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -69,11 +75,22 @@ export default function Navbar() {
           {/* Desktop Icons */}
           <div className="hidden md:flex items-center space-x-4">
             <Search className="h-5 w-5 text-gray-700 cursor-pointer hover:text-gray-900" />
-            <UserCircle className="h-5 w-5 text-gray-700 cursor-pointer hover:text-gray-900" />
             <ShoppingBag className="h-5 w-5 text-gray-700 cursor-pointer hover:text-gray-900" />
-            <Button asChild>
-              <Link href={"/auth/signin"}>Sign In</Link>
-            </Button>
+            {accessToken && user ? (
+              <div className="flex items-center gap-4">
+                <Link
+                  href="/account"
+                  className="text-sm font-medium hover:underline"
+                >
+                  {user.name?.split(" ")[0] || user.email}
+                </Link>
+                <LogoutButton />
+              </div>
+            ) : (
+              <Button asChild>
+                <Link href="/auth/signin">Sign In</Link>
+              </Button>
+            )}
           </div>
 
           {/* Mobile menu button */}
@@ -111,7 +128,6 @@ export default function Navbar() {
               {/* Mobile Icons */}
               <div className="flex items-center justify-center space-x-6 pt-4 pb-2">
                 <Search className="h-6 w-6 text-gray-700 cursor-pointer" />
-                <UserCircle className="h-6 w-6 text-gray-700 cursor-pointer" />
                 <ShoppingBag className="h-6 w-6 text-gray-700 cursor-pointer" />
               </div>
             </div>

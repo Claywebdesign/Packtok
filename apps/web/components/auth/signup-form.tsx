@@ -15,8 +15,11 @@ import { useForm } from "react-hook-form";
 import { SignUpFormData, signUpSchema } from "@/schemas/signup-schema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import Link from "next/link";
+import { useSignup } from "@/hooks/useSignup";
 
 export default function SignUpForm() {
+  const { mutate, isPending } = useSignup();
+
   const form = useForm<SignUpFormData>({
     resolver: zodResolver(signUpSchema),
     defaultValues: {
@@ -29,7 +32,7 @@ export default function SignUpForm() {
   });
 
   const onSubmit = (data: SignUpFormData) => {
-    console.log("Sign up data:", data);
+    mutate(data);
   };
 
   return (
@@ -141,12 +144,8 @@ export default function SignUpForm() {
           )}
         />
 
-        <Button
-          type="submit"
-          className="w-full"
-          disabled={form.formState.isSubmitting}
-        >
-          {form.formState.isSubmitting ? "Signing Up..." : "Sign Up"}
+        <Button type="submit" className="w-full" disabled={isPending}>
+          {isPending ? "Signing Up..." : "Sign Up"}
         </Button>
       </form>
     </Form>
