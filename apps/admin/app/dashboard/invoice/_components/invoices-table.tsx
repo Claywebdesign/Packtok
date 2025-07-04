@@ -46,7 +46,9 @@ interface InvoicesTableProps {
   invoices: Invoice[];
 }
 
-export function InvoicesTable({ invoices: initialInvoices }: InvoicesTableProps) {
+export function InvoicesTable({
+  invoices: initialInvoices,
+}: InvoicesTableProps) {
   const [invoiceList, setInvoiceList] = useState<Invoice[]>(initialInvoices);
   const [selectedInvoices, setSelectedInvoices] = useState<string[]>([]);
   const [searchTerm, setSearchTerm] = useState("");

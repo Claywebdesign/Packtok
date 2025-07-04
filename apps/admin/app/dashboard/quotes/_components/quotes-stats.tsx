@@ -1,12 +1,7 @@
 "use client";
 
 import { Calendar, DollarSign } from "lucide-react";
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-} from "@packtok/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@packtok/ui/card";
 import { QuoteRequest } from "../../../../types/product";
 
 interface QuotesStatsProps {
