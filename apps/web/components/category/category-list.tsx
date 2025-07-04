@@ -12,6 +12,7 @@ export default function CategoryList({
         <CategoryItem
           key={idx}
           title={category.title}
+          slug={category.slug}
           subtitle={category.subtitle}
           description={category.description}
           image={category.image}

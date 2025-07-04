@@ -14,7 +14,7 @@ export default function ShopNow() {
         <div>
           <h2 className="text-xl sm:text-2xl md:text-4xl mb-2">Machinery</h2>
           <Link
-            href={"#"}
+            href={"/marketplace/machinery"}
             className="text-sm md:text-lg leading-relaxed border-b border-gray-800"
           >
             Shop Now <ArrowRight className="inline-block" size={20} />
@@ -36,7 +36,7 @@ export default function ShopNow() {
               Spare Parts
             </h3>
             <Link
-              href={"#"}
+              href={"/marketplace/spare-parts"}
               className="text-sm md:text-lg text-left border-b border-gray-800"
             >
               Shop Now <ArrowRight className="inline-block" size={20} />
@@ -56,7 +56,7 @@ export default function ShopNow() {
               Raw Materials
             </h3>
             <Link
-              href={"#"}
+              href={"/marketplace/raw-materials"}
               className="text-sm md:text-lg text-left border-b border-gray-800"
             >
               Shop Now <ArrowRight className="inline-block" size={20} />
