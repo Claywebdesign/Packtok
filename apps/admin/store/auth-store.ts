@@ -1,0 +1,56 @@
+import { User } from "../types/auth";
+import { useEffect, useState } from "react";
+import { create } from "zustand";
+import { persist } from "zustand/middleware";
+
+interface AuthState {
+  accessToken: string | null;
+  user: User | null;
+  setAccessToken: (token: string | null) => void;
+  setUser: (user: User | null) => void;
+  logout: () => Promise<void>;
+}
+
+export const useAuthStore = create<AuthState>()(
+  persist(
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    (set, get) => ({
+      accessToken: null,
+      user: null,
+      setAccessToken: (token) => set({ accessToken: token }),
+      setUser: (user) => set({ user }),
+      logout: async () => {
+        try {
+          await fetch(
+            `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/v1/auth/logout`,
+            {
+              method: "POST",
+              credentials: "include",
+            },
+          );
+        } catch (_) {
+          // ignore
+        }
+        set({ accessToken: null, user: null });
+        // Invalidate persisted storage
+        if (typeof window !== "undefined") {
+          localStorage.removeItem("admin-auth-storage");
+        }
+      },
+    }),
+    {
+      name: "admin-auth-storage",
+      partialize: (state) => ({
+        accessToken: state.accessToken,
+        user: state.user,
+      }),
+    },
+  ),
+);
+
+// Helper: know when Zustand has rehydrated after persistence (for SSR)
+export function useHasHydrated() {
+  const [hydrated, setHydrated] = useState(false);
+  useEffect(() => setHydrated(true), []);
+  return hydrated;
+}
