@@ -1,21 +1,20 @@
 "use client";
 
-import { useState } from "react";
-import Image from "next/image";
+import { useAuthStore } from "@/store/auth-store";
 import {
-  Star,
+  ChevronDown,
+  ChevronUp,
+  FileText,
   Heart,
   Minus,
   Plus,
-  ChevronDown,
-  ChevronUp,
-  Play,
-  FileText,
+  Star,
 } from "lucide-react";
+import Image from "next/image";
+import { useRouter } from "next/navigation";
+import { useState } from "react";
 import ImageGallery from "react-image-gallery";
 import "react-image-gallery/styles/css/image-gallery.css";
-import { useAuthStore } from "@/store/auth-store";
-import { useRouter } from "next/navigation";
 import QuoteModal from "./quote-modal";
 
 interface ProductDetailsProps {
@@ -173,7 +172,7 @@ export default function ProductDetails({ product }: ProductDetailsProps) {
           {/* Product Description */}
           <p className="text-gray-600 leading-relaxed">{product.description}</p>
 
-          {/* Specifications */}
+          {/* Specifications
           <div className="space-y-2">
             <h3 className="font-semibold text-lg">Specifications</h3>
             <div className="space-y-1 text-sm text-gray-600">
@@ -186,7 +185,7 @@ export default function ProductDetails({ product }: ProductDetailsProps) {
                 </div>
               ))}
             </div>
-          </div>
+          </div> */}
 
           {/* Quantity Selector */}
           <div className="space-y-2">
