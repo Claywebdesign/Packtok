@@ -38,12 +38,19 @@ interface SubmissionsTableProps {
   initialSubmissions?: Submission[];
 }
 
-export function SubmissionsTable({ initialSubmissions = [] }: SubmissionsTableProps) {
+export function SubmissionsTable({
+  initialSubmissions = [],
+}: SubmissionsTableProps) {
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState<string>("PENDING_APPROVAL");
-  const [selectedSubmission, setSelectedSubmission] = useState<Submission | null>(null);
+  const [selectedSubmission, setSelectedSubmission] =
+    useState<Submission | null>(null);
 
-  const { data: submissions = initialSubmissions, isLoading, error } = useSubmissions();
+  const {
+    data: submissions = initialSubmissions,
+    isLoading,
+    error,
+  } = useSubmissions();
   const approveMutation = useApproveSubmission();
   const rejectMutation = useRejectSubmission();
 
@@ -237,8 +244,8 @@ export function SubmissionsTable({ initialSubmissions = [] }: SubmissionsTablePr
                             </AlertDialogTitle>
                             <AlertDialogDescription>
                               Are you sure you want to reject the submission
-                              &quot;{submission.title}&quot;? This action cannot be
-                              undone.
+                              &quot;{submission.title}&quot;? This action cannot
+                              be undone.
                             </AlertDialogDescription>
                           </AlertDialogHeader>
                           <AlertDialogFooter>

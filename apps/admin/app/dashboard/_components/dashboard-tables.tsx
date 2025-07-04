@@ -45,9 +45,7 @@ export function DashboardTables() {
       {/* Recent Orders */}
       <div className="bg-white p-6 rounded-lg shadow-sm">
         <div className="flex items-center justify-between mb-4">
-          <h3 className="text-lg font-semibold text-gray-900">
-            Recent Orders
-          </h3>
+          <h3 className="text-lg font-semibold text-gray-900">Recent Orders</h3>
           <Button variant="ghost" size="sm">
             <MoreHorizontal className="h-4 w-4" />
           </Button>

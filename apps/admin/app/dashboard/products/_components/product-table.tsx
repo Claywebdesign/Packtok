@@ -16,7 +16,10 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@packtok/ui/components/dropdown-menu";
-import { MarketplaceProduct, MarketplaceProductStatus } from "../../../../types/product";
+import {
+  MarketplaceProduct,
+  MarketplaceProductStatus,
+} from "../../../../types/product";
 import {
   Package,
   Edit,
@@ -42,14 +45,14 @@ interface ProductTableProps {
   onSort: (field: SortField) => void;
 }
 
-export function ProductTable({ 
-  products, 
-  onEdit, 
-  onDelete, 
+export function ProductTable({
+  products,
+  onEdit,
+  onDelete,
   onStatusChange,
   sortField,
   sortDirection,
-  onSort
+  onSort,
 }: ProductTableProps) {
   const SortIcon = ({ field }: { field: SortField }) => {
     if (sortField !== field) {
@@ -153,9 +156,7 @@ export function ProductTable({
                 {product.quantity} pcs
               </TableCell>
               <TableCell className="py-4 px-6">
-                <Badge
-                  className={`${cxBadge(product.status)} text-xs`}
-                >
+                <Badge className={`${cxBadge(product.status)} text-xs`}>
                   {product.status.replace("_", " ")}
                 </Badge>
               </TableCell>

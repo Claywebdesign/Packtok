@@ -70,7 +70,7 @@ export function CustomersTable({
     const filtered = customers.filter(
       (customer) =>
         customer.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        customer.email.toLowerCase().includes(searchTerm.toLowerCase())
+        customer.email.toLowerCase().includes(searchTerm.toLowerCase()),
     );
 
     filtered.sort((a, b) => {

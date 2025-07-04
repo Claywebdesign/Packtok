@@ -20,7 +20,17 @@ import logger from "./utils/logger";
 const app: Express = express();
 
 app.use(pinoHttp({ logger }));
-app.use(cors({ origin: config.corsOrigin, credentials: true }));
+// CORS_ORIGIN=http://localhost:3000,http://127.0.0.1:3000,http://localhost:3002,http://127.0.0.1:3002
+const allowedOrigins = config.corsOrigin.split(",");
+app.use(
+  cors({
+    origin: allowedOrigins,
+    methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
+    credentials: true, // Allow cookies to be sent
+    optionsSuccessStatus: 204, // For legacy browser support
+  })
+);
+
 app.use(helmet());
 app.use(express.json({ limit: "16kb" }));
 app.use(express.urlencoded({ extended: true, limit: "16kb" }));
@@ -30,7 +40,7 @@ app.get("/healthcheck", (req: Request, res: Response): void => {
   res.status(200).send("OK");
 });
 
-// API Routes 
+// API Routes
 app.use("/api/v1/auth", authRouter);
 app.use("/api/v1/admins", adminRouter);
 app.use("/api/v1/products", productRouter);

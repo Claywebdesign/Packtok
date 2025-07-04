@@ -78,7 +78,7 @@ export default function ProductGrid({
   const products = productsData?.items || [];
   const totalPages = Math.ceil((productsData?.total || 0) / 20);
   const handleProductClick = (productId: string) => {
-    router.push(`/marketplace/product/${productId}`);
+    router.push(`/marketplace/${category.slug}/${productId}`);
   };
 
   const handlePageChange = (page: number) => {

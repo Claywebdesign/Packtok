@@ -1,12 +1,7 @@
 "use client";
 
 import { Button } from "@packtok/ui/components/button";
-import {
-  Mail,
-  Phone,
-  MapPin,
-  MoreHorizontal,
-} from "lucide-react";
+import { Mail, Phone, MapPin, MoreHorizontal } from "lucide-react";
 
 interface CustomerDetail {
   name: string;
@@ -29,7 +24,10 @@ export function CustomerSidebar({ customer }: CustomerSidebarProps) {
         <div className="text-center mb-6">
           <div className="w-16 h-16 bg-blue-100 rounded-full mx-auto mb-3 flex items-center justify-center">
             <span className="text-blue-600 font-semibold text-lg">
-              {customer.name.split(' ').map(n => n[0]).join('')}
+              {customer.name
+                .split(" ")
+                .map((n) => n[0])
+                .join("")}
             </span>
           </div>
           <h3 className="text-xl font-semibold text-gray-900">
@@ -53,16 +51,12 @@ export function CustomerSidebar({ customer }: CustomerSidebarProps) {
 
           <div className="flex items-center space-x-3 text-sm">
             <Phone className="h-4 w-4 text-gray-400" />
-            <span className="text-gray-600">
-              {customer.secondaryPhone}
-            </span>
+            <span className="text-gray-600">{customer.secondaryPhone}</span>
           </div>
 
           <div className="flex items-start space-x-3 text-sm">
             <MapPin className="h-4 w-4 text-gray-400 mt-0.5" />
-            <span className="text-gray-600">
-              {customer.address}
-            </span>
+            <span className="text-gray-600">{customer.address}</span>
           </div>
         </div>
       </div>
@@ -78,27 +72,25 @@ export function CustomerSidebar({ customer }: CustomerSidebarProps) {
 
         {/* Simple bar chart representation */}
         <div className="space-y-3">
-          {["Jan", "Feb", "Mar", "Apr", "May", "Jun"].map(
-            (month, index) => {
-              const height = [40, 60, 80, 30, 90, 50][index];
-              return (
-                <div
-                  key={month}
-                  className="flex items-center justify-between text-sm"
-                >
-                  <span className="text-gray-600">{month}</span>
-                  <div className="flex items-center space-x-2">
-                    <div className="w-16 bg-gray-200 rounded-full h-2">
-                      <div
-                        className="bg-pink-500 h-2 rounded-full"
-                        style={{ width: `${height}%` }}
-                      ></div>
-                    </div>
+          {["Jan", "Feb", "Mar", "Apr", "May", "Jun"].map((month, index) => {
+            const height = [40, 60, 80, 30, 90, 50][index];
+            return (
+              <div
+                key={month}
+                className="flex items-center justify-between text-sm"
+              >
+                <span className="text-gray-600">{month}</span>
+                <div className="flex items-center space-x-2">
+                  <div className="w-16 bg-gray-200 rounded-full h-2">
+                    <div
+                      className="bg-pink-500 h-2 rounded-full"
+                      style={{ width: `${height}%` }}
+                    ></div>
                   </div>
                 </div>
-              );
-            },
-          )}
+              </div>
+            );
+          })}
         </div>
 
         {/* Donut Chart */}
@@ -106,9 +98,7 @@ export function CustomerSidebar({ customer }: CustomerSidebarProps) {
           <div className="relative w-24 h-24 mx-auto mb-4">
             <div className="w-24 h-24 rounded-full bg-gradient-to-r from-green-400 to-blue-500 flex items-center justify-center">
               <div className="w-16 h-16 bg-white rounded-full flex items-center justify-center">
-                <span className="text-lg font-semibold text-gray-700">
-                  70%
-                </span>
+                <span className="text-lg font-semibold text-gray-700">70%</span>
               </div>
             </div>
           </div>

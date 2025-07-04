@@ -99,7 +99,9 @@ export function QuoteDetailsDialog({
                   </div>
                   <div>
                     <p className="text-xs text-muted-foreground">Price:</p>
-                    <p className="text-sm font-medium">₹{quote.product.price}</p>
+                    <p className="text-sm font-medium">
+                      ₹{quote.product.price}
+                    </p>
                   </div>
                 </div>
                 <div className="grid grid-cols-3 gap-4">
@@ -122,13 +124,17 @@ export function QuoteDetailsDialog({
                     <p className="text-sm">{quote.product.productType}</p>
                   </div>
                   <div>
-                    <p className="text-xs text-muted-foreground">Machine Type:</p>
+                    <p className="text-xs text-muted-foreground">
+                      Machine Type:
+                    </p>
                     <p className="text-sm">{quote.product.machineType}</p>
                   </div>
                 </div>
                 <div className="grid grid-cols-2 gap-4">
                   <div>
-                    <p className="text-xs text-muted-foreground">Manufacturer:</p>
+                    <p className="text-xs text-muted-foreground">
+                      Manufacturer:
+                    </p>
                     <p className="text-sm">{quote.product.manufacturer}</p>
                   </div>
                   <div>
@@ -144,9 +150,10 @@ export function QuoteDetailsDialog({
                     <div className="text-sm bg-gray-50 p-2 rounded">
                       {(() => {
                         try {
-                          const specs = typeof quote.product.specifications === 'string' 
-                            ? JSON.parse(quote.product.specifications) 
-                            : quote.product.specifications;
+                          const specs =
+                            typeof quote.product.specifications === "string"
+                              ? JSON.parse(quote.product.specifications)
+                              : quote.product.specifications;
                           return Object.entries(specs).map(([key, value]) => (
                             <div key={key} className="flex justify-between">
                               <span className="font-medium">

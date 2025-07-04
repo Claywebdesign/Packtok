@@ -70,7 +70,9 @@ export function useLogin() {
       router.push("/dashboard");
     },
     onError: (err: unknown) => {
-      const message = (err as { response?: { data?: { message?: string } } })?.response?.data?.message || "Login failed";
+      const message =
+        (err as { response?: { data?: { message?: string } } })?.response?.data
+          ?.message || "Login failed";
       toast.error(message);
     },
   });

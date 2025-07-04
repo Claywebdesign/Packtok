@@ -8,7 +8,10 @@ import { Input } from "@packtok/ui/components/input";
 import { Label } from "@packtok/ui/components/label";
 import { Textarea } from "@packtok/ui/components/textarea";
 import { Loading } from "@packtok/ui/components/loading";
-import { CustomCombobox, ComboboxOption } from "@packtok/ui/components/custom-combobox";
+import {
+  CustomCombobox,
+  ComboboxOption,
+} from "@packtok/ui/components/custom-combobox";
 import {
   Select,
   SelectContent,
@@ -40,7 +43,10 @@ import {
   useCreateProduct,
   useCreateCategory,
 } from "../../../../hooks";
-import { productSchema, type ProductFormData } from "../../../../schemas/product-schema";
+import {
+  productSchema,
+  type ProductFormData,
+} from "../../../../schemas/product-schema";
 
 export default function AddProductForm() {
   const [uploadedImages, setUploadedImages] = useState<File[]>([]);
@@ -102,7 +108,7 @@ export default function AddProductForm() {
       });
 
       const validSpecs = specifications.filter(
-        (spec) => spec.key.trim() && spec.value.trim()
+        (spec) => spec.key.trim() && spec.value.trim(),
       );
       if (validSpecs.length > 0) {
         const specsObj = validSpecs.reduce(
@@ -110,7 +116,7 @@ export default function AddProductForm() {
             acc[spec.key] = spec.value;
             return acc;
           },
-          {} as Record<string, string>
+          {} as Record<string, string>,
         );
         formData.append("specifications", JSON.stringify(specsObj));
       }
@@ -164,7 +170,7 @@ export default function AddProductForm() {
   };
 
   const handleThumbnailUpload = (
-    event: React.ChangeEvent<HTMLInputElement>
+    event: React.ChangeEvent<HTMLInputElement>,
   ) => {
     const file = event.target.files?.[0];
     if (file) {
@@ -180,7 +186,7 @@ export default function AddProductForm() {
   };
 
   const handleVideoThumbnailUpload = (
-    event: React.ChangeEvent<HTMLInputElement>
+    event: React.ChangeEvent<HTMLInputElement>,
   ) => {
     const file = event.target.files?.[0];
     if (file) {
@@ -212,7 +218,7 @@ export default function AddProductForm() {
   const updateSpecification = (
     index: number,
     field: "key" | "value",
-    value: string
+    value: string,
   ) => {
     const updated = [...specifications];
     updated[index][field] = value;
@@ -701,7 +707,7 @@ export default function AddProductForm() {
                               {...field}
                               onChange={(e) =>
                                 field.onChange(
-                                  parseInt(e.target.value) || undefined
+                                  parseInt(e.target.value) || undefined,
                                 )
                               }
                             />
@@ -734,7 +740,7 @@ export default function AddProductForm() {
                               updateSpecification(
                                 index,
                                 "value",
-                                e.target.value
+                                e.target.value,
                               )
                             }
                             className="flex-1"
