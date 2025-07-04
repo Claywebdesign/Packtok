@@ -5,10 +5,16 @@ import { useAuthStore } from "../store/auth-store";
 import { useMutation } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
 import { toast } from "react-hot-toast";
+import { User } from "../types/auth";
 
 interface LoginPayload {
   email: string;
   password: string;
+}
+
+interface ApiLoginResponse {
+  accessToken: string;
+  user: User;
 }
 
 export function useLogin() {
@@ -39,10 +45,10 @@ export function useLogin() {
         // Handle both possible response formats from the documentation
         if (data.data) {
           // Format: { data: { accessToken, user } }
-          return data.data as { accessToken: string; user: any };
+          return data.data as ApiLoginResponse;
         } else if (data.accessToken) {
           // Format: { accessToken, user }
-          return data as { accessToken: string; user: any };
+          return data as ApiLoginResponse;
         } else {
           throw new Error("Unexpected API response format");
         }
@@ -63,8 +69,8 @@ export function useLogin() {
       toast.success("Logged in successfully");
       router.push("/dashboard");
     },
-    onError: (err: any) => {
-      const message = err?.response?.data?.message || "Login failed";
+    onError: (err: unknown) => {
+      const message = (err as { response?: { data?: { message?: string } } })?.response?.data?.message || "Login failed";
       toast.error(message);
     },
   });

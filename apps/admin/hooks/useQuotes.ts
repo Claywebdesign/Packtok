@@ -3,11 +3,12 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import api from "../lib/axios";
 import { QuoteRequest, QuoteStatus } from "../types/product";
+import { QK } from "../utils/queryKeys";
 
 // Fetch all quote requests (admin)
 export function useQuotes() {
   return useQuery({
-    queryKey: ["quotes"],
+    queryKey: QK.quotes,
     queryFn: async (): Promise<QuoteRequest[]> => {
       const { data } = await api.get("/api/v1/admins/quotes");
       return data.data || data;
@@ -34,7 +35,7 @@ export function useUpdateQuoteStatus() {
       return data.data || data;
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["quotes"] });
+      queryClient.invalidateQueries({ queryKey: QK.quotes });
     },
   });
 }

@@ -22,7 +22,12 @@
     "./textarea": "./src/components/textarea.tsx",
     "./form": "./src/components/form.tsx",
     "./dropdown-menu": "./src/components/dropdown-menu.tsx",
-    "./checkbox": "./src/components/checkbox.tsx"
+    "./checkbox": "./src/components/checkbox.tsx",
+    "./loading": "./src/components/loading.tsx",
+    "./select": "./src/components/select.tsx",
+    "./command": "./src/components/command.tsx",
+    "./popover": "./src/components/popover.tsx",
+    "./combobox": "./src/components/combobox.tsx"
   },
   "scripts": {
     "lint": "eslint . --max-warnings 0"
@@ -35,7 +40,10 @@
     "@radix-ui/react-dialog": "^1.1.6",
     "@radix-ui/react-dropdown-menu": "^2.1.15",
     "@radix-ui/react-label": "^2.1.7",
+    "@radix-ui/react-popover": "^1.1.5",
+    "@radix-ui/react-select": "^2.1.6",
     "@radix-ui/react-slot": "^1.2.3",
+    "cmdk": "^1.0.1",
     "@tanstack/react-table": "^8.21.3",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",

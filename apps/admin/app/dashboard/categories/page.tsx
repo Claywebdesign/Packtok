@@ -4,6 +4,7 @@ import { useState } from "react";
 import { Plus, Trash2, Search, Edit } from "lucide-react";
 import { Button } from "@packtok/ui/components/button";
 import { Input } from "@packtok/ui/components/input";
+import { Loading } from "@packtok/ui/components/loading";
 import {
   Table,
   TableBody,
@@ -92,11 +93,7 @@ export default function CategoriesPage() {
   );
 
   if (isLoading) {
-    return (
-      <div className="flex items-center justify-center min-h-screen">
-        <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-gray-900"></div>
-      </div>
-    );
+    return <Loading variant="jimu" className="min-h-screen" />;
   }
 
   return (

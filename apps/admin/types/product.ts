@@ -14,6 +14,8 @@ export type UserSubmissionStatus = "PENDING_APPROVAL" | "APPROVED" | "REJECTED";
 export type MachineType = "MONO_CARTON" | "MASTER_CARTON" | "BOTH" | "OTHER";
 export type QuoteStatus = "PENDING" | "REVIEWED" | "COMPLETED" | "CANCELLED";
 
+export type Specification = Record<string, string | number | boolean>;
+
 export interface MarketplaceProduct {
   id: string;
   createdAt: string;
@@ -29,7 +31,7 @@ export interface MarketplaceProduct {
   videoUrl?: string;
   videoThumbnail?: string; // Note: schema uses videoThumbnail not videoThumbnailUrl
   pdfUrl?: string;
-  specifications: Record<string, any>; // JSON field
+  specifications: Specification; // JSON field
   condition: ProductCondition;
   status: MarketplaceProductStatus;
   additionalInfo?: string;

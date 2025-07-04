@@ -3,6 +3,7 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import api from "../lib/axios";
 import { MarketplaceProduct } from "../types/product";
+import { QK } from "../utils/queryKeys";
 
 // Interface for submissions with user data
 export interface Submission extends MarketplaceProduct {
@@ -16,7 +17,7 @@ export interface Submission extends MarketplaceProduct {
 // Fetch all submissions (pending user products)
 export function useSubmissions() {
   return useQuery({
-    queryKey: ["submissions"],
+    queryKey: QK.submissions,
     queryFn: async (): Promise<Submission[]> => {
       const { data } = await api.get("/api/v1/admins/submissions");
       return data.data || data;
@@ -38,8 +39,8 @@ export function useApproveSubmission() {
     },
     onSuccess: () => {
       // Invalidate both submissions and products queries
-      queryClient.invalidateQueries({ queryKey: ["submissions"] });
-      queryClient.invalidateQueries({ queryKey: ["products"] });
+      queryClient.invalidateQueries({ queryKey: QK.submissions });
+      queryClient.invalidateQueries({ queryKey: QK.products });
     },
   });
 }
@@ -56,7 +57,7 @@ export function useRejectSubmission() {
       return data.data || data;
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["submissions"] });
+      queryClient.invalidateQueries({ queryKey: QK.submissions });
     },
   });
 }

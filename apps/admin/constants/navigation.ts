@@ -12,12 +12,13 @@ import {
   ClipboardList,
   Tags,
   UserCheck,
+  LucideIcon,
 } from "lucide-react";
 
 export interface NavigationItem {
   name: string;
   href: string;
-  icon: any;
+  icon: LucideIcon;
   current?: boolean;
   badge?: number;
 }

@@ -3,11 +3,12 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import api from "../lib/axios";
 import { Category } from "../types/product";
+import { QK } from "../utils/queryKeys";
 
 // Fetch all categories
 export function useCategories() {
   return useQuery({
-    queryKey: ["categories"],
+    queryKey: QK.categories,
     queryFn: async (): Promise<Category[]> => {
       const { data } = await api.get("/api/v1/categories");
       return data.data || data;
@@ -27,7 +28,7 @@ export function useCreateCategory() {
     },
     onSuccess: () => {
       // Invalidate categories query to refetch
-      queryClient.invalidateQueries({ queryKey: ["categories"] });
+      queryClient.invalidateQueries({ queryKey: QK.categories });
     },
   });
 }
@@ -41,7 +42,7 @@ export function useDeleteCategory() {
       await api.delete(`/api/v1/categories/${categoryId}`);
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["categories"] });
+      queryClient.invalidateQueries({ queryKey: QK.categories });
     },
   });
 }
