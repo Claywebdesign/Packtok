@@ -3,11 +3,12 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import api from "../lib/axios";
 import { MarketplaceProduct, MarketplaceProductStatus } from "../types/product";
+import { QK } from "../utils/queryKeys";
 
 // Fetch all products (admin)
 export function useProducts() {
   return useQuery({
-    queryKey: ["products"],
+    queryKey: QK.products,
     queryFn: async (): Promise<MarketplaceProduct[]> => {
       const { data } = await api.get("/api/v1/admins/products");
       return data.data || data;
@@ -31,7 +32,7 @@ export function useCreateProduct() {
     },
     onSuccess: () => {
       // Invalidate products query to refetch
-      queryClient.invalidateQueries({ queryKey: ["products"] });
+      queryClient.invalidateQueries({ queryKey: QK.products });
     },
   });
 }
@@ -55,7 +56,7 @@ export function useUpdateProductStatus() {
       return data.data || data;
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["products"] });
+      queryClient.invalidateQueries({ queryKey: QK.products });
     },
   });
 }
@@ -69,7 +70,7 @@ export function useDeleteProduct() {
       await api.delete(`/api/v1/admins/products/${productId}`);
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["products"] });
+      queryClient.invalidateQueries({ queryKey: QK.products });
     },
   });
 }
@@ -98,7 +99,7 @@ export function useUpdateProduct() {
       return data.data || data;
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["products"] });
+      queryClient.invalidateQueries({ queryKey: QK.products });
     },
   });
 }

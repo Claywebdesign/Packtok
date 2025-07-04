@@ -6,6 +6,7 @@ import { User } from "../types/auth";
 import { useQuery } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
+import { QK } from "../utils/queryKeys";
 
 export function useCurrentUser() {
   const accessToken = useAuthStore((s) => s.accessToken);
@@ -14,7 +15,7 @@ export function useCurrentUser() {
   const router = useRouter();
 
   const query = useQuery({
-    queryKey: ["current-user"],
+    queryKey: QK.currentUser,
     queryFn: async (): Promise<User> => {
       // Handle mock authentication
       // if (accessToken === "mock-admin-token") {
