@@ -9,6 +9,11 @@ const supabase = createClient(
       autoRefreshToken: false,
       persistSession: false,
     },
+    global: {
+      headers: {
+        Authorization: `Bearer ${config.supabase.serviceRoleKey}`,
+      },
+    },
   }
 );
 
