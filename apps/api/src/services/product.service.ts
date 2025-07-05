@@ -58,8 +58,11 @@ const ensureCategory = async (
 };
 
 export const createProductAsAdmin = async (adminId: string, data: any) => {
-  const { categoryId, categoryName, ...rest } = data;
-  const resolvedCategoryId = await ensureCategory(categoryId, categoryName);
+  const { categoryId, categoryName, category, ...rest } = data;
+  const resolvedCategoryId = await ensureCategory(
+    categoryId,
+    categoryName ?? category
+  );
   return prisma.marketplaceProduct.create({
     data: {
       ...rest,
@@ -71,8 +74,11 @@ export const createProductAsAdmin = async (adminId: string, data: any) => {
 };
 
 export const createProductSubmission = async (userId: string, data: any) => {
-  const { categoryId, categoryName, ...rest } = data;
-  const resolvedCategoryId = await ensureCategory(categoryId, categoryName);
+  const { categoryId, categoryName, category, ...rest } = data;
+  const resolvedCategoryId = await ensureCategory(
+    categoryId,
+    categoryName ?? category
+  );
   return prisma.marketplaceProduct.create({
     data: {
       ...rest,
@@ -95,10 +101,8 @@ export const updateProduct = async (
     throw new ApiError(404, "Product not found");
   }
 
-
   const { categoryId, categoryName, category, ...rest } = data as any;
   let updatedCategoryId: string | undefined = undefined;
-
 
   const possibleCategoryName = categoryName ?? category;
   if (categoryId || possibleCategoryName) {
