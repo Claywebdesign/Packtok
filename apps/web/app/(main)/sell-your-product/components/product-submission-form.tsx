@@ -13,10 +13,29 @@ import { Button } from "@packtok/ui/components/button";
 import { Input } from "@packtok/ui/components/input";
 import { Label } from "@packtok/ui/components/label";
 import { Textarea } from "@packtok/ui/components/textarea";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@packtok/ui/components/select";
-import { Card, CardContent, CardHeader, CardTitle } from "@packtok/ui/components/card";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@packtok/ui/components/select";
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+} from "@packtok/ui/components/card";
 import { toast } from "react-hot-toast";
-import { X, MapPin, Plus, Minus, Upload, FileVideo, FileText } from "lucide-react";
+import {
+  X,
+  MapPin,
+  Plus,
+  Minus,
+  Upload,
+  FileVideo,
+  FileText,
+} from "lucide-react";
 import { cn } from "@packtok/ui/lib/utils";
 import Image from "next/image";
 
@@ -30,7 +49,9 @@ export function ProductSubmissionForm() {
   const [specifications, setSpecifications] = useState<
     { key: string; value: string }[]
   >([{ key: "", value: "" }]);
-  const [currentStep, setCurrentStep] = useState<"details" | "address">("details");
+  const [currentStep, setCurrentStep] = useState<"details" | "address">(
+    "details"
+  );
 
   const { data: categories } = useCategories();
   const submitProduct = useSubmitProduct();
@@ -55,7 +76,7 @@ export function ProductSubmissionForm() {
     if (files) {
       const newFiles = Array.from(files);
       const totalImages = uploadedImages.length + newFiles.length;
-      
+
       if (totalImages > 5) {
         toast.error("Maximum 5 images allowed");
         return;
@@ -66,8 +87,8 @@ export function ProductSubmissionForm() {
       setValue("images", updatedImages);
 
       // Create previews
-      const newPreviews = newFiles.map(file => URL.createObjectURL(file));
-      setImagePreviews(prev => [...prev, ...newPreviews]);
+      const newPreviews = newFiles.map((file) => URL.createObjectURL(file));
+      setImagePreviews((prev) => [...prev, ...newPreviews]);
     }
   };
 
@@ -81,7 +102,9 @@ export function ProductSubmissionForm() {
     setImagePreviews(updatedPreviews);
   };
 
-  const handleThumbnailUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleThumbnailUpload = (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
     const file = event.target.files?.[0];
     if (file) {
       setThumbnail(file);
@@ -97,7 +120,9 @@ export function ProductSubmissionForm() {
     }
   };
 
-  const handleVideoThumbnailUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleVideoThumbnailUpload = (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
     const file = event.target.files?.[0];
     if (file) {
       setVideoThumbnail(file);
@@ -126,13 +151,12 @@ export function ProductSubmissionForm() {
   const updateSpecification = (
     index: number,
     field: "key" | "value",
-    value: string,
+    value: string
   ) => {
     const updated = [...specifications];
     updated[index][field] = value;
     setSpecifications(updated);
   };
-
 
   const onSubmit = async (data: ProductSubmissionFormData) => {
     try {
@@ -158,7 +182,7 @@ export function ProductSubmissionForm() {
 
       // Add specifications if any valid ones exist
       const validSpecs = specifications.filter(
-        (spec) => spec.key.trim() && spec.value.trim(),
+        (spec) => spec.key.trim() && spec.value.trim()
       );
       if (validSpecs.length > 0) {
         const specsObj = validSpecs.reduce(
@@ -166,13 +190,13 @@ export function ProductSubmissionForm() {
             acc[spec.key] = spec.value;
             return acc;
           },
-          {} as Record<string, string>,
+          {} as Record<string, string>
         );
         submissionData.specifications = JSON.stringify(specsObj);
       }
 
       await submitProduct.mutateAsync(submissionData);
-      
+
       // Reset form
       setUploadedImages([]);
       setImagePreviews([]);
@@ -212,7 +236,7 @@ export function ProductSubmissionForm() {
             <>
               <div className="space-y-4">
                 <h3 className="text-lg font-semibold">Information</h3>
-                
+
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
                     <Label htmlFor="title">Item Name</Label>
@@ -223,7 +247,9 @@ export function ProductSubmissionForm() {
                       className={cn(errors.title && "border-red-500")}
                     />
                     {errors.title && (
-                      <p className="text-red-500 text-sm mt-1">{errors.title.message}</p>
+                      <p className="text-red-500 text-sm mt-1">
+                        {errors.title.message}
+                      </p>
                     )}
                   </div>
 
@@ -237,7 +263,9 @@ export function ProductSubmissionForm() {
                       className={cn(errors.email && "border-red-500")}
                     />
                     {errors.email && (
-                      <p className="text-red-500 text-sm mt-1">{errors.email.message}</p>
+                      <p className="text-red-500 text-sm mt-1">
+                        {errors.email.message}
+                      </p>
                     )}
                   </div>
 
@@ -250,7 +278,9 @@ export function ProductSubmissionForm() {
                       className={cn(errors.phoneNumber && "border-red-500")}
                     />
                     {errors.phoneNumber && (
-                      <p className="text-red-500 text-sm mt-1">{errors.phoneNumber.message}</p>
+                      <p className="text-red-500 text-sm mt-1">
+                        {errors.phoneNumber.message}
+                      </p>
                     )}
                   </div>
 
@@ -263,14 +293,25 @@ export function ProductSubmissionForm() {
                       className={cn(errors.price && "border-red-500")}
                     />
                     {errors.price && (
-                      <p className="text-red-500 text-sm mt-1">{errors.price.message}</p>
+                      <p className="text-red-500 text-sm mt-1">
+                        {errors.price.message}
+                      </p>
                     )}
                   </div>
 
                   <div>
                     <Label htmlFor="productType">Product Type</Label>
                     <Select
-                      onValueChange={(value) => setValue("productType", value as "MACHINERY" | "SPARE_PARTS" | "CONSUMABLES" | "RAW_MATERIALS")}
+                      onValueChange={(value) =>
+                        setValue(
+                          "productType",
+                          value as
+                            | "MACHINERY"
+                            | "SPARE_PARTS"
+                            | "CONSUMABLES"
+                            | "RAW_MATERIALS"
+                        )
+                      }
                       defaultValue="MACHINERY"
                     >
                       <SelectTrigger>
@@ -280,18 +321,24 @@ export function ProductSubmissionForm() {
                         <SelectItem value="MACHINERY">Machinery</SelectItem>
                         <SelectItem value="SPARE_PARTS">Spare Parts</SelectItem>
                         <SelectItem value="CONSUMABLES">Consumables</SelectItem>
-                        <SelectItem value="RAW_MATERIALS">Raw Materials</SelectItem>
+                        <SelectItem value="RAW_MATERIALS">
+                          Raw Materials
+                        </SelectItem>
                       </SelectContent>
                     </Select>
                     {errors.productType && (
-                      <p className="text-red-500 text-sm mt-1">{errors.productType.message}</p>
+                      <p className="text-red-500 text-sm mt-1">
+                        {errors.productType.message}
+                      </p>
                     )}
                   </div>
 
                   <div>
                     <Label htmlFor="condition">Condition</Label>
                     <Select
-                      onValueChange={(value) => setValue("condition", value as "NEW" | "USED")}
+                      onValueChange={(value) =>
+                        setValue("condition", value as "NEW" | "USED")
+                      }
                       defaultValue="USED"
                     >
                       <SelectTrigger>
@@ -303,13 +350,17 @@ export function ProductSubmissionForm() {
                       </SelectContent>
                     </Select>
                     {errors.condition && (
-                      <p className="text-red-500 text-sm mt-1">{errors.condition.message}</p>
+                      <p className="text-red-500 text-sm mt-1">
+                        {errors.condition.message}
+                      </p>
                     )}
                   </div>
 
                   <div>
                     <Label htmlFor="categoryName">Category</Label>
-                    <Select onValueChange={(value) => setValue("categoryName", value)}>
+                    <Select
+                      onValueChange={(value) => setValue("categoryName", value)}
+                    >
                       <SelectTrigger>
                         <SelectValue placeholder="Select category" />
                       </SelectTrigger>
@@ -322,12 +373,16 @@ export function ProductSubmissionForm() {
                       </SelectContent>
                     </Select>
                     {errors.categoryName && (
-                      <p className="text-red-500 text-sm mt-1">{errors.categoryName.message}</p>
+                      <p className="text-red-500 text-sm mt-1">
+                        {errors.categoryName.message}
+                      </p>
                     )}
                   </div>
 
                   <div>
-                    <Label htmlFor="manufacturer">Manufacturer (Optional)</Label>
+                    <Label htmlFor="manufacturer">
+                      Manufacturer (Optional)
+                    </Label>
                     <Input
                       id="manufacturer"
                       placeholder="ACME Corp"
@@ -346,11 +401,7 @@ export function ProductSubmissionForm() {
 
                   <div>
                     <Label htmlFor="year">Year (Optional)</Label>
-                    <Input
-                      id="year"
-                      placeholder="2024"
-                      {...register("year")}
-                    />
+                    <Input id="year" placeholder="2024" {...register("year")} />
                   </div>
                 </div>
 
@@ -364,7 +415,9 @@ export function ProductSubmissionForm() {
                     className={cn(errors.description && "border-red-500")}
                   />
                   {errors.description && (
-                    <p className="text-red-500 text-sm mt-1">{errors.description.message}</p>
+                    <p className="text-red-500 text-sm mt-1">
+                      {errors.description.message}
+                    </p>
                   )}
                 </div>
 
@@ -387,11 +440,7 @@ export function ProductSubmissionForm() {
                           placeholder="Value (e.g., 5kW)"
                           value={spec.value}
                           onChange={(e) =>
-                            updateSpecification(
-                              index,
-                              "value",
-                              e.target.value,
-                            )
+                            updateSpecification(index, "value", e.target.value)
                           }
                           className="flex-1"
                         />
@@ -420,7 +469,9 @@ export function ProductSubmissionForm() {
                 </div>
 
                 <div>
-                  <Label htmlFor="additionalInfo">Additional Information (Optional)</Label>
+                  <Label htmlFor="additionalInfo">
+                    Additional Information (Optional)
+                  </Label>
                   <Textarea
                     id="additionalInfo"
                     placeholder="Any additional details..."
@@ -431,8 +482,10 @@ export function ProductSubmissionForm() {
               </div>
 
               <div className="space-y-6">
-                <h3 className="text-lg font-semibold">Share Photos and Videos</h3>
-                
+                <h3 className="text-lg font-semibold">
+                  Share Photos and Videos
+                </h3>
+
                 {/* Thumbnail Upload */}
                 <div>
                   <Label className="text-sm font-semibold text-gray-800 mb-3 flex items-center gap-2">
@@ -718,15 +771,21 @@ export function ProductSubmissionForm() {
               <div className="space-y-4">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
-                    <Label htmlFor="legalBusinessName">Legal Business Name</Label>
+                    <Label htmlFor="legalBusinessName">
+                      Legal Business Name
+                    </Label>
                     <Input
                       id="legalBusinessName"
                       placeholder="Tesla, Inc."
                       {...register("legalBusinessName")}
-                      className={cn(errors.legalBusinessName && "border-red-500")}
+                      className={cn(
+                        errors.legalBusinessName && "border-red-500"
+                      )}
                     />
                     {errors.legalBusinessName && (
-                      <p className="text-red-500 text-sm mt-1">{errors.legalBusinessName.message}</p>
+                      <p className="text-red-500 text-sm mt-1">
+                        {errors.legalBusinessName.message}
+                      </p>
                     )}
                   </div>
 
@@ -739,12 +798,16 @@ export function ProductSubmissionForm() {
                       className={cn(errors.addressLine1 && "border-red-500")}
                     />
                     {errors.addressLine1 && (
-                      <p className="text-red-500 text-sm mt-1">{errors.addressLine1.message}</p>
+                      <p className="text-red-500 text-sm mt-1">
+                        {errors.addressLine1.message}
+                      </p>
                     )}
                   </div>
 
                   <div>
-                    <Label htmlFor="addressLine2">Address Line 2 (Optional)</Label>
+                    <Label htmlFor="addressLine2">
+                      Address Line 2 (Optional)
+                    </Label>
                     <Input
                       id="addressLine2"
                       placeholder="Apt, suite, etc."
@@ -761,7 +824,9 @@ export function ProductSubmissionForm() {
                       className={cn(errors.city && "border-red-500")}
                     />
                     {errors.city && (
-                      <p className="text-red-500 text-sm mt-1">{errors.city.message}</p>
+                      <p className="text-red-500 text-sm mt-1">
+                        {errors.city.message}
+                      </p>
                     )}
                   </div>
 
@@ -774,7 +839,9 @@ export function ProductSubmissionForm() {
                       className={cn(errors.postcodeZip && "border-red-500")}
                     />
                     {errors.postcodeZip && (
-                      <p className="text-red-500 text-sm mt-1">{errors.postcodeZip.message}</p>
+                      <p className="text-red-500 text-sm mt-1">
+                        {errors.postcodeZip.message}
+                      </p>
                     )}
                   </div>
 
@@ -788,15 +855,21 @@ export function ProductSubmissionForm() {
                         <SelectValue placeholder="Select country" />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="United States">United States</SelectItem>
+                        <SelectItem value="United States">
+                          United States
+                        </SelectItem>
                         <SelectItem value="Canada">Canada</SelectItem>
                         <SelectItem value="Mexico">Mexico</SelectItem>
                         <SelectItem value="India">India</SelectItem>
-                        <SelectItem value="United Kingdom">United Kingdom</SelectItem>
+                        <SelectItem value="United Kingdom">
+                          United Kingdom
+                        </SelectItem>
                       </SelectContent>
                     </Select>
                     {errors.country && (
-                      <p className="text-red-500 text-sm mt-1">{errors.country.message}</p>
+                      <p className="text-red-500 text-sm mt-1">
+                        {errors.country.message}
+                      </p>
                     )}
                   </div>
 
@@ -818,7 +891,9 @@ export function ProductSubmissionForm() {
                       </SelectContent>
                     </Select>
                     {errors.state && (
-                      <p className="text-red-500 text-sm mt-1">{errors.state.message}</p>
+                      <p className="text-red-500 text-sm mt-1">
+                        {errors.state.message}
+                      </p>
                     )}
                   </div>
                 </div>
@@ -827,22 +902,28 @@ export function ProductSubmissionForm() {
                   <Label>Locate on Maps</Label>
                   <div className="w-full h-64 bg-gray-100 rounded-lg border flex items-center justify-center">
                     <div className="text-center">
-                      <MapPin size={48} className="text-gray-400 mx-auto mb-2" />
-                      <p className="text-gray-500">Alto, New York, United States</p>
+                      <MapPin
+                        size={48}
+                        className="text-gray-400 mx-auto mb-2"
+                      />
+                      <p className="text-gray-500">
+                        Alto, New York, United States
+                      </p>
                     </div>
                   </div>
                 </div>
               </div>
 
               <div className="flex justify-between">
-                <Button type="button" onClick={handleBack} variant="outline" className="px-8">
-                  Back
-                </Button>
-                <Button 
-                  type="submit" 
-                  disabled={isSubmitting}
+                <Button
+                  type="button"
+                  onClick={handleBack}
+                  variant="outline"
                   className="px-8"
                 >
+                  Back
+                </Button>
+                <Button type="submit" disabled={isSubmitting} className="px-8">
                   {isSubmitting ? "Submitting..." : "Submit"}
                 </Button>
               </div>

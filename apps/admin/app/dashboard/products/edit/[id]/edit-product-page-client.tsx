@@ -1,11 +1,11 @@
 "use client";
 
 import { useGetProduct } from "../../../../../hooks";
-import EditProductForm from "../../_components/edit-product-form";
 import { Loading } from "@packtok/ui/components/loading";
 import { Button } from "@packtok/ui/components/button";
 import { ArrowLeft, AlertCircle } from "lucide-react";
 import { useRouter } from "next/navigation";
+import EditProductForm from "../../_components/edit-product-form";
 
 interface EditProductPageClientProps {
   productId: string;
