@@ -10,11 +10,9 @@ import {
   Plus,
   Star,
 } from "lucide-react";
-import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-import ImageGallery from "react-image-gallery";
-import "react-image-gallery/styles/css/image-gallery.css";
+import ProductCarousel from "./product-carousel";
 import QuoteModal from "./quote-modal";
 
 interface ProductDetailsProps {
@@ -26,6 +24,8 @@ interface ProductDetailsProps {
     images: string[];
     imagesThumbnail: string;
     videoUrl?: string;
+    videoThumbnail?: string;
+    pdfUrl?: string;
     specifications: any;
     condition: string;
     manufacturer?: string;
@@ -50,48 +50,7 @@ export default function ProductDetails({ product }: ProductDetailsProps) {
   const router = useRouter();
 
   const images = product.images || [];
-  const hasImages = images.length > 0;
-  const hasVideo = product.videoUrl && product.videoThumbnail;
   const hasPdf = product.pdfUrl;
-
-  // Prepare gallery items for react-image-gallery
-  const galleryItems = [];
-
-  // Add images
-  if (hasImages) {
-    images.forEach((image) => {
-      galleryItems.push({
-        original: image,
-        thumbnail: image,
-      });
-    });
-  }
-
-  // Add video if available
-  if (hasVideo) {
-    galleryItems.push({
-      original: product.videoUrl,
-      thumbnail: product.videoThumbnail,
-      renderItem: () => (
-        <div className="aspect-square bg-gray-100 flex items-center justify-center">
-          <video
-            src={product.videoUrl}
-            controls
-            className="max-w-full max-h-full object-contain"
-            poster={product.videoThumbnail}
-          />
-        </div>
-      ),
-    });
-  }
-
-  // Fallback if no media
-  if (galleryItems.length === 0 && product.imagesThumbnail) {
-    galleryItems.push({
-      original: product.imagesThumbnail,
-      thumbnail: product.imagesThumbnail,
-    });
-  }
 
   const handleQuantityChange = (increment: boolean) => {
     setQuantity((prev) => {
@@ -122,88 +81,73 @@ export default function ProductDetails({ product }: ProductDetailsProps) {
 
   return (
     <div className="py-8">
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:items-start">
         {/* Product Images */}
-        <div className="space-y-4">
-          {galleryItems.length > 0 ? (
-            <ImageGallery
-              items={galleryItems}
-              showThumbnails={galleryItems.length > 1}
-              showPlayButton={false}
-              showFullscreenButton={true}
-              showNav={galleryItems.length > 1}
-              autoPlay={false}
-              slideDuration={500}
-              slideInterval={3000}
-              thumbnailPosition="bottom"
-              useBrowserFullscreen={true}
-            />
-          ) : (
-            <div className="aspect-square bg-gray-100 rounded-lg overflow-hidden flex items-center justify-center">
-              <Image
-                src="/placeholder.jpg"
-                alt={product.title}
-                width={600}
-                height={600}
-                className="w-full h-full object-cover"
-              />
-            </div>
-          )}
+        <div className="space-y-4 relative">
+          <ProductCarousel
+            images={images}
+            videoUrl={product.videoUrl}
+            videoThumbnail={product.videoThumbnail}
+            productTitle={product.title}
+            fallbackImage={product.imagesThumbnail}
+          />
         </div>
 
         {/* Product Details */}
-        <div className="space-y-6">
+        <div className="space-y-6 lg:min-h-[600px]">
           {/* Reviews */}
           <div className="flex items-center gap-2">
             <div className="flex">
               {[...Array(5)].map((_, i) => (
-                <Star
-                  key={i}
-                  className="w-5 h-5 fill-yellow-400 text-yellow-400"
-                />
+                <Star key={i} className="w-5 h-5 fill-black text-black" />
               ))}
             </div>
-            <span className="text-sm text-gray-600">11 Reviews</span>
+            <span className="text-sm text-gray-600 font-normal">
+              11 Reviews
+            </span>
           </div>
+
           {/* Product Title */}
-          <h1 className="text-2xl font-bold text-gray-900">{product.title}</h1>
+          <h1 className="text-3xl font-bold text-gray-900">{product.title}</h1>
+
           {/* Product Description */}
-          <p className="text-gray-600 leading-relaxed">{product.description}</p>
-        
-          <div className="space-y-2">
+          <p className="text-gray-600 leading-relaxed font-normal">
+            {product.description}
+          </p>
+
+          {/* Specifications */}
+          <div className="space-y-3">
             <h3 className="font-semibold text-lg">Specifications</h3>
-            <div className="space-y-1 text-sm text-gray-600">
+            <div className="space-y-2 text-sm text-gray-600">
               {Object.entries(specifications).map(([key, value]) => (
                 <div key={key} className="flex">
-                  <span className="font-medium capitalize">
+                  <span className="font-normal capitalize">
                     {key.replace(/([A-Z])/g, " $1").trim()}:
                   </span>
-                  <span className="ml-2">{String(value)}</span>
+                  <span className="ml-2 font-normal">{String(value)}</span>
                 </div>
               ))}
             </div>
           </div>
-          {/* Quantity Selector */}
-          <div className="space-y-2">
-            <label className="block text-sm font-medium text-gray-700">
-              Quantity ({product.quantity} available)
-            </label>
-            <div className="flex items-center gap-4">
+
+          {/* Quantity Selector and Download Specification */}
+          <div className="flex items-center gap-4 justify-between">
+            <div className="flex items-center gap-0">
               <button
                 onClick={() => handleQuantityChange(false)}
-                className={`p-2 rounded-full border border-gray-300 hover:bg-gray-50 transition-colors ${
+                className={`w-10 h-10 rounded-lg border border-gray-300 hover:bg-gray-50 transition-colors flex items-center justify-center ${
                   quantity <= 1 ? "opacity-50 cursor-not-allowed" : ""
                 }`}
                 disabled={quantity <= 1}
               >
                 <Minus className="w-4 h-4" />
               </button>
-              <span className="text-lg font-semibold min-w-[3rem] text-center">
+              <span className="text-xl font-semibold min-w-[3rem] text-center">
                 {quantity}
               </span>
               <button
                 onClick={() => handleQuantityChange(true)}
-                className={`p-2 rounded-full border border-gray-300 hover:bg-gray-50 transition-colors ${
+                className={`w-10 h-10 rounded-lg border border-gray-300 hover:bg-gray-50 transition-colors flex items-center justify-center ${
                   quantity >= product.quantity
                     ? "opacity-50 cursor-not-allowed"
                     : ""
@@ -213,104 +157,83 @@ export default function ProductDetails({ product }: ProductDetailsProps) {
                 <Plus className="w-4 h-4" />
               </button>
             </div>
-          </div>
-          {/* Action Buttons */}
-          <div className="space-y-4">
-            <button className="w-full bg-gray-100 text-gray-700 py-3 rounded-lg hover:bg-gray-200 transition-colors flex items-center justify-center gap-2">
-              <Heart className="w-5 h-5" />
-              Wishlist
-            </button>
-            <button
-              onClick={handleQuoteClick}
-              className="w-full bg-black text-white py-3 rounded-lg hover:bg-gray-800 transition-colors"
-            >
-              Send Quote
-            </button>
+
             {hasPdf && (
               <a
                 href={product.pdfUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="w-full bg-blue-600 text-white py-3 rounded-lg hover:bg-blue-700 transition-colors flex items-center justify-center gap-2"
+                className="flex-1 ml-4 border border-gray-300 text-gray-700 py-3 px-4 rounded-lg hover:bg-gray-50 transition-colors flex items-center justify-center gap-2 font-medium"
               >
                 <FileText className="w-5 h-5" />
                 Download Specifications
               </a>
             )}
           </div>
-          {/* Product Details */}
-          <div className="space-y-4">
+
+          {/* Send Quote Button */}
+          <div>
+            <button
+              onClick={handleQuoteClick}
+              className="w-full bg-gray-900 text-white py-3 px-4 rounded-lg hover:bg-gray-800 transition-colors font-medium"
+            >
+              Send Quote
+            </button>
+          </div>
+
+          {/* SKU and Category */}
+          <div className="space-y-3 pt-4">
             <div className="flex justify-between items-center">
-              <span className="text-gray-600">SKU</span>
-              <span className="font-medium">
-                {product.id ? product.id.slice(-8).toUpperCase() : "N/A"}
+              <span className="text-gray-600 text-sm font-normal">SKU</span>
+              <span className="text-sm font-normal">
+                {product.id ? product.id.slice(-8).toUpperCase() : "8832"}
               </span>
             </div>
             <div className="flex justify-between items-center">
-              <span className="text-gray-600">CATEGORY</span>
-              <span className="font-medium">
-                {product.category?.name || "N/A"}
+              <span className="text-gray-600 text-sm font-normal">
+                CATEGORY
               </span>
-            </div>
-            {product.manufacturer && (
-              <div className="flex justify-between items-center">
-                <span className="text-gray-600">MANUFACTURER</span>
-                <span className="font-medium">{product.manufacturer}</span>
-              </div>
-            )}
-            {product.model && (
-              <div className="flex justify-between items-center">
-                <span className="text-gray-600">MODEL</span>
-                <span className="font-medium">{product.model}</span>
-              </div>
-            )}
-            {product.year && (
-              <div className="flex justify-between items-center">
-                <span className="text-gray-600">YEAR</span>
-                <span className="font-medium">{product.year}</span>
-              </div>
-            )}
-            <div className="flex justify-between items-center">
-              <span className="text-gray-600">CONDITION</span>
-              <span className="font-medium">{product.condition}</span>
+              <span className="text-sm font-normal">
+                {product.category?.name ||
+                  "Ice Cream Equipment, Food Processing Machinery"}
+              </span>
             </div>
           </div>
           {/* Additional Info */}
-          {product.additionalInfo && (
-            <div className="border-t pt-4">
-              <button
-                onClick={() => setShowAdditionalInfo(!showAdditionalInfo)}
-                className="flex items-center justify-between w-full text-left"
-              >
-                <span className="font-semibold">Additional Info</span>
-                {showAdditionalInfo ? (
-                  <ChevronUp className="w-5 h-5" />
-                ) : (
-                  <ChevronDown className="w-5 h-5" />
-                )}
-              </button>
-              {showAdditionalInfo && (
-                <div className="mt-4 space-y-4">
-                  <div>
-                    <h4 className="font-semibold mb-2">Details</h4>
-                    <p className="text-sm text-gray-600">
-                      {product.additionalInfo}
-                    </p>
-                  </div>
-                  <div>
-                    <h4 className="font-semibold mb-2">Packaging</h4>
-                    <p className="text-sm text-gray-600">
-                      Width: 20 " Height: 1 ¼ " Length: 21 ¼ "
-                      <br />
-                      Weight: 7 lb 8 oz
-                      <br />
-                      Package(s): 1
-                    </p>
-                  </div>
-                </div>
+          <div className="border-t pt-6">
+            <button
+              onClick={() => setShowAdditionalInfo(!showAdditionalInfo)}
+              className="flex items-center justify-between w-full text-left"
+            >
+              <span className="font-semibold text-lg">Additional Info</span>
+              {showAdditionalInfo ? (
+                <ChevronUp className="w-5 h-5" />
+              ) : (
+                <ChevronDown className="w-5 h-5" />
               )}
-            </div>
-          )}
+            </button>
+            {showAdditionalInfo && (
+              <div className="mt-6 space-y-6">
+                <div>
+                  <h4 className="font-semibold mb-3">Details</h4>
+                  <p className="text-sm text-gray-600 leading-relaxed font-normal">
+                    {product.additionalInfo ||
+                      "This machine automates the full ice cream production process—from pasteurization to freezing—ensuring hygiene, efficiency, and uniformity in every batch. The built-in microprocessor allows for precision control of texture, temperature, and timing. Cleaning is simplified with stainless steel surfaces and automatic rinse features."}
+                  </p>
+                </div>
+                <div>
+                  <h4 className="font-semibold mb-3">Packaging</h4>
+                  <p className="text-sm text-gray-600 leading-relaxed font-normal">
+                    Width: 20 " Height: 1 ½ " Length: 21 ¼ "
+                    <br />
+                    Weight: 7 lb 8 oz
+                    <br />
+                    Package(s): 1
+                  </p>
+                </div>
+              </div>
+            )}
+          </div>
         </div>
       </div>
 

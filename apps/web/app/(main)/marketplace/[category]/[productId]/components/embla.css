@@ -1,0 +1,36 @@
+.embla {
+  overflow: hidden;
+}
+
+.embla__container {
+  display: flex;
+  cursor: grab;
+}
+
+.embla__container:active {
+  cursor: grabbing;
+}
+
+.embla__slide {
+  flex: 0 0 100%;
+  min-width: 0;
+}
+
+.embla-thumbs {
+  overflow: hidden;
+}
+
+.embla-thumbs .embla__container {
+  display: flex;
+  gap: 0.5rem;
+  cursor: grab;
+}
+
+.embla-thumbs .embla__container:active {
+  cursor: grabbing;
+}
+
+.embla-thumbs .embla__slide {
+  flex: 0 0 auto;
+  min-width: 0;
+}

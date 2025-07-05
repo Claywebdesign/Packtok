@@ -40,25 +40,53 @@ import { toast } from "react-hot-toast";
 import { useRouter } from "next/navigation";
 import {
   useCategories,
-  useCreateProduct,
+  useUpdateProduct,
   useCreateCategory,
 } from "../../../../hooks";
 import {
-  productSchema,
-  type ProductFormData,
+  updateProductSchema,
+  type UpdateProductFormData,
 } from "../../../../schemas/product-schema";
+import { MarketplaceProduct } from "../../../../types/product";
 import MediaPreviewModal from "./media-preview-modal";
 import Image from "next/image";
 
-export default function AddProductForm() {
+interface EditProductFormProps {
+  product: MarketplaceProduct;
+}
+
+export default function EditProductForm({ product }: EditProductFormProps) {
   const [uploadedImages, setUploadedImages] = useState<File[]>([]);
+  const [existingImages, setExistingImages] = useState<string[]>(
+    product.images || []
+  );
   const [thumbnail, setThumbnail] = useState<File | null>(null);
+  const [existingThumbnail, setExistingThumbnail] = useState<string | null>(
+    product.imagesThumbnail || null
+  );
   const [video, setVideo] = useState<File | null>(null);
+  const [existingVideo, setExistingVideo] = useState<string | null>(
+    product.videoUrl || null
+  );
   const [videoThumbnail, setVideoThumbnail] = useState<File | null>(null);
+  const [existingVideoThumbnail, setExistingVideoThumbnail] = useState<
+    string | null
+  >(product.videoThumbnail || null);
   const [pdf, setPdf] = useState<File | null>(null);
+  const [existingPdf, setExistingPdf] = useState<string | null>(
+    product.pdfUrl || null
+  );
   const [specifications, setSpecifications] = useState<
     { key: string; value: string }[]
-  >([{ key: "", value: "" }]);
+  >(() => {
+    if (product.specifications && typeof product.specifications === "object") {
+      return Object.entries(product.specifications).map(([key, value]) => ({
+        key,
+        value: String(value),
+      }));
+    }
+    return [{ key: "", value: "" }];
+  });
   const [modalOpen, setModalOpen] = useState(false);
   const [modalMedia, setModalMedia] = useState<{
     url: string;
@@ -78,17 +106,23 @@ export default function AddProductForm() {
   };
 
   // Helper function to open media in modal
-  const openMediaModal = (file: File, type: "image" | "video") => {
+  const openMediaModal = (
+    fileOrUrl: File | string,
+    type: "image" | "video",
+    name: string
+  ) => {
+    const url =
+      typeof fileOrUrl === "string" ? fileOrUrl : createPreviewUrl(fileOrUrl);
     setModalMedia({
-      url: createPreviewUrl(file),
+      url,
       type,
-      name: file.name,
+      name,
     });
     setModalOpen(true);
   };
 
   const closeMediaModal = () => {
-    if (modalMedia) {
+    if (modalMedia && modalMedia.url.startsWith("blob:")) {
       cleanupPreviewUrl(modalMedia.url);
     }
     setModalOpen(false);
@@ -96,7 +130,7 @@ export default function AddProductForm() {
   };
 
   const { data: categories = [], error: categoriesError } = useCategories();
-  const createProductMutation = useCreateProduct();
+  const updateProductMutation = useUpdateProduct();
   const createCategoryMutation = useCreateCategory();
 
   useEffect(() => {
@@ -106,10 +140,10 @@ export default function AddProductForm() {
   }, [categoriesError]);
 
   useEffect(() => {
-    if (createProductMutation.error) {
-      toast.error("Failed to create product");
+    if (updateProductMutation.error) {
+      toast.error("Failed to update product");
     }
-  }, [createProductMutation.error]);
+  }, [updateProductMutation.error]);
 
   useEffect(() => {
     if (createCategoryMutation.error) {
@@ -117,23 +151,26 @@ export default function AddProductForm() {
     }
   }, [createCategoryMutation.error]);
 
-  const form = useForm<ProductFormData>({
-    resolver: zodResolver(productSchema),
+  const form = useForm<UpdateProductFormData>({
+    resolver: zodResolver(updateProductSchema),
     defaultValues: {
-      title: "",
-      description: "",
-      price: 0,
-      quantity: 1,
-      productType: "MACHINERY",
-      condition: "NEW",
-      manufacturer: "",
-      model: "",
-      categoryName: "",
+      title: product.title,
+      description: product.description,
+      price: product.price,
+      quantity: product.quantity,
+      productType: product.productType,
+      machineType: product.machineType,
+      condition: product.condition,
+      manufacturer: product.manufacturer || "",
+      model: product.model || "",
+      year: product.year,
+      category: product.category?.name || "",
       specifications: "",
+      additionalInfo: product.additionalInfo || "",
     },
   });
 
-  const onSubmit = async (data: ProductFormData) => {
+  const onSubmit = async (data: UpdateProductFormData) => {
     try {
       const formData = new FormData();
 
@@ -177,30 +214,26 @@ export default function AddProductForm() {
         formData.append("pdf", pdf);
       }
 
-      await createProductMutation.mutateAsync(formData);
+      await updateProductMutation.mutateAsync({
+        productId: product.id,
+        productData: formData,
+      });
 
-      toast.success("Product created successfully");
-
-      form.reset();
-      setUploadedImages([]);
-      setThumbnail(null);
-      setVideo(null);
-      setVideoThumbnail(null);
-      setPdf(null);
-      setSpecifications([{ key: "", value: "" }]);
-
+      toast.success("Product updated successfully");
       router.push("/dashboard/products");
     } catch (error) {
-      toast.error("Failed to create product");
+      toast.error("Failed to update product");
     }
   };
 
   const handleImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
     const files = event.target.files;
-    if (files && uploadedImages.length + files.length <= 5) {
+    const totalImages = uploadedImages.length + existingImages.length;
+
+    if (files && totalImages + files.length <= 5) {
       const newImages = Array.from(files);
       setUploadedImages([...uploadedImages, ...newImages]);
-    } else if (files && uploadedImages.length + files.length > 5) {
+    } else if (files && totalImages + files.length > 5) {
       toast.error("Maximum 5 images allowed");
     }
   };
@@ -211,6 +244,7 @@ export default function AddProductForm() {
     const file = event.target.files?.[0];
     if (file) {
       setThumbnail(file);
+      setExistingThumbnail(null);
     }
   };
 
@@ -218,6 +252,7 @@ export default function AddProductForm() {
     const file = event.target.files?.[0];
     if (file) {
       setVideo(file);
+      setExistingVideo(null);
     }
   };
 
@@ -227,6 +262,7 @@ export default function AddProductForm() {
     const file = event.target.files?.[0];
     if (file) {
       setVideoThumbnail(file);
+      setExistingVideoThumbnail(null);
     }
   };
 
@@ -234,11 +270,16 @@ export default function AddProductForm() {
     const file = event.target.files?.[0];
     if (file) {
       setPdf(file);
+      setExistingPdf(null);
     }
   };
 
   const removeImage = (index: number) => {
     setUploadedImages(uploadedImages.filter((_, i) => i !== index));
+  };
+
+  const removeExistingImage = (index: number) => {
+    setExistingImages(existingImages.filter((_, i) => i !== index));
   };
 
   const addSpecification = () => {
@@ -268,11 +309,11 @@ export default function AddProductForm() {
     label: category.name,
   }));
 
-  const handleCreateCategory = async (categoryName: string) => {
+  const handleCreateCategory = async (category: string) => {
     try {
-      await createCategoryMutation.mutateAsync({ name: categoryName });
-      form.setValue("categoryName", categoryName);
-      toast.success(`Category "${categoryName}" created successfully`);
+      await createCategoryMutation.mutateAsync({ name: category });
+      form.setValue("category", category);
+      toast.success(`Category "${category}" created successfully`);
     } catch (error) {
       toast.error("Failed to create category");
     }
@@ -294,9 +335,10 @@ export default function AddProductForm() {
 
   return (
     <div className="relative w-full">
-      {createProductMutation.isPending && (
+      {updateProductMutation.isPending && (
         <Loading variant="jimu" className="z-10" />
       )}
+
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
           <div className="bg-white p-6 rounded-xl shadow-md border border-gray-100">
@@ -309,7 +351,7 @@ export default function AddProductForm() {
                   Product Media
                 </h3>
                 <p className="text-sm text-gray-600">
-                  Upload images, videos, and documents
+                  Update images, videos, and documents
                 </p>
               </div>
             </div>
@@ -317,7 +359,6 @@ export default function AddProductForm() {
             <div className="mb-8">
               <Label className="text-sm font-semibold text-gray-800 mb-3 flex items-center gap-2">
                 Thumbnail Image
-                <span className="text-red-500">*</span>
                 <span className="text-xs text-gray-500 font-normal">
                   (Main product image)
                 </span>
@@ -327,7 +368,7 @@ export default function AddProductForm() {
                   <label className="cursor-pointer text-center p-4">
                     <Upload className="h-8 w-8 text-gray-400 group-hover:text-blue-500 mx-auto mb-2 transition-colors" />
                     <span className="text-sm text-gray-600 group-hover:text-blue-600 font-medium">
-                      Upload Thumbnail
+                      {thumbnail || existingThumbnail ? "Replace" : "Upload"}
                     </span>
                     <input
                       type="file"
@@ -337,24 +378,37 @@ export default function AddProductForm() {
                     />
                   </label>
                 </div>
-                {thumbnail && (
+                {(thumbnail || existingThumbnail) && (
                   <div className="flex items-start gap-4">
                     <div className="relative group">
                       <div className="w-32 h-32 rounded-xl overflow-hidden bg-gray-100 shadow-md border-2 border-white">
                         <Image
-                          width={200}
-                          height={200}
-                          src={createPreviewUrl(thumbnail)}
+                          width={128}
+                          height={128}
+                          src={
+                            thumbnail
+                              ? createPreviewUrl(thumbnail)
+                              : existingThumbnail!
+                          }
                           alt="Thumbnail preview"
                           className="w-full h-full object-cover cursor-pointer hover:scale-105 transition-transform duration-200"
-                          onClick={() => openMediaModal(thumbnail, "image")}
+                          onClick={() =>
+                            openMediaModal(
+                              thumbnail || existingThumbnail!,
+                              "image",
+                              thumbnail ? thumbnail.name : "Current thumbnail"
+                            )
+                          }
                         />
                       </div>
                       <Button
                         type="button"
                         variant="destructive"
                         size="sm"
-                        onClick={() => setThumbnail(null)}
+                        onClick={() => {
+                          setThumbnail(null);
+                          setExistingThumbnail(null);
+                        }}
                         className="absolute -top-2 -right-2 w-8 h-8 rounded-full p-0 shadow-lg hover:scale-110 transition-transform"
                       >
                         <X className="h-4 w-4" />
@@ -362,17 +416,25 @@ export default function AddProductForm() {
                     </div>
                     <div className="flex flex-col gap-2">
                       <span className="text-sm font-medium text-gray-700">
-                        {thumbnail.name}
+                        {thumbnail ? thumbnail.name : "Current thumbnail"}
                       </span>
-                      <span className="text-xs text-gray-500">
-                        {(thumbnail.size / 1024 / 1024).toFixed(2)} MB
-                      </span>
+                      {thumbnail && (
+                        <span className="text-xs text-gray-500">
+                          {(thumbnail.size / 1024 / 1024).toFixed(2)} MB
+                        </span>
+                      )}
                       <Button
                         type="button"
                         variant="outline"
                         size="sm"
-                        onClick={() => openMediaModal(thumbnail, "image")}
-                        className="text-xs"
+                        onClick={() =>
+                          openMediaModal(
+                            thumbnail || existingThumbnail!,
+                            "image",
+                            thumbnail ? thumbnail.name : "Current thumbnail"
+                          )
+                        }
+                        className="text-xs w-fit"
                       >
                         Preview
                       </Button>
@@ -382,50 +444,71 @@ export default function AddProductForm() {
               </div>
             </div>
 
-            <div className="mb-8">
-              <Label className="text-sm font-semibold text-gray-800 mb-3 flex items-center gap-2">
-                Gallery Images
-                <span className="text-xs text-gray-500 font-normal">
-                  (Max 5 images)
-                </span>
+            <div className="mb-6">
+              <Label className="text-sm font-medium mb-2 block">
+                Gallery Images (Max 5)
               </Label>
               <div className="grid grid-cols-2 md:grid-cols-6 gap-4 mb-4">
-                {uploadedImages.length < 5 && (
-                  <div className="aspect-square border-2 border-dashed border-gray-300 rounded-xl flex items-center justify-center hover:border-blue-400 hover:bg-blue-50 transition-all duration-200 cursor-pointer group">
-                    <label className="cursor-pointer text-center p-4">
-                      <Upload className="h-6 w-6 text-gray-400 group-hover:text-blue-500 mx-auto mb-2 transition-colors" />
-                      <span className="text-xs text-gray-600 group-hover:text-blue-600 font-medium">
-                        Add Images
-                      </span>
-                      <input
-                        type="file"
-                        multiple
-                        accept="image/*"
-                        onChange={handleImageUpload}
-                        className="hidden"
-                      />
-                    </label>
+                <div className="aspect-square border-2 border-dashed border-gray-300 rounded-lg flex items-center justify-center hover:border-blue-400 cursor-pointer">
+                  <label className="cursor-pointer text-center">
+                    <Upload className="h-8 w-8 text-gray-400 mx-auto mb-2" />
+                    <span className="text-sm text-gray-600">Add Images</span>
+                    <input
+                      type="file"
+                      multiple
+                      accept="image/*"
+                      onChange={handleImageUpload}
+                      className="hidden"
+                    />
+                  </label>
+                </div>
+
+                {existingImages.map((imageUrl, index) => (
+                  <div
+                    key={`existing-${index}`}
+                    className="relative aspect-square bg-gray-100 rounded-lg overflow-hidden group"
+                  >
+                    <Image
+                      width={128}
+                      height={128}
+                      src={imageUrl}
+                      alt={`Product image ${index + 1}`}
+                      className="w-full h-full object-cover cursor-pointer hover:scale-105 transition-transform duration-200"
+                      onClick={() =>
+                        openMediaModal(
+                          imageUrl,
+                          "image",
+                          `Gallery image ${index + 1}`
+                        )
+                      }
+                    />
+                    <Button
+                      type="button"
+                      variant="destructive"
+                      size="sm"
+                      onClick={() => removeExistingImage(index)}
+                      className="absolute -top-2 -right-2 w-7 h-7 rounded-full p-0 shadow-lg hover:scale-110 transition-transform opacity-0 group-hover:opacity-100"
+                    >
+                      <X className="h-3 w-3" />
+                    </Button>
                   </div>
-                )}
+                ))}
 
                 {uploadedImages.map((image, index) => (
                   <div
-                    key={index}
-                    className="relative aspect-square bg-gray-100 rounded-xl overflow-hidden shadow-md border-2 border-white group"
+                    key={`new-${index}`}
+                    className="relative aspect-square bg-gray-100 rounded-lg overflow-hidden group"
                   >
                     <Image
-                      width={200}
-                      height={200}
                       src={createPreviewUrl(image)}
-                      alt={`Gallery image ${index + 1}`}
+                      alt={`New gallery image ${index + 1}`}
                       className="w-full h-full object-cover cursor-pointer hover:scale-105 transition-transform duration-200"
-                      onClick={() => openMediaModal(image, "image")}
+                      onClick={() => openMediaModal(image, "image", image.name)}
+                      width={128}
+                      height={128}
                     />
                     <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 to-transparent text-white text-xs p-2">
                       <div className="truncate font-medium">{image.name}</div>
-                      <div className="text-gray-300">
-                        {(image.size / 1024 / 1024).toFixed(2)} MB
-                      </div>
                     </div>
                     <Button
                       type="button"
@@ -439,28 +522,19 @@ export default function AddProductForm() {
                   </div>
                 ))}
               </div>
-              {uploadedImages.length > 0 && (
-                <p className="text-xs text-gray-500 mt-2">
-                  {uploadedImages.length}/5 images uploaded. Click on any image
-                  to preview.
-                </p>
-              )}
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
               <div>
-                <Label className="text-sm font-semibold text-gray-800 mb-3 flex items-center gap-2">
-                  Product Video
-                  <span className="text-xs text-gray-500 font-normal">
-                    (Optional)
-                  </span>
+                <Label className="text-sm font-medium mb-2 block">
+                  Product Video (Optional)
                 </Label>
-                <div className="space-y-4">
-                  <div className="w-full h-32 border-2 border-dashed border-gray-300 rounded-xl flex items-center justify-center hover:border-blue-400 hover:bg-blue-50 transition-all duration-200 cursor-pointer group">
-                    <label className="cursor-pointer text-center p-4">
-                      <FileVideo className="h-8 w-8 text-gray-400 group-hover:text-blue-500 mx-auto mb-2 transition-colors" />
-                      <span className="text-sm text-gray-600 group-hover:text-blue-600 font-medium">
-                        Upload Video
+                <div className="flex items-center gap-4">
+                  <div className="w-24 h-16 border-2 border-dashed border-gray-300 rounded-lg flex items-center justify-center hover:border-blue-400 cursor-pointer">
+                    <label className="cursor-pointer text-center">
+                      <FileVideo className="h-6 w-6 text-gray-400 mx-auto mb-1" />
+                      <span className="text-xs text-gray-600">
+                        {video || existingVideo ? "Replace" : "Upload"}
                       </span>
                       <input
                         type="file"
@@ -470,45 +544,37 @@ export default function AddProductForm() {
                       />
                     </label>
                   </div>
-                  {video && (
-                    <div className="bg-gray-50 rounded-xl p-4 border">
-                      <div className="flex items-start gap-4">
-                        <div className="relative group">
-                          <div className="w-32 h-20 rounded-lg overflow-hidden bg-gray-100 shadow-md border-2 border-white">
-                            <video
-                              src={createPreviewUrl(video)}
-                              className="w-full h-full object-cover cursor-pointer"
-                              muted
-                              onClick={() => openMediaModal(video, "video")}
-                            />
-                          </div>
-                          <Button
-                            type="button"
-                            variant="destructive"
-                            size="sm"
-                            onClick={() => setVideo(null)}
-                            className="absolute -top-2 -right-2 w-7 h-7 rounded-full p-0 shadow-lg hover:scale-110 transition-transform"
-                          >
-                            <X className="h-3 w-3" />
-                          </Button>
-                        </div>
-                        <div className="flex flex-col gap-2">
-                          <span className="text-sm font-medium text-gray-700">
-                            {video.name}
-                          </span>
-                          <span className="text-xs text-gray-500">
-                            {(video.size / 1024 / 1024).toFixed(2)} MB
-                          </span>
-                          <Button
-                            type="button"
-                            variant="outline"
-                            size="sm"
-                            onClick={() => openMediaModal(video, "video")}
-                            className="text-xs w-fit"
-                          >
-                            Preview Video
-                          </Button>
-                        </div>
+                  {(video || existingVideo) && (
+                    <div className="flex items-center gap-4">
+                      <div className="w-32 h-20 rounded-lg overflow-hidden bg-gray-100">
+                        <video
+                          src={video ? createPreviewUrl(video) : existingVideo!}
+                          className="w-full h-full object-cover cursor-pointer"
+                          muted
+                          onClick={() =>
+                            openMediaModal(
+                              video || existingVideo!,
+                              "video",
+                              video ? video.name : "Current video"
+                            )
+                          }
+                        />
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <span className="text-sm text-gray-600">
+                          {video ? video.name : "Current video"}
+                        </span>
+                        <Button
+                          type="button"
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => {
+                            setVideo(null);
+                            setExistingVideo(null);
+                          }}
+                        >
+                          <X className="h-4 w-4" />
+                        </Button>
                       </div>
                     </div>
                   )}
@@ -516,18 +582,17 @@ export default function AddProductForm() {
               </div>
 
               <div>
-                <Label className="text-sm font-semibold text-gray-800 mb-3 flex items-center gap-2">
-                  Video Thumbnail
-                  <span className="text-xs text-gray-500 font-normal">
-                    (Optional)
-                  </span>
+                <Label className="text-sm font-medium mb-2 block">
+                  Video Thumbnail (Optional)
                 </Label>
-                <div className="space-y-4">
-                  <div className="w-full h-24 border-2 border-dashed border-gray-300 rounded-xl flex items-center justify-center hover:border-blue-400 hover:bg-blue-50 transition-all duration-200 cursor-pointer group">
-                    <label className="cursor-pointer text-center p-4">
-                      <Upload className="h-6 w-6 text-gray-400 group-hover:text-blue-500 mx-auto mb-2 transition-colors" />
-                      <span className="text-sm text-gray-600 group-hover:text-blue-600 font-medium">
-                        Upload Thumbnail
+                <div className="flex items-center gap-4">
+                  <div className="w-24 h-16 border-2 border-dashed border-gray-300 rounded-lg flex items-center justify-center hover:border-blue-400 cursor-pointer">
+                    <label className="cursor-pointer text-center">
+                      <Upload className="h-6 w-6 text-gray-400 mx-auto mb-1" />
+                      <span className="text-xs text-gray-600">
+                        {videoThumbnail || existingVideoThumbnail
+                          ? "Replace"
+                          : "Upload"}
                       </span>
                       <input
                         type="file"
@@ -537,51 +602,47 @@ export default function AddProductForm() {
                       />
                     </label>
                   </div>
-                  {videoThumbnail && (
-                    <div className="bg-gray-50 rounded-xl p-4 border">
-                      <div className="flex items-start gap-4">
-                        <div className="relative group">
-                          <div className="w-24 h-16 rounded-lg overflow-hidden bg-gray-100 shadow-md border-2 border-white">
-                            <Image
-                              width={96}
-                              height={64}
-                              src={createPreviewUrl(videoThumbnail)}
-                              alt="Video thumbnail preview"
-                              className="w-full h-full object-cover cursor-pointer hover:scale-105 transition-transform duration-200"
-                              onClick={() =>
-                                openMediaModal(videoThumbnail, "image")
-                              }
-                            />
-                          </div>
-                          <Button
-                            type="button"
-                            variant="destructive"
-                            size="sm"
-                            onClick={() => setVideoThumbnail(null)}
-                            className="absolute -top-2 -right-2 w-7 h-7 rounded-full p-0 shadow-lg hover:scale-110 transition-transform"
-                          >
-                            <X className="h-3 w-3" />
-                          </Button>
-                        </div>
-                        <div className="flex flex-col gap-2">
-                          <span className="text-sm font-medium text-gray-700">
-                            {videoThumbnail.name}
-                          </span>
-                          <span className="text-xs text-gray-500">
-                            {(videoThumbnail.size / 1024 / 1024).toFixed(2)} MB
-                          </span>
-                          <Button
-                            type="button"
-                            variant="outline"
-                            size="sm"
-                            onClick={() =>
-                              openMediaModal(videoThumbnail, "image")
-                            }
-                            className="text-xs w-fit"
-                          >
-                            Preview
-                          </Button>
-                        </div>
+                  {(videoThumbnail || existingVideoThumbnail) && (
+                    <div className="flex items-center gap-4">
+                      <div className="w-24 h-16 rounded-lg overflow-hidden bg-gray-100">
+                        <Image
+                          width={96}
+                          height={64}
+                          src={
+                            videoThumbnail
+                              ? createPreviewUrl(videoThumbnail)
+                              : existingVideoThumbnail!
+                          }
+                          alt="Video thumbnail preview"
+                          className="w-full h-full object-cover cursor-pointer hover:scale-105 transition-transform duration-200"
+                          onClick={() =>
+                            openMediaModal(
+                              videoThumbnail || existingVideoThumbnail!,
+                              "image",
+                              videoThumbnail
+                                ? videoThumbnail.name
+                                : "Current video thumbnail"
+                            )
+                          }
+                        />
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <span className="text-sm text-gray-600">
+                          {videoThumbnail
+                            ? videoThumbnail.name
+                            : "Current video thumbnail"}
+                        </span>
+                        <Button
+                          type="button"
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => {
+                            setVideoThumbnail(null);
+                            setExistingVideoThumbnail(null);
+                          }}
+                        >
+                          <X className="h-4 w-4" />
+                        </Button>
                       </div>
                     </div>
                   )}
@@ -589,19 +650,16 @@ export default function AddProductForm() {
               </div>
             </div>
 
-            <div className="pt-4 border-t border-gray-200">
-              <Label className="text-sm font-semibold text-gray-800 mb-3 flex items-center gap-2">
-                Specification Sheet
-                <span className="text-xs text-gray-500 font-normal">
-                  (PDF, Optional)
-                </span>
+            <div>
+              <Label className="text-sm font-medium mb-2 block">
+                Specification Sheet PDF (Optional)
               </Label>
-              <div className="space-y-4">
-                <div className="w-full h-24 border-2 border-dashed border-gray-300 rounded-xl flex items-center justify-center hover:border-blue-400 hover:bg-blue-50 transition-all duration-200 cursor-pointer group">
-                  <label className="cursor-pointer text-center p-4">
-                    <FileText className="h-6 w-6 text-gray-400 group-hover:text-blue-500 mx-auto mb-2 transition-colors" />
-                    <span className="text-sm text-gray-600 group-hover:text-blue-600 font-medium">
-                      Upload PDF
+              <div className="flex items-center gap-4">
+                <div className="w-24 h-16 border-2 border-dashed border-gray-300 rounded-lg flex items-center justify-center hover:border-blue-400 cursor-pointer">
+                  <label className="cursor-pointer text-center">
+                    <FileText className="h-6 w-6 text-gray-400 mx-auto mb-1" />
+                    <span className="text-xs text-gray-600">
+                      {pdf || existingPdf ? "Replace" : "Upload"}
                     </span>
                     <input
                       type="file"
@@ -611,46 +669,44 @@ export default function AddProductForm() {
                     />
                   </label>
                 </div>
-                {pdf && (
-                  <div className="bg-gray-50 rounded-xl p-4 border">
-                    <div className="flex items-start gap-4">
-                      <div className="relative group">
-                        <div className="w-20 h-24 border rounded-xl bg-white flex items-center justify-center shadow-md">
-                          <div className="text-center">
-                            <FileText className="h-8 w-8 text-red-500 mx-auto mb-1" />
-                            <span className="text-xs text-gray-600 font-medium">
-                              PDF
-                            </span>
-                          </div>
-                        </div>
-                        <Button
-                          type="button"
-                          variant="destructive"
-                          size="sm"
-                          onClick={() => setPdf(null)}
-                          className="absolute -top-2 -right-2 w-7 h-7 rounded-full p-0 shadow-lg hover:scale-110 transition-transform"
-                        >
-                          <X className="h-3 w-3" />
-                        </Button>
+                {(pdf || existingPdf) && (
+                  <div className="flex items-center gap-4">
+                    <div className="w-32 h-20 border rounded-lg bg-gray-50 flex items-center justify-center">
+                      <div className="text-center">
+                        <FileText className="h-8 w-8 text-red-500 mx-auto mb-1" />
+                        <span className="text-xs text-gray-600">
+                          PDF Document
+                        </span>
                       </div>
-                      <div className="flex flex-col gap-2">
-                        <span className="text-sm font-medium text-gray-700">
-                          {pdf.name}
-                        </span>
-                        <span className="text-xs text-gray-500">
-                          {(pdf.size / 1024 / 1024).toFixed(2)} MB
-                        </span>
+                    </div>
+                    <div className="flex flex-col gap-2">
+                      <span className="text-sm text-gray-600">
+                        {pdf ? pdf.name : "Current PDF"}
+                      </span>
+                      <div className="flex gap-2">
                         <Button
                           type="button"
                           variant="outline"
                           size="sm"
                           onClick={() => {
-                            const url = createPreviewUrl(pdf);
+                            const url = pdf
+                              ? createPreviewUrl(pdf)
+                              : existingPdf!;
                             window.open(url, "_blank");
                           }}
-                          className="text-xs w-fit"
                         >
                           View PDF
+                        </Button>
+                        <Button
+                          type="button"
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => {
+                            setPdf(null);
+                            setExistingPdf(null);
+                          }}
+                        >
+                          <X className="h-4 w-4" />
                         </Button>
                       </div>
                     </div>
@@ -743,6 +799,24 @@ export default function AddProductForm() {
                       )}
                     />
                   </div>
+
+                  <FormField
+                    control={form.control}
+                    name="additionalInfo"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Additional Information</FormLabel>
+                        <FormControl>
+                          <Textarea
+                            placeholder="Enter additional information"
+                            rows={3}
+                            {...field}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
                 </div>
               </div>
 
@@ -818,7 +892,7 @@ export default function AddProductForm() {
 
                   <FormField
                     control={form.control}
-                    name="categoryName"
+                    name="category"
                     render={({ field }) => (
                       <FormItem>
                         <FormLabel>Category</FormLabel>
@@ -984,16 +1058,20 @@ export default function AddProductForm() {
           </div>
 
           <div className="flex justify-end space-x-4">
-            <Button variant="outline" type="button">
-              Save as Draft
+            <Button
+              variant="outline"
+              type="button"
+              onClick={() => router.push("/dashboard/products")}
+            >
+              Cancel
             </Button>
             <Button
               type="submit"
-              disabled={createProductMutation.isPending}
+              disabled={updateProductMutation.isPending}
               className="bg-blue-600 hover:bg-blue-700"
             >
               <Save className="h-4 w-4 mr-2" />
-              {createProductMutation.isPending ? "Saving..." : "Save Product"}
+              {updateProductMutation.isPending ? "Saving..." : "Update Product"}
             </Button>
           </div>
         </form>
