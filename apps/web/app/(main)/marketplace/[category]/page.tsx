@@ -7,9 +7,13 @@ interface CategoryPageProps {
   params: {
     category: string;
   };
+  searchParams: {
+    searchTerm?: string;
+    [key: string]: string | string[] | undefined;
+  };
 }
 
-export default function CategoryPage({ params }: CategoryPageProps) {
+export default function CategoryPage({ params, searchParams }: CategoryPageProps) {
   const categorySlug = params.category;
   const category = marketplaceCategories.find(
     (cat) => cat.slug === categorySlug
@@ -27,7 +31,7 @@ export default function CategoryPage({ params }: CategoryPageProps) {
           subtitle={category.subtitle}
           image={category.image}
         />
-        <CategoryContent category={category} />
+        <CategoryContent category={category} initialSearchTerm={searchParams.searchTerm} />
       </div>
       <Newsletter />
     </main>

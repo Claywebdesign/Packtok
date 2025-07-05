@@ -15,14 +15,36 @@ import {
 
 export const listProducts = asyncHandler(
   async (req: Request, res: Response) => {
-    const { categoryId, condition, machineType, productType, page, limit } =
-      req.query;
+    const { 
+      categoryId, 
+      condition, 
+      machineType, 
+      productType, 
+      priceMin, 
+      priceMax, 
+      searchTerm, 
+      page, 
+      limit 
+    } = req.query;
+
+    // Helper function to parse array parameters
+    const parseArrayParam = (param: any): string[] | string | undefined => {
+      if (!param) return undefined;
+      if (Array.isArray(param)) return param as string[];
+      if (typeof param === 'string' && param.includes(',')) {
+        return param.split(',').map(item => item.trim());
+      }
+      return param as string;
+    };
 
     const result = await getPublicProducts({
-      categoryId: categoryId as string | undefined,
-      condition: condition as string | undefined,
-      machineType: machineType as string | undefined,
-      productType: productType as string | undefined,
+      categoryId: parseArrayParam(categoryId),
+      condition: parseArrayParam(condition),
+      machineType: parseArrayParam(machineType),
+      productType: parseArrayParam(productType),
+      priceMin: priceMin ? Number(priceMin) : undefined,
+      priceMax: priceMax ? Number(priceMax) : undefined,
+      searchTerm: searchTerm as string | undefined,
       page: page ? Number(page) : undefined,
       limit: limit ? Number(limit) : undefined,
     });

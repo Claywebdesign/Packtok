@@ -49,25 +49,32 @@ export default function ProductGrid({
 
     const productType = productTypeMap[category.title];
 
+    // Calculate price range from multiple selected ranges
+    let priceMin: number | undefined;
+    let priceMax: number | undefined;
+    
+    if (filters.priceRanges.length > 0) {
+      const allMins = filters.priceRanges.map(r => parseInt(r.min)).filter(n => !isNaN(n));
+      const allMaxs = filters.priceRanges.map(r => r.max ? parseInt(r.max) : Infinity).filter(n => !isNaN(n));
+      
+      priceMin = allMins.length > 0 ? Math.min(...allMins) : undefined;
+      priceMax = allMaxs.length > 0 && allMaxs.some(m => m !== Infinity) ? Math.max(...allMaxs.filter(m => m !== Infinity)) : undefined;
+    }
+
     return {
       productType,
-      categoryId:
-        filters.categories.length > 0 ? filters.categories[0] : undefined,
-      condition: selectedCondition !== "ALL" ? selectedCondition : undefined,
-      machineType:
-        filters.machineType.length > 0
-          ? (filters.machineType[0] as
-              | "MONO_CARTON"
-              | "MASTER_CARTON"
-              | "BOTH"
-              | "OTHER")
-          : undefined,
-      priceMin: filters.priceRange.min
-        ? parseInt(filters.priceRange.min)
-        : undefined,
-      priceMax: filters.priceRange.max
-        ? parseInt(filters.priceRange.max)
-        : undefined,
+      categoryId: filters.categories.length > 0 ? filters.categories : undefined,
+      condition: [
+        ...(selectedCondition !== "ALL" ? [selectedCondition] : []),
+        ...filters.conditions
+      ].length > 0 ? [
+        ...(selectedCondition !== "ALL" ? [selectedCondition] : []),
+        ...filters.conditions
+      ] : undefined,
+      machineType: filters.machineType.length > 0 ? filters.machineType : undefined,
+      priceMin,
+      priceMax,
+      searchTerm: filters.searchTerm || undefined,
       page: currentPage,
       limit: 20,
     };

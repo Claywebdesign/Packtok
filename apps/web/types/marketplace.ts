@@ -85,10 +85,10 @@ export interface CategoriesResponse {
 export interface ProductFilters {
   page?: number;
   limit?: number;
-  categoryId?: string;
-  productType?: ProductType;
-  machineType?: MachineType;
-  condition?: ProductCondition;
+  categoryId?: string | string[]; // Support multiple categories
+  productType?: ProductType | ProductType[]; // Support multiple product types
+  machineType?: MachineType | MachineType[]; // Support multiple machine types
+  condition?: ProductCondition | ProductCondition[]; // Support multiple conditions
   priceMin?: number;
   priceMax?: number;
   searchTerm?: string;

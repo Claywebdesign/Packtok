@@ -3,8 +3,11 @@
 import { CategoryItem } from "@/types";
 import { Checkbox } from "@packtok/ui/components/checkbox";
 import { Button } from "@packtok/ui/components/button";
+import { Input } from "@packtok/ui/components/input";
 import { MarketplaceFilters } from "@/hooks/useMarketplaceFilters";
 import { useCategories } from "@/hooks";
+import { Search, X } from "lucide-react";
+import React, { useState, useCallback, useEffect } from "react";
 
 interface CategorySidebarProps {
   category: CategoryItem;
@@ -17,6 +20,7 @@ interface CategorySidebarProps {
   onResetFilters: () => void;
   hasActiveFilters: boolean;
   isMobileOverlay?: boolean;
+  onSearchChange?: (searchTerm: string) => void;
 }
 
 const MACHINE_TYPES = [
@@ -34,6 +38,11 @@ const PRICE_RANGES = [
   { min: "500000", max: "", label: "5L+ Lakhs" },
 ];
 
+const CONDITIONS = [
+  { value: "NEW" as const, label: "New" },
+  { value: "USED" as const, label: "Used" },
+];
+
 export default function CategorySidebar({
   category,
   filters,
@@ -41,8 +50,36 @@ export default function CategorySidebar({
   onResetFilters,
   hasActiveFilters,
   isMobileOverlay = false,
+  onSearchChange,
 }: CategorySidebarProps) {
   const { data: categories, isLoading: categoriesLoading } = useCategories();
+  const [searchInput, setSearchInput] = useState(filters.searchTerm || "");
+
+  // Debounced search functionality
+  const debouncedSearch = useCallback(
+    (searchTerm: string) => {
+      const timeoutId = setTimeout(() => {
+        onSearchChange?.(searchTerm);
+      }, 300); // 300ms debounce
+
+      return () => clearTimeout(timeoutId);
+    },
+    [onSearchChange]
+  );
+
+  useEffect(() => {
+    const cleanup = debouncedSearch(searchInput);
+    return cleanup;
+  }, [searchInput, debouncedSearch]);
+
+  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchInput(e.target.value);
+  };
+
+  const clearSearch = () => {
+    setSearchInput("");
+    onSearchChange?.("");
+  };
 
   return (
     <div
@@ -63,6 +100,31 @@ export default function CategorySidebar({
             Clear All
           </Button>
         )}
+      </div>
+
+      {/* Search Bar */}
+      <div className="mb-6">
+        <h4 className="font-medium mb-3 text-sm lg:text-base">SEARCH</h4>
+        <div className="relative">
+          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
+          <Input
+            type="text"
+            placeholder="Search products..."
+            value={searchInput}
+            onChange={handleSearchChange}
+            className="pl-10 pr-10 text-sm"
+          />
+          {searchInput && (
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={clearSearch}
+              className="absolute right-1 top-1/2 transform -translate-y-1/2 h-6 w-6 p-0 hover:bg-gray-100 rounded-full"
+            >
+              <X className="h-3 w-3" />
+            </Button>
+          )}
+        </div>
       </div>
 
       {/* Categories */}
@@ -140,12 +202,11 @@ export default function CategorySidebar({
             <div key={range.label} className="flex items-center space-x-2">
               <Checkbox
                 id={range.label}
-                checked={
-                  filters.priceRange.min === range.min &&
-                  filters.priceRange.max === range.max
-                }
+                checked={filters.priceRanges.some(
+                  (r) => r.label === range.label
+                )}
                 onCheckedChange={(checked) =>
-                  onFilterChange("priceRange", range.label, checked as boolean)
+                  onFilterChange("priceRanges", range.label, checked as boolean)
                 }
               />
               <label
@@ -153,6 +214,34 @@ export default function CategorySidebar({
                 className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 cursor-pointer"
               >
                 {range.label}
+              </label>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* Condition Filter */}
+      <div>
+        <h4 className="font-medium mb-3 text-sm lg:text-base">CONDITION</h4>
+        <div className="space-y-2">
+          {CONDITIONS.map((condition) => (
+            <div key={condition.value} className="flex items-center space-x-2">
+              <Checkbox
+                id={condition.value}
+                checked={filters.conditions.includes(condition.value)}
+                onCheckedChange={(checked) =>
+                  onFilterChange(
+                    "conditions",
+                    condition.value,
+                    checked as boolean
+                  )
+                }
+              />
+              <label
+                htmlFor={condition.value}
+                className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 cursor-pointer"
+              >
+                {condition.label}
               </label>
             </div>
           ))}
