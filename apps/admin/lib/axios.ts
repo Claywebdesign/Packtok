@@ -1,5 +1,5 @@
+import axios, { AxiosError, AxiosHeaders, AxiosRequestConfig } from "axios";
 import { useAuthStore } from "../store/auth-store";
-import axios, { AxiosError, AxiosRequestConfig, AxiosHeaders } from "axios";
 
 interface AxiosRequestConfigWithRetry extends AxiosRequestConfig {
   _retry?: boolean;
@@ -42,6 +42,21 @@ api.interceptors.response.use(
   (response) => response,
   async (error: AxiosError) => {
     const originalRequest = error.config as AxiosRequestConfigWithRetry;
+
+    // Endpoints that don't require an access token and therefore shouldn't trigger refresh logic
+    const unauthenticatedEndpoints = [
+      "/api/v1/auth/login",
+      "/api/v1/auth/signup",
+      "/api/v1/auth/verify-otp",
+    ];
+
+    const isUnauthEndpoint = unauthenticatedEndpoints.some((ep) =>
+      originalRequest?.url?.endsWith(ep)
+    );
+
+    if (isUnauthEndpoint || !useAuthStore.getState().accessToken) {
+      return Promise.reject(error);
+    }
 
     if (
       (error.response?.status === 401 || error.response?.status === 403) &&
@@ -92,7 +107,7 @@ api.interceptors.response.use(
     }
 
     return Promise.reject(error);
-  },
+  }
 );
 
 export default api;

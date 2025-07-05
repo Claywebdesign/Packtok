@@ -44,6 +44,21 @@ api.interceptors.response.use(
   async (error: AxiosError) => {
     const originalRequest = error.config as AxiosRequestConfigWithRetry;
 
+    const unauthenticatedEndpoints = [
+      "/api/v1/auth/login",
+      "/api/v1/auth/signup",
+      "/api/v1/auth/verify-otp",
+    ];
+
+    const isUnauthEndpoint = unauthenticatedEndpoints.some((ep) =>
+      originalRequest?.url?.endsWith(ep)
+    );
+
+    // If request doesn't have token yet or is an auth endpoint, don't try refresh.
+    if (isUnauthEndpoint || !useAuthStore.getState().accessToken) {
+      return Promise.reject(error);
+    }
+
     if (
       (error.response?.status === 401 || error.response?.status === 403) &&
       !originalRequest?._retry

@@ -15,22 +15,29 @@ import {
 } from "@packtok/ui/components/form";
 import { Input } from "@packtok/ui/components/input";
 import countries from "i18n-iso-countries";
-// @ts-ignore – JSON import type declaration handled by compiler option
 import enLocale from "i18n-iso-countries/langs/en.json";
 import dynamic from "next/dynamic";
 import Link from "next/link";
-import { useMemo } from "react";
+import { useCallback, useState } from "react";
 import { useForm } from "react-hook-form";
 import "react-phone-input-2/lib/style.css";
 import ReactSelect from "react-select";
+import { Eye, EyeOff } from "lucide-react";
 
-// @ts-ignore – no types for this dynamic import; cast to any to allow arbitrary props
+
 const PhoneInput = dynamic(() => import("react-phone-input-2" as any), {
   ssr: false,
 }) as any;
 
-// Register English names for countries
-countries.registerLocale(enLocale);
+
+const COUNTRY_OPTIONS = (() => {
+  countries.registerLocale(enLocale);
+  const names = countries.getNames("en", { select: "official" });
+  return Object.entries(names).map(([code, name]) => ({
+    value: code,
+    label: `${name} (${code})`,
+  }));
+})();
 
 export default function SignUpForm() {
   const { mutate, isPending } = useSignup();
@@ -47,18 +54,17 @@ export default function SignUpForm() {
     } as any,
   });
 
-  // Country options for react-select
-  const countryOptions = useMemo(() => {
-    const names = countries.getNames("en", { select: "official" });
-    return Object.entries(names).map(([code, name]) => ({
-      value: code,
-      label: `${name} (${code})`,
-    }));
-  }, []);
+  const [showPassword, setShowPassword] = useState(false);
 
-  const onSubmit = (data: SignUpFormData) => {
-    mutate(data);
-  };
+  // Country options for react-select
+  const countryOptions = COUNTRY_OPTIONS;
+
+  const onSubmit = useCallback(
+    (data: SignUpFormData) => {
+      mutate(data);
+    },
+    [mutate]
+  );
 
   return (
     <Form {...form}>
@@ -73,6 +79,8 @@ export default function SignUpForm() {
                   {...field}
                   type="text"
                   placeholder="Enter your full name"
+                  name="name"
+                  autoComplete="name"
                   className="border-0 border-b border-border rounded-none px-0 focus-visible:ring-0 focus-visible:border-primary bg-transparent"
                 />
               </FormControl>
@@ -91,6 +99,8 @@ export default function SignUpForm() {
                   {...field}
                   type="email"
                   placeholder="Enter your email"
+                  name="email"
+                  autoComplete="email"
                   className="border-0 border-b border-border rounded-none px-0 focus-visible:ring-0 focus-visible:border-primary bg-transparent"
                 />
               </FormControl>
@@ -118,7 +128,11 @@ export default function SignUpForm() {
                   containerClass="relative w-full"
                   inputClass="!w-full !bg-transparent !border-0 !border-b !border-border !px-0 !pl-14 focus:!border-primary focus:!outline-none"
                   buttonClass="!absolute !left-0 !top-1/2 -translate-y-1/2 !bg-transparent !border-0 !pl-0"
-                  inputProps={{ ref: undefined }}
+                  inputProps={{
+                    ref: undefined,
+                    name: "phone_number",
+                    autoComplete: "tel",
+                  }}
                 />
               </FormControl>
               <FormMessage />
@@ -142,7 +156,18 @@ export default function SignUpForm() {
                   // eslint-disable-next-line @typescript-eslint/no-explicit-any
                   onChange={(opt: any) => field.onChange(opt ? opt.value : "")}
                   isSearchable
+                  maxMenuHeight={250}
                   placeholder="Select country"
+                  name="country"
+                  inputId="country-select"
+                  aria-label="Select country"
+                  styles={{
+                    control: (base) => ({
+                      ...base,
+                      borderRadius: 0,
+                      borderColor: "#e5e7eb",
+                    }),
+                  }}
                 />
               </FormControl>
               <FormMessage />
@@ -156,12 +181,25 @@ export default function SignUpForm() {
           render={({ field }) => (
             <FormItem>
               <FormControl>
-                <Input
-                  {...field}
-                  type="password"
-                  placeholder="Create a password"
-                  className="border-0 border-b border-border rounded-none px-0 focus-visible:ring-0 focus-visible:border-primary bg-transparent"
-                />
+                <div className="relative">
+                  <Input
+                    {...field}
+                    type={showPassword ? "text" : "password"}
+                    placeholder="Create a password"
+                    name="password"
+                    autoComplete="new-password"
+                    spellCheck={false}
+                    className="border-0 border-b border-border rounded-none px-0 pr-8 focus-visible:ring-0 focus-visible:border-primary bg-transparent w-full"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword((p) => !p)}
+                    className="absolute right-0 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700"
+                    tabIndex={-1}
+                  >
+                    {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                  </button>
+                </div>
               </FormControl>
               <FormMessage />
             </FormItem>

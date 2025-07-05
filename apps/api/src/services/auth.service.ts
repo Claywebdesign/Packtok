@@ -1,9 +1,10 @@
-import { User, prisma } from "@packtok/db";
+import { User, prisma, Prisma } from "@packtok/db";
 import crypto from "crypto";
 import { Resend } from "resend";
 import config from "../config";
 import { ApiError } from "../utils/apiError";
 import supabase from "../utils/supabaseClient";
+
 
 const resend = new Resend(config.resend.apiKey);
 
@@ -30,6 +31,17 @@ export const registerUser = async (userData: {
     throw new ApiError(409, "User with this email already exists");
   }
 
+  // If phone number is supplied ensure it's unique in our DB first
+  if (userData.phone_number) {
+    const existsPhone = await prisma.user.findFirst({
+      where: { phone_number: userData.phone_number },
+      select: { id: true },
+    });
+    if (existsPhone) {
+      throw new ApiError(409, "Phone number is already in use");
+    }
+  }
+
   const { data, error } = await supabase.auth.admin.createUser({
     email: userData.email,
     password: userData.password,
@@ -39,18 +51,32 @@ export const registerUser = async (userData: {
   });
 
   if (error || !data.user) {
+    if (error?.message?.toLowerCase().includes("user already registered")) {
+      throw new ApiError(409, "User with this email already exists");
+    }
     throw new ApiError(500, `Supabase error: ${error?.message}`);
   }
 
-  const newUser = await prisma.user.create({
-    data: {
-      id: data.user.id,
-      name: userData.name,
-      email: userData.email,
-      phone_number: userData.phone_number,
-      country: userData.country,
-    },
-  } as any);
+  let newUser: User;
+  try {
+    newUser = await prisma.user.create({
+      data: {
+        id: data.user.id,
+        name: userData.name,
+        email: userData.email,
+        phone_number: userData.phone_number,
+        country: userData.country,
+      },
+    } as any);
+  } catch (err) {
+    if (
+      err instanceof Prisma.PrismaClientKnownRequestError &&
+      err.code === "P2002"
+    ) {
+      throw new ApiError(409, "Email or phone number already in use");
+    }
+    throw err;
+  }
 
   await sendVerificationOtp(userData.email);
 
@@ -74,10 +100,8 @@ export const loginUser = async (
   });
 
   if (error) {
-    if (
-      error.status === 400 &&
-      error.message?.toLowerCase().includes("email")
-    ) {
+    const msg = error.message?.toLowerCase() || "";
+    if (msg.includes("email not confirmed") || msg.includes("confirm")) {
       await sendVerificationOtp(email);
       throw new ApiError(403, "Account not verified. A new OTP has been sent.");
     }

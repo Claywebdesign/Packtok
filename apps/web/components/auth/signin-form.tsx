@@ -1,5 +1,9 @@
 "use client";
 
+import { useLogin } from "@/hooks/useLogin";
+import { SignInFormData, signInSchema } from "@/schemas/signin-schema";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { Button } from "@packtok/ui/components/button";
 import {
   Form,
   FormControl,
@@ -8,15 +12,14 @@ import {
   FormMessage,
 } from "@packtok/ui/components/form";
 import { Input } from "@packtok/ui/components/input";
-import { Button } from "@packtok/ui/components/button";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
+import { Eye, EyeOff } from "lucide-react";
 import Link from "next/link";
-import { SignInFormData, signInSchema } from "@/schemas/signin-schema";
-import { useLogin } from "@/hooks/useLogin";
+import { useState } from "react";
+import { useForm } from "react-hook-form";
 
 export default function SignInForm() {
   const { mutate, isPending } = useLogin();
+  const [showPassword, setShowPassword] = useState(false);
 
   const form = useForm<SignInFormData>({
     resolver: zodResolver(signInSchema),
@@ -57,12 +60,22 @@ export default function SignInForm() {
           render={({ field }) => (
             <FormItem>
               <FormControl>
-                <Input
-                  {...field}
-                  type="password"
-                  placeholder="Enter your password"
-                  className="border-0 border-b border-border rounded-none px-0 focus-visible:ring-0 focus-visible:border-primary bg-transparent"
-                />
+                <div className="relative">
+                  <Input
+                    {...field}
+                    type={showPassword ? "text" : "password"}
+                    placeholder="Enter your password"
+                    className="border-0 border-b border-border rounded-none px-0 pr-8 focus-visible:ring-0 focus-visible:border-primary bg-transparent w-full"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword((p) => !p)}
+                    className="absolute right-0 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700"
+                    tabIndex={-1}
+                  >
+                    {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                  </button>
+                </div>
               </FormControl>
               <FormMessage />
             </FormItem>

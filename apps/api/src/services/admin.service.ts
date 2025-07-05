@@ -1,4 +1,4 @@
-import { Permission, Role, User, prisma } from "@packtok/db";
+import { Permission, prisma, Prisma, Role, User } from "@packtok/db";
 import { ApiError } from "../utils/apiError";
 import supabase from "../utils/supabaseClient";
 
@@ -19,6 +19,16 @@ export const createAdminUser = async (
     throw new ApiError(409, "User with this email already exists");
   }
 
+  if (adminData.phone_number) {
+    const existsPhone = await prisma.user.findFirst({
+      where: { phone_number: adminData.phone_number },
+      select: { id: true },
+    });
+    if (existsPhone) {
+      throw new ApiError(409, "Phone number is already in use");
+    }
+  }
+
   const { data, error } = await supabase.auth.admin.createUser({
     email: adminData.email,
     password: adminData.password,
@@ -34,16 +44,27 @@ export const createAdminUser = async (
     throw new ApiError(500, `Supabase user creation failed: ${error?.message}`);
   }
 
-  const newAdmin = await prisma.user.create({
-    data: {
-      id: data.user.id, // Supabase UUID
-      name: adminData.name,
-      email: adminData.email,
-      phone_number: adminData.phone_number,
-      role: Role.ADMIN,
-      country: adminData.country,
-    },
-  });
+  let newAdmin: User;
+  try {
+    newAdmin = await prisma.user.create({
+      data: {
+        id: data.user.id, // Supabase UUID
+        name: adminData.name,
+        email: adminData.email,
+        phone_number: adminData.phone_number,
+        role: Role.ADMIN,
+        country: adminData.country,
+      },
+    });
+  } catch (err) {
+    if (
+      err instanceof Prisma.PrismaClientKnownRequestError &&
+      err.code === "P2002"
+    ) {
+      throw new ApiError(409, "Email or phone number already in use");
+    }
+    throw err;
+  }
 
   if (permissions && permissions.length > 0) {
     await prisma.adminPermission.createMany({
