@@ -17,6 +17,8 @@ export * from "./components/popover";
 export * from "./components/select";
 export * from "./components/table";
 export * from "./components/textarea";
+export * from "./components/scroll-area";
+export * from "./components/separator";
 
 // Export utilities
 export * from "./lib/utils";

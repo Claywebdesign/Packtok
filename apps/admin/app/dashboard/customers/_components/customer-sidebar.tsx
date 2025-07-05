@@ -2,6 +2,7 @@
 
 import { Button } from "@packtok/ui/components/button";
 import { Mail, Phone, MapPin, MoreHorizontal } from "lucide-react";
+import { BarChart, Bar, XAxis, YAxis, ResponsiveContainer, PieChart, Pie, Cell } from 'recharts';
 
 interface CustomerDetail {
   name: string;
@@ -15,6 +16,22 @@ interface CustomerDetail {
 interface CustomerSidebarProps {
   customer: CustomerDetail;
 }
+
+const performanceData = [
+  { month: "Jan", value: 40 },
+  { month: "Feb", value: 60 },
+  { month: "Mar", value: 80 },
+  { month: "Apr", value: 30 },
+  { month: "May", value: 90 },
+  { month: "Jun", value: 50 },
+];
+
+const pieData = [
+  { name: "Active", value: 70, color: "#10B981" },
+  { name: "Inactive", value: 30, color: "#E5E7EB" },
+];
+
+const COLORS = ["#10B981", "#E5E7EB"];
 
 export function CustomerSidebar({ customer }: CustomerSidebarProps) {
   return (
@@ -70,42 +87,46 @@ export function CustomerSidebar({ customer }: CustomerSidebarProps) {
           </Button>
         </div>
 
-        {/* Simple bar chart representation */}
-        <div className="space-y-3">
-          {["Jan", "Feb", "Mar", "Apr", "May", "Jun"].map((month, index) => {
-            const height = [40, 60, 80, 30, 90, 50][index];
-            return (
-              <div
-                key={month}
-                className="flex items-center justify-between text-sm"
-              >
-                <span className="text-gray-600">{month}</span>
-                <div className="flex items-center space-x-2">
-                  <div className="w-16 bg-gray-200 rounded-full h-2">
-                    <div
-                      className="bg-pink-500 h-2 rounded-full"
-                      style={{ width: `${height}%` }}
-                    ></div>
-                  </div>
-                </div>
-              </div>
-            );
-          })}
+        {/* Performance Bar Chart */}
+        <div className="h-32">
+          <ResponsiveContainer width="100%" height="100%">
+            <BarChart data={performanceData}>
+              <XAxis dataKey="month" tick={{ fontSize: 12 }} />
+              <YAxis hide />
+              <Bar dataKey="value" fill="#EC4899" radius={[2, 2, 0, 0]} />
+            </BarChart>
+          </ResponsiveContainer>
         </div>
 
         {/* Donut Chart */}
         <div className="mt-6 text-center">
-          <div className="relative w-24 h-24 mx-auto mb-4">
-            <div className="w-24 h-24 rounded-full bg-gradient-to-r from-green-400 to-blue-500 flex items-center justify-center">
-              <div className="w-16 h-16 bg-white rounded-full flex items-center justify-center">
-                <span className="text-lg font-semibold text-gray-700">70%</span>
-              </div>
-            </div>
+          <div className="h-24 w-24 mx-auto">
+            <ResponsiveContainer width="100%" height="100%">
+              <PieChart>
+                <Pie
+                  data={pieData}
+                  cx="50%"
+                  cy="50%"
+                  innerRadius={30}
+                  outerRadius={40}
+                  paddingAngle={2}
+                  dataKey="value"
+                >
+                  {pieData.map((_, index) => (
+                    <Cell key={`cell-${index}`} fill={COLORS[index]} />
+                  ))}
+                </Pie>
+              </PieChart>
+            </ResponsiveContainer>
           </div>
-          <div className="flex justify-center space-x-4 text-xs">
+          <div className="flex justify-center space-x-4 text-xs mt-2">
             <div className="flex items-center">
-              <div className="w-3 h-3 bg-green-400 rounded-full mr-1"></div>
-              <span>60%</span>
+              <div className="w-3 h-3 bg-green-500 rounded-full mr-1"></div>
+              <span>Active 70%</span>
+            </div>
+            <div className="flex items-center">
+              <div className="w-3 h-3 bg-gray-300 rounded-full mr-1"></div>
+              <span>Inactive 30%</span>
             </div>
           </div>
         </div>

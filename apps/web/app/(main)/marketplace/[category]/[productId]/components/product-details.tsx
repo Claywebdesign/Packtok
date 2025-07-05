@@ -100,65 +100,76 @@ export default function ProductDetails({ product }: ProductDetailsProps) {
           </div>
 
           {/* Product Title */}
-          <h1 className="text-3xl font-bold text-gray-900">{product.title}</h1>
+          <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold text-gray-900">
+            {product.title}
+          </h1>
 
           {/* Product Description */}
-          <p className="text-gray-600 leading-relaxed font-normal">
+          <p className="text-sm sm:text-base text-gray-600 leading-relaxed font-normal">
             {product.description}
           </p>
 
           {/* Specifications */}
           <div className="space-y-3">
-            <h3 className="font-semibold text-lg">Specifications</h3>
-            <div className="space-y-2 text-sm text-gray-600">
+            <h3 className="font-semibold text-base sm:text-lg">
+              Specifications
+            </h3>
+            <div className="space-y-2 text-xs sm:text-sm text-gray-600">
               {Object.entries(specifications).map(([key, value]) => (
-                <div key={key} className="flex">
-                  <span className="font-normal capitalize">
+                <div key={key} className="flex flex-col sm:flex-row">
+                  <span className="font-normal capitalize sm:min-w-[120px]">
                     {key.replace(/([A-Z])/g, " $1").trim()}:
                   </span>
-                  <span className="ml-2 font-normal">{String(value)}</span>
+                  <span className="sm:ml-2 font-normal">{String(value)}</span>
                 </div>
               ))}
             </div>
           </div>
 
           {/* Quantity Selector and Download Specification */}
-          <div className="flex items-center gap-4 justify-between">
-            <div className="flex items-center gap-0">
-              <button
-                onClick={() => handleQuantityChange(false)}
-                className={`w-10 h-10 rounded-lg border border-gray-300 hover:bg-gray-50 transition-colors flex items-center justify-center ${
-                  quantity <= 1 ? "opacity-50 cursor-not-allowed" : ""
-                }`}
-                disabled={quantity <= 1}
-              >
-                <Minus className="w-4 h-4" />
-              </button>
-              <span className="text-xl font-semibold min-w-[3rem] text-center">
-                {quantity}
-              </span>
-              <button
-                onClick={() => handleQuantityChange(true)}
-                className={`w-10 h-10 rounded-lg border border-gray-300 hover:bg-gray-50 transition-colors flex items-center justify-center ${
-                  quantity >= product.quantity
-                    ? "opacity-50 cursor-not-allowed"
-                    : ""
-                }`}
-                disabled={quantity >= product.quantity}
-              >
-                <Plus className="w-4 h-4" />
-              </button>
+          <div className="space-y-4 sm:space-y-4">
+            {/* Quantity Selector */}
+            <div className="flex items-center justify-start">
+              <div className="flex items-center gap-0">
+                <button
+                  onClick={() => handleQuantityChange(false)}
+                  className={`w-10 h-10 rounded-lg border border-gray-300 hover:bg-gray-50 transition-colors flex items-center justify-center ${
+                    quantity <= 1 ? "opacity-50 cursor-not-allowed" : ""
+                  }`}
+                  disabled={quantity <= 1}
+                >
+                  <Minus className="w-4 h-4" />
+                </button>
+                <span className="text-xl font-semibold min-w-[3rem] text-center">
+                  {quantity}
+                </span>
+                <button
+                  onClick={() => handleQuantityChange(true)}
+                  className={`w-10 h-10 rounded-lg border border-gray-300 hover:bg-gray-50 transition-colors flex items-center justify-center ${
+                    quantity >= product.quantity
+                      ? "opacity-50 cursor-not-allowed"
+                      : ""
+                  }`}
+                  disabled={quantity >= product.quantity}
+                >
+                  <Plus className="w-4 h-4" />
+                </button>
+              </div>
             </div>
 
+            {/* Download Specifications Button */}
             {hasPdf && (
               <a
                 href={product.pdfUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex-1 ml-4 border border-gray-300 text-gray-700 py-3 px-4 rounded-lg hover:bg-gray-50 transition-colors flex items-center justify-center gap-2 font-medium"
+                className="w-full sm:w-auto border border-gray-300 text-gray-700 py-3 px-4 rounded-lg hover:bg-gray-50 transition-colors flex items-center justify-center gap-2 font-medium text-sm sm:text-base"
               >
-                <FileText className="w-5 h-5" />
-                Download Specifications
+                <FileText className="w-4 h-4 sm:w-5 sm:h-5" />
+                <span className="hidden sm:inline">
+                  Download Specifications
+                </span>
+                <span className="sm:hidden">Download Specs</span>
               </a>
             )}
           </div>
@@ -167,7 +178,7 @@ export default function ProductDetails({ product }: ProductDetailsProps) {
           <div>
             <button
               onClick={handleQuoteClick}
-              className="w-full bg-gray-900 text-white py-3 px-4 rounded-lg hover:bg-gray-800 transition-colors font-medium"
+              className="w-full bg-gray-900 text-white py-3 px-4 rounded-lg hover:bg-gray-800 transition-colors font-medium text-sm sm:text-base"
             >
               Send Quote
             </button>
@@ -176,16 +187,18 @@ export default function ProductDetails({ product }: ProductDetailsProps) {
           {/* SKU and Category */}
           <div className="space-y-3 pt-4">
             <div className="flex justify-between items-center">
-              <span className="text-gray-600 text-sm font-normal">SKU</span>
-              <span className="text-sm font-normal">
+              <span className="text-gray-600 text-xs sm:text-sm font-normal">
+                SKU
+              </span>
+              <span className="text-xs sm:text-sm font-normal">
                 {product.id ? product.id.slice(-8).toUpperCase() : "8832"}
               </span>
             </div>
-            <div className="flex justify-between items-center">
-              <span className="text-gray-600 text-sm font-normal">
+            <div className="flex justify-between items-start sm:items-center">
+              <span className="text-gray-600 text-xs sm:text-sm font-normal">
                 CATEGORY
               </span>
-              <span className="text-sm font-normal">
+              <span className="text-xs sm:text-sm font-normal text-right sm:text-left max-w-[60%] sm:max-w-none">
                 {product.category?.name ||
                   "Ice Cream Equipment, Food Processing Machinery"}
               </span>
