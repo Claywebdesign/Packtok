@@ -9,6 +9,7 @@ import {
   adminRejectSubmission,
   adminUpdateProduct,
   adminUpdateProductStatus,
+  adminDeleteProduct,
 } from "../controllers/admin.product.controller";
 import {
   adminGetQuotes,
@@ -47,6 +48,12 @@ router.put(
   authMiddleware,
   hasRole(Role.ADMIN, Role.SUPER_ADMIN),
   adminUpdateProductStatus
+);
+router.delete(
+  "/products/:id",
+  authMiddleware,
+  hasRole(Role.ADMIN, Role.SUPER_ADMIN),
+  adminDeleteProduct
 );
 
 // Submissions moderation

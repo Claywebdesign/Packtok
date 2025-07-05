@@ -4,6 +4,7 @@ import {
   approveSubmission,
   changeProductStatus,
   createProductAsAdmin,
+  deleteProduct,
   getPendingSubmissions,
   listAllProductsForAdmin,
   rejectSubmission,
@@ -156,5 +157,15 @@ export const adminRejectSubmission = asyncHandler(
     const { id } = req.params;
     const updated = await rejectSubmission(id);
     res.status(200).json(new ApiResponse(200, updated, "Submission rejected"));
+  }
+);
+
+export const adminDeleteProduct = asyncHandler(
+  async (req: Request, res: Response) => {
+    const { id } = req.params;
+    await deleteProduct(id, req.user!.id, req.user!.role as any);
+    res
+      .status(200)
+      .json(new ApiResponse(200, null, "Product deleted successfully"));
   }
 );
