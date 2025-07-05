@@ -71,16 +71,17 @@ export function useSubmitProduct() {
       });
       return data.data as Product;
     },
-    onSuccess: (data) => {
+    onSuccess: (_data) => {
       toast.success(
         "Product submitted successfully! It will be reviewed by our team."
       );
       // Invalidate products queries to refresh listings
       queryClient.invalidateQueries({ queryKey: ["products"] });
     },
-    onError: (error: any) => {
+    onError: (error: Error) => {
+      const axiosError = error as any;
       const message =
-        error?.response?.data?.message || "Failed to submit product";
+        axiosError?.response?.data?.message || "Failed to submit product";
       toast.error(message);
     },
   });

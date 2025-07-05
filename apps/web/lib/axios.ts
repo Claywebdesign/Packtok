@@ -1,5 +1,5 @@
 import { useAuthStore } from "@/store/auth-store";
-import axios, { AxiosError, AxiosRequestConfig } from "axios";
+import axios, { AxiosError, AxiosRequestConfig, AxiosHeaders } from "axios";
 
 interface AxiosRequestConfigWithRetry extends AxiosRequestConfig {
   _retry?: boolean;
@@ -14,10 +14,9 @@ api.interceptors.request.use((config) => {
   const token = useAuthStore.getState().accessToken;
   if (token) {
     if (!config.headers) {
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      config.headers = {} as any;
+      config.headers = new AxiosHeaders();
     }
-    (config.headers as any)["Authorization"] = `Bearer ${token}`;
+    config.headers["Authorization"] = `Bearer ${token}`;
   }
   return config;
 });
@@ -25,10 +24,10 @@ api.interceptors.request.use((config) => {
 let isRefreshing = false;
 let failedQueue: {
   resolve: (token: string | null) => void;
-  reject: (err: any) => void;
+  reject: (err: Error) => void;
 }[] = [];
 
-const processQueue = (error: any, token: string | null = null) => {
+const processQueue = (error: Error | null, token: string | null = null) => {
   failedQueue.forEach((prom) => {
     if (error) {
       prom.reject(error);

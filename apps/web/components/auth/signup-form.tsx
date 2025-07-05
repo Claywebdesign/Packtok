@@ -18,17 +18,27 @@ import countries from "i18n-iso-countries";
 import enLocale from "i18n-iso-countries/langs/en.json";
 import dynamic from "next/dynamic";
 import Link from "next/link";
-import { useCallback, useState } from "react";
+import React, { useCallback, useState } from "react";
 import { useForm } from "react-hook-form";
 import "react-phone-input-2/lib/style.css";
 import ReactSelect from "react-select";
 import { Eye, EyeOff } from "lucide-react";
 
-
-const PhoneInput = dynamic(() => import("react-phone-input-2" as any), {
+const PhoneInput = dynamic(() => import("react-phone-input-2"), {
   ssr: false,
-}) as any;
-
+}) as React.ComponentType<{
+  country: string;
+  value: string;
+  onChange: (value: string) => void;
+  autoFormat?: boolean;
+  enableLongNumbers?: boolean;
+  enableSearch?: boolean;
+  placeholder?: string;
+  containerClass?: string;
+  inputClass?: string;
+  buttonClass?: string;
+  inputProps?: Record<string, unknown>;
+}>;
 
 const COUNTRY_OPTIONS = (() => {
   countries.registerLocale(enLocale);
@@ -51,7 +61,7 @@ export default function SignUpForm() {
       country: "",
       password: "",
       agreeToTerms: false,
-    } as any,
+    },
   });
 
   const [showPassword, setShowPassword] = useState(false);
@@ -118,7 +128,7 @@ export default function SignUpForm() {
                 <PhoneInput
                   country="in"
                   value={field.value ?? ""}
-                  onChange={(value: any) =>
+                  onChange={(value: string) =>
                     field.onChange(value ? `+${value}` : undefined)
                   }
                   autoFormat={false}
@@ -153,8 +163,9 @@ export default function SignUpForm() {
                     countryOptions.find((opt) => opt.value === field.value) ||
                     null
                   }
-                  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-                  onChange={(opt: any) => field.onChange(opt ? opt.value : "")}
+                  onChange={(opt: { value: string } | null) =>
+                    field.onChange(opt ? opt.value : "")
+                  }
                   isSearchable
                   maxMenuHeight={250}
                   placeholder="Select country"

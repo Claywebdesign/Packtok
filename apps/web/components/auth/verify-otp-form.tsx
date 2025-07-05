@@ -42,8 +42,9 @@ export default function VerifyOtpForm() {
       // Optionally auto-login
       router.push("/auth/signin");
     },
-    onError: (err: any) => {
-      toast.error(err?.response?.data?.message || "Verification failed");
+    onError: (err: Error) => {
+      const axiosError = err as any;
+      toast.error(axiosError?.response?.data?.message || "Verification failed");
     },
   });
 

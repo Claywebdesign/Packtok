@@ -37,7 +37,7 @@ export const productSchema = z.object({
     .min(1900, "Year must be after 1900")
     .max(new Date().getFullYear(), "Year cannot be in the future")
     .optional(),
-  categoryName: z.string().min(1, "Category is required"),
+  category: z.string().min(1, "Category is required"),
   specifications: z.string().optional(),
   additionalInfo: z
     .string()

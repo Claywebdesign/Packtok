@@ -1,6 +1,5 @@
 "use client";
 
-import { useRouter } from "next/navigation";
 import { CategoryItem } from "@/types";
 import { Checkbox } from "@packtok/ui/components/checkbox";
 import { Button } from "@packtok/ui/components/button";
@@ -43,7 +42,6 @@ export default function CategorySidebar({
   hasActiveFilters,
   isMobileOverlay = false,
 }: CategorySidebarProps) {
-  const router = useRouter();
   const { data: categories, isLoading: categoriesLoading } = useCategories();
 
   return (

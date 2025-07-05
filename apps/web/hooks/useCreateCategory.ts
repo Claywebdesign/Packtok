@@ -22,9 +22,10 @@ export function useCreateCategory() {
       // Invalidate categories to refresh the list
       queryClient.invalidateQueries({ queryKey: ["categories"] });
     },
-    onError: (error: any) => {
+    onError: (error: Error) => {
+      const axiosError = error as any;
       const message =
-        error?.response?.data?.message || "Failed to create category";
+        axiosError?.response?.data?.message || "Failed to create category";
       toast.error(message);
     },
   });

@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useCallback } from "react";
-import { ProductCondition, MachineType } from "@/types/marketplace";
+import { MachineType } from "@/types/marketplace";
 
 export interface MarketplaceFilters {
   categories: string[];

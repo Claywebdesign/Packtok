@@ -5,6 +5,7 @@ export { useLogin } from "./useLogin";
 // Marketplace hooks
 export {
   useProducts,
+  useGetProduct,
   useCreateProduct,
   useUpdateProduct,
   useUpdateProductStatus,

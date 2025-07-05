@@ -18,6 +18,7 @@ import {
 } from "../../../../types/product";
 import { Plus, Search, Filter, Grid3X3, List, Package } from "lucide-react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { toast } from "react-hot-toast";
 import {
   useProducts,
@@ -43,6 +44,7 @@ export function ProductsView({ initialProducts = [] }: ProductsViewProps) {
   const [sortField, setSortField] = useState<SortField>("title");
   const [sortDirection, setSortDirection] = useState<SortDirection>("asc");
 
+  const router = useRouter();
   const { data: products = initialProducts, isLoading, error } = useProducts();
   const updateStatusMutation = useUpdateProductStatus();
   const deleteProductMutation = useDeleteProduct();
@@ -63,7 +65,7 @@ export function ProductsView({ initialProducts = [] }: ProductsViewProps) {
   };
 
   const handleEdit = (product: MarketplaceProduct) => {
-    console.log("Edit product:", product);
+    router.push(`/dashboard/products/edit/${product.id}`);
   };
 
   const handleDelete = async (productId: string) => {

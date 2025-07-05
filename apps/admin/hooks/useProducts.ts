@@ -17,6 +17,19 @@ export function useProducts() {
   });
 }
 
+// Fetch single product (using public endpoint for admin)
+export function useGetProduct(productId: string) {
+  return useQuery({
+    queryKey: [...QK.products, productId],
+    queryFn: async (): Promise<MarketplaceProduct> => {
+      const { data } = await api.get(`/api/v1/products/${productId}`);
+      return data.data || data;
+    },
+    enabled: !!productId,
+    staleTime: 1000 * 60 * 5, // 5 minutes
+  });
+}
+
 // Create product mutation
 export function useCreateProduct() {
   const queryClient = useQueryClient();
@@ -98,8 +111,11 @@ export function useUpdateProduct() {
       );
       return data.data || data;
     },
-    onSuccess: () => {
+    onSuccess: (_, variables) => {
       queryClient.invalidateQueries({ queryKey: QK.products });
+      queryClient.invalidateQueries({
+        queryKey: [...QK.products, variables.productId],
+      });
     },
   });
 }

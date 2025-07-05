@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import React from "react";
 import { X, Check } from "lucide-react";
 import { useAuthStore } from "@/store/auth-store";
 
@@ -103,7 +104,8 @@ export default function QuoteModal({
               Quote Sent Successfully!
             </h3>
             <p className="text-gray-600">
-              Your quote request has been shared. We'll get back to you soon.
+              Your quote request has been shared. We&apos;ll get back to you
+              soon.
             </p>
           </div>
         ) : (

@@ -4,8 +4,16 @@ import { Button } from "@packtok/ui/components/button";
 import StarRating from "./star-rating";
 import machinery from "@/assets/machinery.png";
 import Image from "next/image";
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export default function ProductCard({ product }: any) {
+interface ProductCardProps {
+  product: {
+    rating: number;
+    name: string;
+    price: number;
+    originalPrice: number;
+  };
+}
+
+export default function ProductCard({ product }: ProductCardProps) {
   return (
     <div className="flex-shrink-0 w-72 md:w-80 group">
       <Card className="overflow-hidden rounded-none border-none bg-gray-100">
