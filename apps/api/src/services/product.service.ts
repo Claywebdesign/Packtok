@@ -94,7 +94,29 @@ export const updateProduct = async (
   if (!existing) {
     throw new ApiError(404, "Product not found");
   }
-  return prisma.marketplaceProduct.update({ where: { id: productId }, data });
+
+
+  const { categoryId, categoryName, category, ...rest } = data as any;
+  let updatedCategoryId: string | undefined = undefined;
+
+
+  const possibleCategoryName = categoryName ?? category;
+  if (categoryId || possibleCategoryName) {
+    updatedCategoryId = await ensureCategory(
+      categoryId as any,
+      possibleCategoryName as any
+    );
+  }
+
+  const updateData: Prisma.MarketplaceProductUpdateInput = {
+    ...rest,
+    ...(updatedCategoryId ? { categoryId: updatedCategoryId } : {}),
+  };
+
+  return prisma.marketplaceProduct.update({
+    where: { id: productId },
+    data: updateData,
+  });
 };
 
 export const changeProductStatus = async (
