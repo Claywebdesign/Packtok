@@ -221,7 +221,7 @@ export default function SignUpForm() {
           control={form.control}
           name="agreeToTerms"
           render={({ field }) => (
-            <FormItem className="flex flex-row items-start space-x-3 space-y-0">
+            <FormItem className="flex flex-row items-start sm:items-center justify-center space-x-0 sm:space-x-3 space-y-0">
               <FormControl>
                 <Checkbox
                   checked={field.value}
@@ -229,7 +229,7 @@ export default function SignUpForm() {
                 />
               </FormControl>
               <div className="space-y-1 leading-none">
-                <FormLabel className="text-sm font-normal">
+                <FormLabel className="text-sm inline font-normal">
                   I agree to the{" "}
                   <Link
                     href="/terms"

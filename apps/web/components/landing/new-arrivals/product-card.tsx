@@ -15,14 +15,14 @@ interface ProductCardProps {
 
 export default function ProductCard({ product }: ProductCardProps) {
   return (
-    <div className="flex-shrink-0 w-72 md:w-80 group">
+    <div className="flex-shrink-0 w-60 sm:w-72 md:w-80 group">
       <Card className="overflow-hidden rounded-none border-none bg-gray-100">
         <CardContent className="p-0">
           <div className="relative">
             <Image
               src={machinery}
               alt={"product"}
-              className="h-80 w-full object-cover"
+              className="h-48 sm:h-64 md:h-80 w-full object-cover"
             />
             <Badge
               variant="destructive"
@@ -40,10 +40,10 @@ export default function ProductCard({ product }: ProductCardProps) {
       </Card>
       <div className="pt-4 space-y-2 text-left">
         <StarRating rating={product.rating} />
-        <h3 className="text-lg font-semibold text-gray-800">{product.name}</h3>
+        <h3 className="text-base sm:text-lg font-semibold text-gray-800">{product.name}</h3>
         <div className="flex items-baseline gap-2">
-          <p className="text-xl font-bold text-gray-900">${product.price}</p>
-          <p className="text-base text-gray-400 line-through">
+          <p className="text-lg sm:text-xl font-bold text-gray-900">${product.price}</p>
+          <p className="text-sm sm:text-base text-gray-400 line-through">
             ${product.originalPrice}
           </p>
         </div>

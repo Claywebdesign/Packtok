@@ -40,7 +40,7 @@ export default function HeroCarousel() {
   }, [emblaApi, onSelect]);
 
   return (
-    <div className="relative select-none w-[85%] mx-auto">
+    <div className="relative select-none w-[95%] sm:w-[90%] md:w-[85%] mx-auto">
       <div className="overflow-hidden" ref={emblaRef}>
         <div className="flex">
           {images.map((image, idx) => (
@@ -51,7 +51,7 @@ export default function HeroCarousel() {
                 width={1920}
                 height={740}
                 sizes="(max-width: 768px) 100vw, 1920px"
-                className="object-cover w-full h-[657px] md:h-[740px]"
+                className="object-cover w-full h-[300px] sm:h-[400px] md:h-[500px] lg:h-[657px] xl:h-[740px]"
                 priority={idx == 0}
               />
             </div>

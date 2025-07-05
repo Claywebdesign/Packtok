@@ -130,6 +130,34 @@ export default function Navbar() {
                 <Search className="h-6 w-6 text-gray-700 cursor-pointer" />
                 <ShoppingBag className="h-6 w-6 text-gray-700 cursor-pointer" />
               </div>
+
+              {/* Mobile Authentication */}
+              <div className="pt-4 pb-2 border-t border-gray-200">
+                {accessToken && user ? (
+                  <div className="space-y-2">
+                    <div className="px-3 py-2">
+                      <Link
+                        href="/account"
+                        onClick={handleLinkClick}
+                        className="block text-sm font-medium text-gray-900 hover:text-gray-700"
+                      >
+                        Welcome, {user.name?.split(" ")[0] || user.email}
+                      </Link>
+                    </div>
+                    <div className="px-3">
+                      <LogoutButton />
+                    </div>
+                  </div>
+                ) : (
+                  <div className="px-3">
+                    <Button asChild className="w-full">
+                      <Link href="/auth/signin" onClick={handleLinkClick}>
+                        Sign In
+                      </Link>
+                    </Button>
+                  </div>
+                )}
+              </div>
             </div>
           </div>
         )}

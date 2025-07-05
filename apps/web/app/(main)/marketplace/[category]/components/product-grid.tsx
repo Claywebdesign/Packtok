@@ -115,7 +115,39 @@ export default function ProductGrid({
 
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4">
         <h2 className="text-xl lg:text-2xl font-semibold">{category.title}</h2>
-        <div className="flex gap-2">
+        
+        {/* Mobile: Horizontal scrollable filter tabs */}
+        <div className="sm:hidden w-full">
+          <div className="flex gap-2 overflow-x-auto pb-2 no-scrollbar">
+            <Button
+              variant={selectedCondition === "ALL" ? "default" : "outline"}
+              size="sm"
+              className="text-xs whitespace-nowrap flex-shrink-0 px-3"
+              onClick={() => setSelectedCondition("ALL")}
+            >
+              All
+            </Button>
+            <Button
+              variant={selectedCondition === "NEW" ? "default" : "outline"}
+              size="sm"
+              className="text-xs whitespace-nowrap flex-shrink-0 px-3"
+              onClick={() => setSelectedCondition("NEW")}
+            >
+              New
+            </Button>
+            <Button
+              variant={selectedCondition === "USED" ? "default" : "outline"}
+              size="sm"
+              className="text-xs whitespace-nowrap flex-shrink-0 px-3"
+              onClick={() => setSelectedCondition("USED")}
+            >
+              Used
+            </Button>
+          </div>
+        </div>
+        
+        {/* Desktop: Regular filter tabs */}
+        <div className="hidden sm:flex gap-2">
           <Button
             variant={selectedCondition === "ALL" ? "default" : "outline"}
             size="sm"
