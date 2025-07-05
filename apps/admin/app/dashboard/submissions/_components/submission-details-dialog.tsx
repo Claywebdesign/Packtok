@@ -12,13 +12,13 @@ import { ScrollArea } from "@packtok/ui/scroll-area";
 import { Separator } from "@packtok/ui/separator";
 import { Submission } from "../../../../hooks";
 import Image from "next/image";
-import { 
-  Calendar, 
-  User, 
-  Mail, 
-  Phone, 
-  Package, 
-  FileText, 
+import {
+  Calendar,
+  User,
+  Mail,
+  Phone,
+  Package,
+  FileText,
   Tag,
   Building,
   DollarSign,
@@ -27,7 +27,7 @@ import {
   Info,
   Image as ImageIcon,
   Video,
-  FileIcon
+  FileIcon,
 } from "lucide-react";
 
 interface SubmissionDetailsDialogProps {
@@ -44,9 +44,12 @@ export function SubmissionDetailsDialog({
   // Parse specifications if it's a JSON string
   let parsedSpecs = {};
   try {
-    if (submission.specifications && typeof submission.specifications === 'string') {
+    if (
+      submission.specifications &&
+      typeof submission.specifications === "string"
+    ) {
       parsedSpecs = JSON.parse(submission.specifications);
-    } else if (typeof submission.specifications === 'object') {
+    } else if (typeof submission.specifications === "object") {
       parsedSpecs = submission.specifications;
     }
   } catch (error) {
@@ -54,26 +57,30 @@ export function SubmissionDetailsDialog({
   }
 
   const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString('en-US', {
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit'
+    return new Date(dateString).toLocaleDateString("en-US", {
+      year: "numeric",
+      month: "long",
+      day: "numeric",
+      hour: "2-digit",
+      minute: "2-digit",
     });
   };
 
   const getStatusBadgeVariant = (status: string) => {
     switch (status) {
-      case 'PENDING_APPROVAL': return 'default';
-      case 'APPROVED': return 'secondary';
-      case 'REJECTED': return 'destructive';
-      default: return 'outline';
+      case "PENDING_APPROVAL":
+        return "default";
+      case "APPROVED":
+        return "secondary";
+      case "REJECTED":
+        return "destructive";
+      default:
+        return "outline";
     }
   };
 
   const getConditionBadgeVariant = (condition: string) => {
-    return condition === 'NEW' ? 'secondary' : 'outline';
+    return condition === "NEW" ? "secondary" : "outline";
   };
 
   return (
@@ -88,8 +95,13 @@ export function SubmissionDetailsDialog({
               </DialogDescription>
             </div>
             <div className="flex gap-2">
-              <Badge variant={getStatusBadgeVariant(submission.submissionStatus || 'PENDING_APPROVAL')}>
-                {submission.submissionStatus?.replace('_', ' ') || 'PENDING APPROVAL'}
+              <Badge
+                variant={getStatusBadgeVariant(
+                  submission.submissionStatus || "PENDING_APPROVAL"
+                )}
+              >
+                {submission.submissionStatus?.replace("_", " ") ||
+                  "PENDING APPROVAL"}
               </Badge>
               <Badge variant={getConditionBadgeVariant(submission.condition)}>
                 {submission.condition}
@@ -97,7 +109,7 @@ export function SubmissionDetailsDialog({
             </div>
           </div>
         </DialogHeader>
-        
+
         <ScrollArea className="max-h-[70vh]">
           <div className="space-y-6">
             {/* Submitter Information */}
@@ -112,14 +124,18 @@ export function SubmissionDetailsDialog({
                     <User className="h-4 w-4 text-muted-foreground" />
                     <div>
                       <p className="text-xs text-muted-foreground">Name</p>
-                      <p className="text-sm font-medium">{submission.createdByUser.name}</p>
+                      <p className="text-sm font-medium">
+                        {submission.createdByUser.name}
+                      </p>
                     </div>
                   </div>
                   <div className="flex items-center gap-2">
                     <Mail className="h-4 w-4 text-muted-foreground" />
                     <div>
                       <p className="text-xs text-muted-foreground">Email</p>
-                      <p className="text-sm font-medium">{submission.createdByUser.email}</p>
+                      <p className="text-sm font-medium">
+                        {submission.createdByUser.email}
+                      </p>
                     </div>
                   </div>
                   {submission.createdByUser.phone_number && (
@@ -127,7 +143,9 @@ export function SubmissionDetailsDialog({
                       <Phone className="h-4 w-4 text-muted-foreground" />
                       <div>
                         <p className="text-xs text-muted-foreground">Phone</p>
-                        <p className="text-sm font-medium">{submission.createdByUser.phone_number}</p>
+                        <p className="text-sm font-medium">
+                          {submission.createdByUser.phone_number}
+                        </p>
                       </div>
                     </div>
                   )}
@@ -148,7 +166,9 @@ export function SubmissionDetailsDialog({
                   <DollarSign className="h-4 w-4 text-muted-foreground" />
                   <div>
                     <p className="text-xs text-muted-foreground">Price</p>
-                    <p className="text-sm font-medium">${Number(submission.price).toLocaleString()}</p>
+                    <p className="text-sm font-medium">
+                      ${Number(submission.price).toLocaleString()}
+                    </p>
                   </div>
                 </div>
                 <div className="flex items-center gap-2">
@@ -162,15 +182,21 @@ export function SubmissionDetailsDialog({
                   <Tag className="h-4 w-4 text-muted-foreground" />
                   <div>
                     <p className="text-xs text-muted-foreground">Type</p>
-                    <p className="text-sm font-medium">{submission.productType.replace('_', ' ')}</p>
+                    <p className="text-sm font-medium">
+                      {submission.productType.replace("_", " ")}
+                    </p>
                   </div>
                 </div>
                 {submission.machineType && (
                   <div className="flex items-center gap-2">
                     <Settings className="h-4 w-4 text-muted-foreground" />
                     <div>
-                      <p className="text-xs text-muted-foreground">Machine Type</p>
-                      <p className="text-sm font-medium">{submission.machineType.replace('_', ' ')}</p>
+                      <p className="text-xs text-muted-foreground">
+                        Machine Type
+                      </p>
+                      <p className="text-sm font-medium">
+                        {submission.machineType.replace("_", " ")}
+                      </p>
                     </div>
                   </div>
                 )}
@@ -179,7 +205,9 @@ export function SubmissionDetailsDialog({
                     <Tag className="h-4 w-4 text-muted-foreground" />
                     <div>
                       <p className="text-xs text-muted-foreground">Category</p>
-                      <p className="text-sm font-medium">{submission.category.name}</p>
+                      <p className="text-sm font-medium">
+                        {submission.category.name}
+                      </p>
                     </div>
                   </div>
                 )}
@@ -187,14 +215,18 @@ export function SubmissionDetailsDialog({
                   <Calendar className="h-4 w-4 text-muted-foreground" />
                   <div>
                     <p className="text-xs text-muted-foreground">Submitted</p>
-                    <p className="text-sm font-medium">{formatDate(submission.createdAt)}</p>
+                    <p className="text-sm font-medium">
+                      {formatDate(submission.createdAt)}
+                    </p>
                   </div>
                 </div>
               </div>
             </div>
 
             {/* Manufacturer Details */}
-            {(submission.manufacturer || submission.model || submission.year) && (
+            {(submission.manufacturer ||
+              submission.model ||
+              submission.year) && (
               <>
                 <Separator />
                 <div className="space-y-3">
@@ -205,14 +237,20 @@ export function SubmissionDetailsDialog({
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                     {submission.manufacturer && (
                       <div>
-                        <p className="text-xs text-muted-foreground">Manufacturer</p>
-                        <p className="text-sm font-medium">{submission.manufacturer}</p>
+                        <p className="text-xs text-muted-foreground">
+                          Manufacturer
+                        </p>
+                        <p className="text-sm font-medium">
+                          {submission.manufacturer}
+                        </p>
                       </div>
                     )}
                     {submission.model && (
                       <div>
                         <p className="text-xs text-muted-foreground">Model</p>
-                        <p className="text-sm font-medium">{submission.model}</p>
+                        <p className="text-sm font-medium">
+                          {submission.model}
+                        </p>
                       </div>
                     )}
                     {submission.year && (
@@ -265,9 +303,14 @@ export function SubmissionDetailsDialog({
                   </div>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                     {Object.entries(parsedSpecs).map(([key, value]) => (
-                      <div key={key} className="flex justify-between p-3 bg-muted/30 rounded-lg">
+                      <div
+                        key={key}
+                        className="flex justify-between p-3 bg-muted/30 rounded-lg"
+                      >
                         <span className="text-sm font-medium">{key}</span>
-                        <span className="text-sm text-muted-foreground">{String(value)}</span>
+                        <span className="text-sm text-muted-foreground">
+                          {String(value)}
+                        </span>
                       </div>
                     ))}
                   </div>
@@ -286,7 +329,9 @@ export function SubmissionDetailsDialog({
               {/* Thumbnail */}
               {submission.imagesThumbnail && (
                 <div className="space-y-2">
-                  <h4 className="text-sm font-medium text-muted-foreground">Thumbnail</h4>
+                  <h4 className="text-sm font-medium text-muted-foreground">
+                    Thumbnail
+                  </h4>
                   <Image
                     width={200}
                     height={150}
@@ -300,7 +345,9 @@ export function SubmissionDetailsDialog({
               {/* Gallery Images */}
               {submission.images && submission.images.length > 0 && (
                 <div className="space-y-2">
-                  <h4 className="text-sm font-medium text-muted-foreground">Gallery Images ({submission.images.length})</h4>
+                  <h4 className="text-sm font-medium text-muted-foreground">
+                    Gallery Images ({submission.images.length})
+                  </h4>
                   <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
                     {submission.images.map((image, index) => (
                       <Image
@@ -321,7 +368,9 @@ export function SubmissionDetailsDialog({
                 <div className="space-y-2">
                   <div className="flex items-center gap-2">
                     <Video className="h-4 w-4 text-muted-foreground" />
-                    <h4 className="text-sm font-medium text-muted-foreground">Product Video</h4>
+                    <h4 className="text-sm font-medium text-muted-foreground">
+                      Product Video
+                    </h4>
                   </div>
                   <video
                     src={submission.videoUrl}
@@ -337,13 +386,19 @@ export function SubmissionDetailsDialog({
                 <div className="space-y-2">
                   <div className="flex items-center gap-2">
                     <FileIcon className="h-4 w-4 text-muted-foreground" />
-                    <h4 className="text-sm font-medium text-muted-foreground">Specification Sheet</h4>
+                    <h4 className="text-sm font-medium text-muted-foreground">
+                      Specification Sheet
+                    </h4>
                   </div>
                   <div className="flex items-center gap-3 p-3 border rounded-lg">
                     <FileIcon className="h-8 w-8 text-red-500" />
                     <div className="flex-1">
-                      <p className="text-sm font-medium">Specification Document</p>
-                      <p className="text-xs text-muted-foreground">PDF Document</p>
+                      <p className="text-sm font-medium">
+                        Specification Document
+                      </p>
+                      <p className="text-xs text-muted-foreground">
+                        PDF Document
+                      </p>
                     </div>
                     <a
                       href={submission.pdfUrl}

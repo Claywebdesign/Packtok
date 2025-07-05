@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
@@ -43,8 +43,13 @@ export function ProductSubmissionForm() {
   const [uploadedImages, setUploadedImages] = useState<File[]>([]);
   const [imagePreviews, setImagePreviews] = useState<string[]>([]);
   const [thumbnail, setThumbnail] = useState<File | null>(null);
+  const [thumbnailPreview, setThumbnailPreview] = useState<string | null>(null);
   const [video, setVideo] = useState<File | null>(null);
+  const [videoPreview, setVideoPreview] = useState<string | null>(null);
   const [videoThumbnail, setVideoThumbnail] = useState<File | null>(null);
+  const [videoThumbnailPreview, setVideoThumbnailPreview] = useState<
+    string | null
+  >(null);
   const [pdf, setPdf] = useState<File | null>(null);
   const [specifications, setSpecifications] = useState<
     { key: string; value: string }[]
@@ -52,9 +57,21 @@ export function ProductSubmissionForm() {
   const [currentStep, setCurrentStep] = useState<"details" | "address">(
     "details"
   );
+  const [selectedProductType, setSelectedProductType] = useState<string>("MACHINERY");
 
   const { data: categories } = useCategories();
   const submitProduct = useSubmitProduct();
+
+  // Cleanup object URLs on component unmount
+  useEffect(() => {
+    return () => {
+      // Cleanup all object URLs when component unmounts
+      imagePreviews.forEach((url) => URL.revokeObjectURL(url));
+      if (thumbnailPreview) URL.revokeObjectURL(thumbnailPreview);
+      if (videoPreview) URL.revokeObjectURL(videoPreview);
+      if (videoThumbnailPreview) URL.revokeObjectURL(videoThumbnailPreview);
+    };
+  }, [imagePreviews, thumbnailPreview, videoPreview, videoThumbnailPreview]);
 
   const {
     register,
@@ -93,6 +110,11 @@ export function ProductSubmissionForm() {
   };
 
   const removeImage = (index: number) => {
+    // Revoke the object URL to prevent memory leak
+    if (imagePreviews[index]) {
+      URL.revokeObjectURL(imagePreviews[index]);
+    }
+
     const updatedImages = uploadedImages.filter((_, i) => i !== index);
     setUploadedImages(updatedImages);
     setValue("images", updatedImages);
@@ -107,7 +129,13 @@ export function ProductSubmissionForm() {
   ) => {
     const file = event.target.files?.[0];
     if (file) {
+      // Revoke previous thumbnail preview URL
+      if (thumbnailPreview) {
+        URL.revokeObjectURL(thumbnailPreview);
+      }
+
       setThumbnail(file);
+      setThumbnailPreview(URL.createObjectURL(file));
       setValue("thumbnail", file);
     }
   };
@@ -115,7 +143,13 @@ export function ProductSubmissionForm() {
   const handleVideoUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (file) {
+      // Revoke previous video preview URL
+      if (videoPreview) {
+        URL.revokeObjectURL(videoPreview);
+      }
+
       setVideo(file);
+      setVideoPreview(URL.createObjectURL(file));
       setValue("video", file);
     }
   };
@@ -125,7 +159,13 @@ export function ProductSubmissionForm() {
   ) => {
     const file = event.target.files?.[0];
     if (file) {
+      // Revoke previous video thumbnail preview URL
+      if (videoThumbnailPreview) {
+        URL.revokeObjectURL(videoThumbnailPreview);
+      }
+
       setVideoThumbnail(file);
+      setVideoThumbnailPreview(URL.createObjectURL(file));
       setValue("videoThumbnail", file);
     }
   };
@@ -169,6 +209,7 @@ export function ProductSubmissionForm() {
         productType: data.productType,
         condition: data.condition,
         categoryName: data.categoryName,
+        machineType: data.machineType, // Include machine type if selected
         manufacturer: data.manufacturer,
         model: data.model,
         year: data.year,
@@ -197,12 +238,21 @@ export function ProductSubmissionForm() {
 
       await submitProduct.mutateAsync(submissionData);
 
+      // Cleanup object URLs before reset
+      imagePreviews.forEach((url) => URL.revokeObjectURL(url));
+      if (thumbnailPreview) URL.revokeObjectURL(thumbnailPreview);
+      if (videoPreview) URL.revokeObjectURL(videoPreview);
+      if (videoThumbnailPreview) URL.revokeObjectURL(videoThumbnailPreview);
+
       // Reset form
       setUploadedImages([]);
       setImagePreviews([]);
       setThumbnail(null);
+      setThumbnailPreview(null);
       setVideo(null);
+      setVideoPreview(null);
       setVideoThumbnail(null);
+      setVideoThumbnailPreview(null);
       setPdf(null);
       setSpecifications([{ key: "", value: "" }]);
       setCurrentStep("details");
@@ -302,7 +352,8 @@ export function ProductSubmissionForm() {
                   <div>
                     <Label htmlFor="productType">Product Type</Label>
                     <Select
-                      onValueChange={(value) =>
+                      onValueChange={(value) => {
+                        setSelectedProductType(value);
                         setValue(
                           "productType",
                           value as
@@ -310,8 +361,12 @@ export function ProductSubmissionForm() {
                             | "SPARE_PARTS"
                             | "CONSUMABLES"
                             | "RAW_MATERIALS"
-                        )
-                      }
+                        );
+                        // Reset machineType when productType changes
+                        if (value !== "MACHINERY") {
+                          setValue("machineType", undefined);
+                        }
+                      }}
                       defaultValue="MACHINERY"
                     >
                       <SelectTrigger>
@@ -332,6 +387,33 @@ export function ProductSubmissionForm() {
                       </p>
                     )}
                   </div>
+
+                  {/* Machine Type - Only show for MACHINERY products */}
+                  {selectedProductType === "MACHINERY" && (
+                    <div>
+                      <Label htmlFor="machineType">Machine Type (Optional)</Label>
+                      <Select
+                        onValueChange={(value) =>
+                          setValue("machineType", value as "MONO_CARTON" | "MASTER_CARTON" | "BOTH" | "OTHER")
+                        }
+                      >
+                        <SelectTrigger>
+                          <SelectValue placeholder="Select machine type" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="MONO_CARTON">Mono Carton</SelectItem>
+                          <SelectItem value="MASTER_CARTON">Master Carton</SelectItem>
+                          <SelectItem value="BOTH">Both</SelectItem>
+                          <SelectItem value="OTHER">Other</SelectItem>
+                        </SelectContent>
+                      </Select>
+                      {errors.machineType && (
+                        <p className="text-red-500 text-sm mt-1">
+                          {errors.machineType.message}
+                        </p>
+                      )}
+                    </div>
+                  )}
 
                   <div>
                     <Label htmlFor="condition">Condition</Label>
@@ -514,7 +596,10 @@ export function ProductSubmissionForm() {
                             <Image
                               width={200}
                               height={200}
-                              src={URL.createObjectURL(thumbnail)}
+                              src={
+                                thumbnailPreview ||
+                                URL.createObjectURL(thumbnail)
+                              }
                               alt="Thumbnail preview"
                               className="w-full h-full object-cover"
                             />
@@ -523,7 +608,13 @@ export function ProductSubmissionForm() {
                             type="button"
                             variant="destructive"
                             size="sm"
-                            onClick={() => setThumbnail(null)}
+                            onClick={() => {
+                              if (thumbnailPreview) {
+                                URL.revokeObjectURL(thumbnailPreview);
+                              }
+                              setThumbnail(null);
+                              setThumbnailPreview(null);
+                            }}
                             className="absolute -top-2 -right-2 w-8 h-8 rounded-full p-0 shadow-lg hover:scale-110 transition-transform"
                           >
                             <X className="h-4 w-4" />
@@ -617,7 +708,9 @@ export function ProductSubmissionForm() {
                             <div className="relative group">
                               <div className="w-32 h-20 rounded-lg overflow-hidden bg-gray-100 shadow-md border-2 border-white">
                                 <video
-                                  src={URL.createObjectURL(video)}
+                                  src={
+                                    videoPreview || URL.createObjectURL(video)
+                                  }
                                   className="w-full h-full object-cover"
                                   muted
                                 />
@@ -626,7 +719,13 @@ export function ProductSubmissionForm() {
                                 type="button"
                                 variant="destructive"
                                 size="sm"
-                                onClick={() => setVideo(null)}
+                                onClick={() => {
+                                  if (videoPreview) {
+                                    URL.revokeObjectURL(videoPreview);
+                                  }
+                                  setVideo(null);
+                                  setVideoPreview(null);
+                                }}
                                 className="absolute -top-2 -right-2 w-7 h-7 rounded-full p-0 shadow-lg hover:scale-110 transition-transform"
                               >
                                 <X className="h-3 w-3" />
@@ -676,7 +775,10 @@ export function ProductSubmissionForm() {
                                 <Image
                                   width={96}
                                   height={64}
-                                  src={URL.createObjectURL(videoThumbnail)}
+                                  src={
+                                    videoThumbnailPreview ||
+                                    URL.createObjectURL(videoThumbnail)
+                                  }
                                   alt="Video thumbnail preview"
                                   className="w-full h-full object-cover"
                                 />
@@ -685,7 +787,13 @@ export function ProductSubmissionForm() {
                                 type="button"
                                 variant="destructive"
                                 size="sm"
-                                onClick={() => setVideoThumbnail(null)}
+                                onClick={() => {
+                                  if (videoThumbnailPreview) {
+                                    URL.revokeObjectURL(videoThumbnailPreview);
+                                  }
+                                  setVideoThumbnail(null);
+                                  setVideoThumbnailPreview(null);
+                                }}
                                 className="absolute -top-2 -right-2 w-7 h-7 rounded-full p-0 shadow-lg hover:scale-110 transition-transform"
                               >
                                 <X className="h-3 w-3" />

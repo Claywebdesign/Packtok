@@ -26,6 +26,7 @@ export const productSubmissionSchema = z.object({
   categoryName: z.string().min(1, {
     message: "Category is required.",
   }),
+  machineType: z.enum(["MONO_CARTON", "MASTER_CARTON", "BOTH", "OTHER"]).optional(),
   
   // Optional fields
   manufacturer: z.string().optional(),
