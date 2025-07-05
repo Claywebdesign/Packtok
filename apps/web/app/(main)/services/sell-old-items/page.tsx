@@ -8,7 +8,7 @@ export default function SellYourProductPage() {
       <main>
         <div className="w-[85%] mx-auto">
           <PageHeader
-            title="Sell Your Product"
+            title="Sell Your Items"
             subtitle="List your equipment and machinery for sale on our marketplace."
             image="/marketplace1.png"
           />

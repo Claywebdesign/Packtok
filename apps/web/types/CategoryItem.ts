@@ -6,4 +6,5 @@ export type CategoryItem = {
   subtitle: string;
   description: string;
   image: StaticImageData | string;
+  isServiceCard?: boolean;
 };

@@ -10,10 +10,15 @@ export default function CategoryItem({
   subtitle,
   description,
   image,
+  isServiceCard,
 }: CategoryItemType) {
   const router = useRouter();
 
   const handleClick = () => {
+    if (isServiceCard) {
+      router.push(`/services/${slug}`);
+      return;
+    }
     router.push(`/marketplace/${slug}`);
   };
 
