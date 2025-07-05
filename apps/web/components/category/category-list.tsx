@@ -16,6 +16,7 @@ export default function CategoryList({
           subtitle={category.subtitle}
           description={category.description}
           image={category.image}
+          isServiceCard={category.isServiceCard}
         />
       ))}
     </div>
