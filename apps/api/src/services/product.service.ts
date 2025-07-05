@@ -189,10 +189,13 @@ export const rejectSubmission = async (productId: string) => {
 };
 
 export type PublicProductQueryOptions = {
-  categoryId?: string;
-  condition?: string; // ProductCondition enum name
-  machineType?: string; // MachineType enum name
-  productType?: string; // optional filter
+  categoryId?: string | string[]; // Support multiple categories
+  condition?: string | string[]; // Support multiple conditions
+  machineType?: string | string[]; // Support multiple machine types
+  productType?: string | string[]; // Support multiple product types
+  priceMin?: number; // Minimum price filter
+  priceMax?: number; // Maximum price filter
+  searchTerm?: string; // Text search across products
   page?: number;
   limit?: number;
 };
@@ -205,10 +208,63 @@ export const getPublicProducts = async (options: PublicProductQueryOptions) => {
   const where: Prisma.MarketplaceProductWhereInput = {
     ...publicVisibilityWhere,
   };
-  if (options.categoryId) where.categoryId = options.categoryId;
-  if (options.condition) (where as any).condition = options.condition;
-  if (options.machineType) (where as any).machineType = options.machineType;
-  if (options.productType) (where as any).productType = options.productType;
+  
+  // Handle multiple category IDs
+  if (options.categoryId) {
+    if (Array.isArray(options.categoryId)) {
+      where.categoryId = { in: options.categoryId };
+    } else {
+      where.categoryId = options.categoryId;
+    }
+  }
+  
+  // Handle multiple conditions
+  if (options.condition) {
+    if (Array.isArray(options.condition)) {
+      (where as any).condition = { in: options.condition };
+    } else {
+      (where as any).condition = options.condition;
+    }
+  }
+  
+  // Handle multiple machine types
+  if (options.machineType) {
+    if (Array.isArray(options.machineType)) {
+      (where as any).machineType = { in: options.machineType };
+    } else {
+      (where as any).machineType = options.machineType;
+    }
+  }
+  
+  // Handle multiple product types
+  if (options.productType) {
+    if (Array.isArray(options.productType)) {
+      (where as any).productType = { in: options.productType };
+    } else {
+      (where as any).productType = options.productType;
+    }
+  }
+  
+  // Handle price range filtering
+  if (options.priceMin !== undefined || options.priceMax !== undefined) {
+    where.price = {};
+    if (options.priceMin !== undefined) {
+      (where.price as any).gte = options.priceMin;
+    }
+    if (options.priceMax !== undefined) {
+      (where.price as any).lte = options.priceMax;
+    }
+  }
+  
+  // Handle search term
+  if (options.searchTerm) {
+    where.OR = [
+      { title: { contains: options.searchTerm, mode: 'insensitive' } },
+      { description: { contains: options.searchTerm, mode: 'insensitive' } },
+      { manufacturer: { contains: options.searchTerm, mode: 'insensitive' } },
+      { model: { contains: options.searchTerm, mode: 'insensitive' } },
+    ];
+  }
 
   const [items, total] = await Promise.all([
     prisma.marketplaceProduct.findMany({

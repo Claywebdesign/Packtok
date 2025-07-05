@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { CategoryItem } from "@/types";
 import { useMarketplaceFilters } from "@/hooks";
 import CategorySidebar from "./category-sidebar";
@@ -9,17 +9,30 @@ import MobileFilterOverlay from "./mobile-filter-overlay";
 
 interface CategoryContentProps {
   category: CategoryItem;
+  initialSearchTerm?: string;
 }
 
-export default function CategoryContent({ category }: CategoryContentProps) {
-  const { filters, updateFilter, resetFilters, hasActiveFilters } =
+export default function CategoryContent({ category, initialSearchTerm }: CategoryContentProps) {
+  const { filters, updateFilter, resetFilters, hasActiveFilters, setSearchTerm } =
     useMarketplaceFilters();
   const [isMobileFilterOpen, setIsMobileFilterOpen] = useState(false);
 
+  // Set initial search term from URL if provided
+  useEffect(() => {
+    if (initialSearchTerm && initialSearchTerm !== filters.searchTerm) {
+      setSearchTerm(initialSearchTerm);
+    }
+  }, [initialSearchTerm, filters.searchTerm, setSearchTerm]);
+
   // Count active filters
   const activeFilterCount =
+    filters.categories.length +
     filters.machineType.length +
-    (filters.priceRange.min || filters.priceRange.max ? 1 : 0);
+    filters.conditions.length +
+    filters.productTypes.length +
+    filters.priceRanges.length +
+    (filters.searchTerm ? 1 : 0) +
+    Object.values(filters.customFilters).reduce((acc, values) => acc + values.length, 0);
 
   return (
     <div className="py-8">
@@ -32,6 +45,7 @@ export default function CategoryContent({ category }: CategoryContentProps) {
             onFilterChange={updateFilter}
             onResetFilters={resetFilters}
             hasActiveFilters={hasActiveFilters}
+            onSearchChange={setSearchTerm}
           />
         </div>
 
@@ -56,6 +70,7 @@ export default function CategoryContent({ category }: CategoryContentProps) {
         onFilterChange={updateFilter}
         onResetFilters={resetFilters}
         hasActiveFilters={hasActiveFilters}
+        onSearchChange={setSearchTerm}
       />
     </div>
   );

@@ -19,6 +19,7 @@ interface MobileFilterOverlayProps {
   ) => void;
   onResetFilters: () => void;
   hasActiveFilters: boolean;
+  onSearchChange?: (searchTerm: string) => void;
 }
 
 export default function MobileFilterOverlay({
@@ -29,6 +30,7 @@ export default function MobileFilterOverlay({
   onFilterChange,
   onResetFilters,
   hasActiveFilters,
+  onSearchChange,
 }: MobileFilterOverlayProps) {
   // Prevent body scroll when overlay is open
   useEffect(() => {
@@ -98,6 +100,7 @@ export default function MobileFilterOverlay({
             onFilterChange={onFilterChange}
             onResetFilters={onResetFilters}
             hasActiveFilters={hasActiveFilters}
+            onSearchChange={onSearchChange}
             isMobileOverlay
           />
         </div>

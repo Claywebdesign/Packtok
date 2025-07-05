@@ -1,21 +1,32 @@
 "use client";
 
 import { useState, useCallback } from "react";
-import { MachineType } from "@/types/marketplace";
+import { MachineType, ProductCondition, ProductType } from "@/types/marketplace";
+
+export interface PriceRange {
+  min: string;
+  max: string;
+  label: string;
+}
 
 export interface MarketplaceFilters {
   categories: string[];
   machineType: MachineType[];
-  priceRange: {
-    min: string;
-    max: string;
-  };
+  conditions: ProductCondition[];
+  productTypes: ProductType[];
+  priceRanges: PriceRange[];
+  searchTerm: string;
+  customFilters: Record<string, string[]>;
 }
 
 const initialFilters: MarketplaceFilters = {
   categories: [],
   machineType: [],
-  priceRange: { min: "", max: "" },
+  conditions: [],
+  productTypes: [],
+  priceRanges: [],
+  searchTerm: "",
+  customFilters: {},
 };
 
 export function useMarketplaceFilters() {
@@ -24,7 +35,7 @@ export function useMarketplaceFilters() {
   const updateFilter = useCallback(
     (filterType: keyof MarketplaceFilters, value: string, checked: boolean) => {
       setFilters((prev) => {
-        if (filterType === "priceRange") {
+        if (filterType === "priceRanges") {
           const PRICE_RANGES = [
             { min: "0", max: "50000", label: "0 - 50k Lakhs" },
             { min: "50000", max: "100000", label: "50k - 1L Lakhs" },
@@ -35,17 +46,53 @@ export function useMarketplaceFilters() {
 
           const range = PRICE_RANGES.find((r) => r.label === value);
           if (range) {
-            return {
-              ...prev,
-              priceRange: checked
-                ? { min: range.min, max: range.max }
-                : { min: "", max: "" },
-            };
+            const currentRanges = prev.priceRanges;
+            if (checked) {
+              return {
+                ...prev,
+                priceRanges: [...currentRanges, range],
+              };
+            } else {
+              return {
+                ...prev,
+                priceRanges: currentRanges.filter((r) => r.label !== value),
+              };
+            }
           }
           return prev;
         }
 
-        const currentValues = prev[filterType] as (MachineType | string)[];
+        if (filterType === "searchTerm") {
+          return {
+            ...prev,
+            searchTerm: value,
+          };
+        }
+
+        if (filterType === "customFilters") {
+          // Handle custom filters with nested structure
+          const [key, filterValue] = value.split(':');
+          const currentCustom = prev.customFilters[key] || [];
+          if (checked) {
+            return {
+              ...prev,
+              customFilters: {
+                ...prev.customFilters,
+                [key]: [...currentCustom, filterValue],
+              },
+            };
+          } else {
+            return {
+              ...prev,
+              customFilters: {
+                ...prev.customFilters,
+                [key]: currentCustom.filter((v) => v !== filterValue),
+              },
+            };
+          }
+        }
+
+        const currentValues = prev[filterType] as any[];
         if (checked) {
           return {
             ...prev,
@@ -70,15 +117,28 @@ export function useMarketplaceFilters() {
     return (
       filters.categories.length > 0 ||
       filters.machineType.length > 0 ||
-      filters.priceRange.min !== "" ||
-      filters.priceRange.max !== ""
+      filters.conditions.length > 0 ||
+      filters.productTypes.length > 0 ||
+      filters.priceRanges.length > 0 ||
+      filters.searchTerm !== "" ||
+      Object.values(filters.customFilters).some(values => values.length > 0)
     );
   }, [filters]);
+
+  const setSearchTerm = useCallback((term: string) => {
+    setFilters(prev => ({ ...prev, searchTerm: term }));
+  }, []);
+
+  const updateCustomFilter = useCallback((key: string, value: string, checked: boolean) => {
+    updateFilter("customFilters", `${key}:${value}`, checked);
+  }, [updateFilter]);
 
   return {
     filters,
     updateFilter,
     resetFilters,
     hasActiveFilters: hasActiveFilters(),
+    setSearchTerm,
+    updateCustomFilter,
   };
 }
