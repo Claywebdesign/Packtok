@@ -84,7 +84,8 @@ model User {
   updatedAt      DateTime      @updatedAt
   name           String
   email          String        @unique
-  phone_number   String?
+  phone_number   String?       @unique  // Full E.164 number like +918800244925
+  country        String?       @default("IN")
   role           Role          @default(NORMAL_USER)
   otp            Otp?
   adminPermissions AdminPermission[]
@@ -92,9 +93,7 @@ model User {
   // --- Relations ---
   quoteRequests    QuoteRequest[]
   serviceInquiries ServiceInquiry[]
-
   createdProducts  MarketplaceProduct[] @relation("ProductsCreatedByUser")
-
 
   @@map("users")
 }

@@ -62,6 +62,18 @@ export default function AccountPage() {
                   readOnly
                   className="md:col-span-2"
                 />
+                <Input
+                  placeholder="Phone number"
+                  value={user.phone_number ?? "-"}
+                  readOnly
+                  className="md:col-span-2"
+                />
+                <Input
+                  placeholder="Country"
+                  value={user.country ?? "-"}
+                  readOnly
+                  className="md:col-span-2"
+                />
               </div>
             </div>
           </section>

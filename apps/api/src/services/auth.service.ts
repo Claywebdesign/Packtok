@@ -20,6 +20,7 @@ export const registerUser = async (userData: {
   name: string;
   email: string;
   phone_number?: string;
+  country?: string;
   password: string;
 }): Promise<User> => {
   const existingUser = await prisma.user.findUnique({
@@ -33,7 +34,7 @@ export const registerUser = async (userData: {
     email: userData.email,
     password: userData.password,
     phone: userData.phone_number,
-    user_metadata: { name: userData.name },
+    user_metadata: { name: userData.name, country: userData.country },
     email_confirm: false,
   });
 
@@ -47,6 +48,7 @@ export const registerUser = async (userData: {
       name: userData.name,
       email: userData.email,
       phone_number: userData.phone_number,
+      country: userData.country,
     },
   } as any);
 
@@ -96,6 +98,7 @@ export const loginUser = async (
         name: data.session.user.user_metadata?.name || "",
         email: data.session.user.email!,
         phone_number: data.session.user.phone,
+        country: (data.session.user.user_metadata as any)?.country,
       },
     } as any);
   }

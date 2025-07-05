@@ -8,6 +8,7 @@ export const createAdminUser = async (
     email: string;
     phone_number?: string;
     password: string;
+    country?: string;
   },
   permissions: Permission[]
 ): Promise<User> => {
@@ -25,6 +26,7 @@ export const createAdminUser = async (
     phone: adminData.phone_number,
     user_metadata: {
       name: adminData.name,
+      country: adminData.country,
     },
   });
 
@@ -39,6 +41,7 @@ export const createAdminUser = async (
       email: adminData.email,
       phone_number: adminData.phone_number,
       role: Role.ADMIN,
+      country: adminData.country,
     },
   });
 

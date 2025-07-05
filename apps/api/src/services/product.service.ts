@@ -103,7 +103,14 @@ export const listAllProductsForAdmin = async () => {
   return prisma.marketplaceProduct.findMany({
     include: {
       createdByUser: {
-        select: { id: true, name: true, email: true, role: true },
+        select: {
+          id: true,
+          name: true,
+          email: true,
+          role: true,
+          phone_number: true,
+          country: true,
+        },
       },
       category: true,
     },
@@ -115,7 +122,15 @@ export const getPendingSubmissions = async () => {
   return prisma.marketplaceProduct.findMany({
     where: { submissionStatus: UserSubmissionStatus.PENDING_APPROVAL },
     include: {
-      createdByUser: { select: { id: true, name: true, email: true } },
+      createdByUser: {
+        select: {
+          id: true,
+          name: true,
+          email: true,
+          phone_number: true,
+          country: true,
+        },
+      },
       category: true,
     },
     orderBy: { createdAt: "asc" },

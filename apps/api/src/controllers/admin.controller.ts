@@ -4,9 +4,9 @@ import { createAdminUser } from "../services/admin.service";
 import { ApiResponse } from "../utils/apiResponse";
 
 export const createAdmin = asyncHandler(async (req: Request, res: Response) => {
-  const { name, email, phone_number, password, permissions } = req.body;
+  const { name, email, phone_number, country, password, permissions } = req.body;
   const admin = await createAdminUser(
-    { name, email, phone_number, password },
+    { name, email, phone_number, country, password },
     permissions
   );
   res

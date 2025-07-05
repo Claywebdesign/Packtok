@@ -11,8 +11,14 @@ import { ApiResponse } from "../utils/apiResponse";
 import { asyncHandler } from "../utils/asyncHandler";
 
 export const signup = asyncHandler(async (req: Request, res: Response) => {
-  const { name, email, phone_number, password } = req.body;
-  const user = await registerUser({ name, email, phone_number, password });
+  const { name, email, phone_number, country, password } = req.body;
+  const user = await registerUser({
+    name,
+    email,
+    phone_number,
+    country,
+    password,
+  });
   res
     .status(201)
     .json(
