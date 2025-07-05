@@ -113,7 +113,9 @@ export function useUpdateProduct() {
     },
     onSuccess: (_, variables) => {
       queryClient.invalidateQueries({ queryKey: QK.products });
-      queryClient.invalidateQueries({ queryKey: [...QK.products, variables.productId] });
+      queryClient.invalidateQueries({
+        queryKey: [...QK.products, variables.productId],
+      });
     },
   });
 }

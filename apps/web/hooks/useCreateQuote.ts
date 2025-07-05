@@ -13,14 +13,15 @@ export function useCreateQuote() {
       const { data } = await api.post("/api/v1/quotes", payload);
       return data.data as QuoteRequest;
     },
-    onSuccess: (data) => {
+    onSuccess: (_data) => {
       toast.success("Quote request submitted successfully!");
       // Invalidate and refetch any related queries
       queryClient.invalidateQueries({ queryKey: ["quotes"] });
     },
-    onError: (error: any) => {
+    onError: (error: Error) => {
+      const axiosError = error as any;
       const message =
-        error?.response?.data?.message || "Failed to submit quote request";
+        axiosError?.response?.data?.message || "Failed to submit quote request";
       toast.error(message);
     },
   });

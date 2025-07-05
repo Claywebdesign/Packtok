@@ -15,7 +15,7 @@ export const productSchema = z.object({
     ["MACHINERY", "SPARE_PARTS", "CONSUMABLES", "RAW_MATERIALS"],
     {
       errorMap: () => ({ message: "Please select a valid product type" }),
-    }
+    },
   ),
   machineType: z
     .enum(["MONO_CARTON", "MASTER_CARTON", "BOTH", "OTHER"])

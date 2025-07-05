@@ -58,15 +58,15 @@ interface EditProductFormProps {
 export default function EditProductForm({ product }: EditProductFormProps) {
   const [uploadedImages, setUploadedImages] = useState<File[]>([]);
   const [existingImages, setExistingImages] = useState<string[]>(
-    product.images || []
+    product.images || [],
   );
   const [thumbnail, setThumbnail] = useState<File | null>(null);
   const [existingThumbnail, setExistingThumbnail] = useState<string | null>(
-    product.imagesThumbnail || null
+    product.imagesThumbnail || null,
   );
   const [video, setVideo] = useState<File | null>(null);
   const [existingVideo, setExistingVideo] = useState<string | null>(
-    product.videoUrl || null
+    product.videoUrl || null,
   );
   const [videoThumbnail, setVideoThumbnail] = useState<File | null>(null);
   const [existingVideoThumbnail, setExistingVideoThumbnail] = useState<
@@ -74,7 +74,7 @@ export default function EditProductForm({ product }: EditProductFormProps) {
   >(product.videoThumbnail || null);
   const [pdf, setPdf] = useState<File | null>(null);
   const [existingPdf, setExistingPdf] = useState<string | null>(
-    product.pdfUrl || null
+    product.pdfUrl || null,
   );
   const [specifications, setSpecifications] = useState<
     { key: string; value: string }[]
@@ -109,7 +109,7 @@ export default function EditProductForm({ product }: EditProductFormProps) {
   const openMediaModal = (
     fileOrUrl: File | string,
     type: "image" | "video",
-    name: string
+    name: string,
   ) => {
     const url =
       typeof fileOrUrl === "string" ? fileOrUrl : createPreviewUrl(fileOrUrl);
@@ -181,7 +181,7 @@ export default function EditProductForm({ product }: EditProductFormProps) {
       });
 
       const validSpecs = specifications.filter(
-        (spec) => spec.key.trim() && spec.value.trim()
+        (spec) => spec.key.trim() && spec.value.trim(),
       );
       if (validSpecs.length > 0) {
         const specsObj = validSpecs.reduce(
@@ -189,7 +189,7 @@ export default function EditProductForm({ product }: EditProductFormProps) {
             acc[spec.key] = spec.value;
             return acc;
           },
-          {} as Record<string, string>
+          {} as Record<string, string>,
         );
         formData.append("specifications", JSON.stringify(specsObj));
       }
@@ -239,7 +239,7 @@ export default function EditProductForm({ product }: EditProductFormProps) {
   };
 
   const handleThumbnailUpload = (
-    event: React.ChangeEvent<HTMLInputElement>
+    event: React.ChangeEvent<HTMLInputElement>,
   ) => {
     const file = event.target.files?.[0];
     if (file) {
@@ -257,7 +257,7 @@ export default function EditProductForm({ product }: EditProductFormProps) {
   };
 
   const handleVideoThumbnailUpload = (
-    event: React.ChangeEvent<HTMLInputElement>
+    event: React.ChangeEvent<HTMLInputElement>,
   ) => {
     const file = event.target.files?.[0];
     if (file) {
@@ -295,7 +295,7 @@ export default function EditProductForm({ product }: EditProductFormProps) {
   const updateSpecification = (
     index: number,
     field: "key" | "value",
-    value: string
+    value: string,
   ) => {
     const updated = [...specifications];
     updated[index][field] = value;
@@ -396,7 +396,7 @@ export default function EditProductForm({ product }: EditProductFormProps) {
                             openMediaModal(
                               thumbnail || existingThumbnail!,
                               "image",
-                              thumbnail ? thumbnail.name : "Current thumbnail"
+                              thumbnail ? thumbnail.name : "Current thumbnail",
                             )
                           }
                         />
@@ -431,7 +431,7 @@ export default function EditProductForm({ product }: EditProductFormProps) {
                           openMediaModal(
                             thumbnail || existingThumbnail!,
                             "image",
-                            thumbnail ? thumbnail.name : "Current thumbnail"
+                            thumbnail ? thumbnail.name : "Current thumbnail",
                           )
                         }
                         className="text-xs w-fit"
@@ -478,7 +478,7 @@ export default function EditProductForm({ product }: EditProductFormProps) {
                         openMediaModal(
                           imageUrl,
                           "image",
-                          `Gallery image ${index + 1}`
+                          `Gallery image ${index + 1}`,
                         )
                       }
                     />
@@ -555,7 +555,7 @@ export default function EditProductForm({ product }: EditProductFormProps) {
                             openMediaModal(
                               video || existingVideo!,
                               "video",
-                              video ? video.name : "Current video"
+                              video ? video.name : "Current video",
                             )
                           }
                         />
@@ -621,7 +621,7 @@ export default function EditProductForm({ product }: EditProductFormProps) {
                               "image",
                               videoThumbnail
                                 ? videoThumbnail.name
-                                : "Current video thumbnail"
+                                : "Current video thumbnail",
                             )
                           }
                         />
@@ -991,7 +991,7 @@ export default function EditProductForm({ product }: EditProductFormProps) {
                               {...field}
                               onChange={(e) =>
                                 field.onChange(
-                                  parseInt(e.target.value) || undefined
+                                  parseInt(e.target.value) || undefined,
                                 )
                               }
                             />
@@ -1024,7 +1024,7 @@ export default function EditProductForm({ product }: EditProductFormProps) {
                               updateSpecification(
                                 index,
                                 "value",
-                                e.target.value
+                                e.target.value,
                               )
                             }
                             className="flex-1"

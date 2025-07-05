@@ -27,8 +27,9 @@ export function useSignup() {
         `/auth/verify-otp?email=${encodeURIComponent(variables.email)}`
       );
     },
-    onError: (err: any) => {
-      const message = err?.response?.data?.message || "Signup failed";
+    onError: (err: Error) => {
+      const axiosError = err as any;
+      const message = axiosError?.response?.data?.message || "Signup failed";
       toast.error(message);
     },
   });

@@ -5,7 +5,6 @@ import {
   ChevronDown,
   ChevronUp,
   FileText,
-  Heart,
   Minus,
   Plus,
   Star,
@@ -26,7 +25,7 @@ interface ProductDetailsProps {
     videoUrl?: string;
     videoThumbnail?: string;
     pdfUrl?: string;
-    specifications: any;
+    specifications: Record<string, string | number>;
     condition: string;
     manufacturer?: string;
     model?: string;
@@ -68,13 +67,6 @@ export default function ProductDetails({ product }: ProductDetailsProps) {
       return;
     }
     setShowQuoteModal(true);
-  };
-
-  const formatPrice = (price: number) => {
-    return new Intl.NumberFormat("en-US", {
-      style: "currency",
-      currency: "USD",
-    }).format(price);
   };
 
   const specifications = product.specifications || {};
@@ -224,7 +216,7 @@ export default function ProductDetails({ product }: ProductDetailsProps) {
                 <div>
                   <h4 className="font-semibold mb-3">Packaging</h4>
                   <p className="text-sm text-gray-600 leading-relaxed font-normal">
-                    Width: 20 " Height: 1 ½ " Length: 21 ¼ "
+                    Width: 20 &quot; Height: 1 ½ &quot; Length: 21 ¼ &quot;
                     <br />
                     Weight: 7 lb 8 oz
                     <br />

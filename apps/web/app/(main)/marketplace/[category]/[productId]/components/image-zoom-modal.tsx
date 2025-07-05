@@ -1,7 +1,9 @@
 "use client";
 
 import { X, ZoomIn, ZoomOut, ChevronLeft, ChevronRight } from "lucide-react";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, useCallback } from "react";
+import React from "react";
+import Image from "next/image";
 
 interface MediaItem {
   type: "image" | "video";
@@ -49,6 +51,22 @@ export default function ImageZoomModal({
     };
   }, [isOpen, currentIndex]);
 
+  const navigatePrev = useCallback(() => {
+    if (activeIndex > 0) {
+      setActiveIndex(activeIndex - 1);
+      setScale(1);
+      setPosition({ x: 0, y: 0 });
+    }
+  }, [activeIndex]);
+
+  const navigateNext = useCallback(() => {
+    if (activeIndex < mediaItems.length - 1) {
+      setActiveIndex(activeIndex + 1);
+      setScale(1);
+      setPosition({ x: 0, y: 0 });
+    }
+  }, [activeIndex, mediaItems.length]);
+
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === "Escape") {
@@ -64,23 +82,7 @@ export default function ImageZoomModal({
       document.addEventListener("keydown", handleKeyDown);
       return () => document.removeEventListener("keydown", handleKeyDown);
     }
-  }, [isOpen, onClose, canNavigate, activeIndex]);
-
-  const navigatePrev = () => {
-    if (activeIndex > 0) {
-      setActiveIndex(activeIndex - 1);
-      setScale(1);
-      setPosition({ x: 0, y: 0 });
-    }
-  };
-
-  const navigateNext = () => {
-    if (activeIndex < mediaItems.length - 1) {
-      setActiveIndex(activeIndex + 1);
-      setScale(1);
-      setPosition({ x: 0, y: 0 });
-    }
-  };
+  }, [isOpen, onClose, canNavigate, navigateNext, navigatePrev]);
 
   const handleZoomIn = () => {
     setScale((prev) => Math.min(prev + 0.5, 4));
@@ -102,12 +104,12 @@ export default function ImageZoomModal({
     if (isDragging && scale > 1) {
       const deltaX = e.clientX - lastMousePos.x;
       const deltaY = e.clientY - lastMousePos.y;
-      
+
       setPosition((prev) => ({
         x: prev.x + deltaX,
         y: prev.y + deltaY,
       }));
-      
+
       setLastMousePos({ x: e.clientX, y: e.clientY });
     }
   };
@@ -131,7 +133,7 @@ export default function ImageZoomModal({
   if (!isOpen || !currentItem) return null;
 
   return (
-    <div 
+    <div
       className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-90"
       onClick={handleBackdropClick}
     >
@@ -187,14 +189,18 @@ export default function ImageZoomModal({
         {/* Scale indicator */}
         {currentItem.type === "image" && (
           <div className="absolute bottom-4 left-4 z-10 px-3 py-1 bg-black bg-opacity-50 rounded-full">
-            <span className="text-white text-sm">{Math.round(scale * 100)}%</span>
+            <span className="text-white text-sm">
+              {Math.round(scale * 100)}%
+            </span>
           </div>
         )}
 
         {/* Image counter */}
         {canNavigate && (
           <div className="absolute bottom-4 right-4 z-10 px-3 py-1 bg-black bg-opacity-50 rounded-full">
-            <span className="text-white text-sm">{activeIndex + 1} / {mediaItems.length}</span>
+            <span className="text-white text-sm">
+              {activeIndex + 1} / {mediaItems.length}
+            </span>
           </div>
         )}
 
@@ -202,26 +208,36 @@ export default function ImageZoomModal({
         <div
           ref={imageRef}
           className={`relative w-full h-full flex items-center justify-center overflow-hidden ${
-            currentItem.type === "image" && scale > 1 ? "cursor-move" : "cursor-zoom-in"
+            currentItem.type === "image" && scale > 1
+              ? "cursor-move"
+              : "cursor-zoom-in"
           }`}
-          onMouseDown={currentItem.type === "image" ? handleMouseDown : undefined}
-          onMouseMove={currentItem.type === "image" ? handleMouseMove : undefined}
+          onMouseDown={
+            currentItem.type === "image" ? handleMouseDown : undefined
+          }
+          onMouseMove={
+            currentItem.type === "image" ? handleMouseMove : undefined
+          }
           onMouseUp={currentItem.type === "image" ? handleMouseUp : undefined}
-          onMouseLeave={currentItem.type === "image" ? handleMouseUp : undefined}
+          onMouseLeave={
+            currentItem.type === "image" ? handleMouseUp : undefined
+          }
           onWheel={currentItem.type === "image" ? handleWheel : undefined}
         >
           {currentItem.type === "image" ? (
             <div
-              className="transition-transform duration-200 ease-out"
+              className="relative transition-transform duration-200 ease-out"
               style={{
                 transform: `scale(${scale}) translate(${position.x / scale}px, ${position.y / scale}px)`,
+                width: "90vw",
+                height: "90vh",
               }}
             >
-              <img
+              <Image
                 src={currentItem.src}
                 alt={`${productTitle} - Image ${activeIndex + 1}`}
-                className="max-w-full max-h-full object-contain"
-                style={{ maxWidth: "90vw", maxHeight: "90vh" }}
+                fill
+                className="object-contain"
                 draggable={false}
               />
             </div>

@@ -64,11 +64,27 @@ const selectedCustomer = {
 };
 
 export default function CustomersPage() {
-  const handleEdit = (customer: any) => {
+  const handleEdit = (customer: {
+    id: string;
+    name: string;
+    email: string;
+    phone_number: string;
+    gender: "Male" | "Female";
+    role: "NORMAL_USER" | "VENDOR" | "ADMIN" | "SUPER_ADMIN";
+    avatar?: string;
+  }) => {
     console.log("Edit customer:", customer);
   };
 
-  const handleDelete = (customer: any) => {
+  const handleDelete = (customer: {
+    id: string;
+    name: string;
+    email: string;
+    phone_number: string;
+    gender: "Male" | "Female";
+    role: "NORMAL_USER" | "VENDOR" | "ADMIN" | "SUPER_ADMIN";
+    avatar?: string;
+  }) => {
     console.log("Delete customer:", customer);
   };
 

@@ -128,7 +128,7 @@ export default function AddProductForm() {
       condition: "NEW",
       manufacturer: "",
       model: "",
-      categoryName: "",
+      category: "",
       specifications: "",
     },
   });
@@ -144,7 +144,7 @@ export default function AddProductForm() {
       });
 
       const validSpecs = specifications.filter(
-        (spec) => spec.key.trim() && spec.value.trim()
+        (spec) => spec.key.trim() && spec.value.trim(),
       );
       if (validSpecs.length > 0) {
         const specsObj = validSpecs.reduce(
@@ -152,7 +152,7 @@ export default function AddProductForm() {
             acc[spec.key] = spec.value;
             return acc;
           },
-          {} as Record<string, string>
+          {} as Record<string, string>,
         );
         formData.append("specifications", JSON.stringify(specsObj));
       }
@@ -206,7 +206,7 @@ export default function AddProductForm() {
   };
 
   const handleThumbnailUpload = (
-    event: React.ChangeEvent<HTMLInputElement>
+    event: React.ChangeEvent<HTMLInputElement>,
   ) => {
     const file = event.target.files?.[0];
     if (file) {
@@ -222,7 +222,7 @@ export default function AddProductForm() {
   };
 
   const handleVideoThumbnailUpload = (
-    event: React.ChangeEvent<HTMLInputElement>
+    event: React.ChangeEvent<HTMLInputElement>,
   ) => {
     const file = event.target.files?.[0];
     if (file) {
@@ -254,7 +254,7 @@ export default function AddProductForm() {
   const updateSpecification = (
     index: number,
     field: "key" | "value",
-    value: string
+    value: string,
   ) => {
     const updated = [...specifications];
     updated[index][field] = value;
@@ -271,7 +271,7 @@ export default function AddProductForm() {
   const handleCreateCategory = async (categoryName: string) => {
     try {
       await createCategoryMutation.mutateAsync({ name: categoryName });
-      form.setValue("categoryName", categoryName);
+      form.setValue("category", categoryName);
       toast.success(`Category "${categoryName}" created successfully`);
     } catch (error) {
       toast.error("Failed to create category");
@@ -818,7 +818,7 @@ export default function AddProductForm() {
 
                   <FormField
                     control={form.control}
-                    name="categoryName"
+                    name="category"
                     render={({ field }) => (
                       <FormItem>
                         <FormLabel>Category</FormLabel>
@@ -917,7 +917,7 @@ export default function AddProductForm() {
                               {...field}
                               onChange={(e) =>
                                 field.onChange(
-                                  parseInt(e.target.value) || undefined
+                                  parseInt(e.target.value) || undefined,
                                 )
                               }
                             />
@@ -950,7 +950,7 @@ export default function AddProductForm() {
                               updateSpecification(
                                 index,
                                 "value",
-                                e.target.value
+                                e.target.value,
                               )
                             }
                             className="flex-1"

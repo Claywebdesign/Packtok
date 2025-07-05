@@ -2,7 +2,8 @@
 
 import { Button } from "@packtok/ui/components/button";
 import { X, Download, ZoomIn, ZoomOut, RotateCw } from "lucide-react";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
+import Image from "next/image";
 
 interface MediaPreviewModalProps {
   isOpen: boolean;
@@ -24,37 +25,40 @@ export default function MediaPreviewModal({
 
   useEffect(() => {
     if (isOpen) {
-      document.body.style.overflow = 'hidden';
+      document.body.style.overflow = "hidden";
       setZoom(1);
       setRotation(0);
     } else {
-      document.body.style.overflow = 'unset';
+      document.body.style.overflow = "unset";
     }
 
     return () => {
-      document.body.style.overflow = 'unset';
+      document.body.style.overflow = "unset";
     };
   }, [isOpen]);
 
-  const handleKeyDown = (e: KeyboardEvent) => {
-    if (e.key === 'Escape') {
-      onClose();
-    }
-  };
+  const handleKeyDown = useCallback(
+    (e: KeyboardEvent) => {
+      if (e.key === "Escape") {
+        onClose();
+      }
+    },
+    [onClose],
+  );
 
   useEffect(() => {
     if (isOpen) {
-      document.addEventListener('keydown', handleKeyDown);
-      return () => document.removeEventListener('keydown', handleKeyDown);
+      document.addEventListener("keydown", handleKeyDown);
+      return () => document.removeEventListener("keydown", handleKeyDown);
     }
-  }, [isOpen]);
+  }, [isOpen, handleKeyDown]);
 
-  const handleZoomIn = () => setZoom(prev => Math.min(prev + 0.25, 3));
-  const handleZoomOut = () => setZoom(prev => Math.max(prev - 0.25, 0.25));
-  const handleRotate = () => setRotation(prev => (prev + 90) % 360);
+  const handleZoomIn = () => setZoom((prev) => Math.min(prev + 0.25, 3));
+  const handleZoomOut = () => setZoom((prev) => Math.max(prev - 0.25, 0.25));
+  const handleRotate = () => setRotation((prev) => (prev + 90) % 360);
 
   const handleDownload = () => {
-    const link = document.createElement('a');
+    const link = document.createElement("a");
     link.href = mediaUrl;
     link.download = mediaName;
     document.body.appendChild(link);
@@ -70,9 +74,11 @@ export default function MediaPreviewModal({
       <div className="absolute top-0 left-0 right-0 z-10 bg-black bg-opacity-50 p-4 flex items-center justify-between">
         <div className="text-white">
           <h3 className="font-medium truncate max-w-md">{mediaName}</h3>
-          <p className="text-sm text-gray-300 capitalize">{mediaType} Preview</p>
+          <p className="text-sm text-gray-300 capitalize">
+            {mediaType} Preview
+          </p>
         </div>
-        
+
         <div className="flex items-center gap-2">
           {mediaType === "image" && (
             <>
@@ -126,15 +132,20 @@ export default function MediaPreviewModal({
       {/* Content */}
       <div className="flex items-center justify-center w-full h-full p-16">
         {mediaType === "image" ? (
-          <img
-            src={mediaUrl}
-            alt={mediaName}
-            className="max-w-full max-h-full object-contain transition-transform duration-200"
+          <div
+            className="relative w-full h-full cursor-pointer"
+            onClick={onClose}
             style={{
               transform: `scale(${zoom}) rotate(${rotation}deg)`,
             }}
-            onClick={onClose}
-          />
+          >
+            <Image
+              src={mediaUrl}
+              alt={mediaName}
+              fill
+              className="object-contain transition-transform duration-200"
+            />
+          </div>
         ) : (
           <video
             src={mediaUrl}
@@ -148,17 +159,22 @@ export default function MediaPreviewModal({
       {/* Instructions */}
       <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 text-white text-sm text-center bg-black bg-opacity-50 px-4 py-2 rounded-lg">
         {mediaType === "image" ? (
-          <p>Click image or press <span className="font-mono bg-white/20 px-1 rounded">Esc</span> to close</p>
+          <p>
+            Click image or press{" "}
+            <span className="font-mono bg-white/20 px-1 rounded">Esc</span> to
+            close
+          </p>
         ) : (
-          <p>Press <span className="font-mono bg-white/20 px-1 rounded">Esc</span> to close</p>
+          <p>
+            Press{" "}
+            <span className="font-mono bg-white/20 px-1 rounded">Esc</span> to
+            close
+          </p>
         )}
       </div>
 
       {/* Backdrop click handler */}
-      <div 
-        className="absolute inset-0 -z-10" 
-        onClick={onClose}
-      />
+      <div className="absolute inset-0 -z-10" onClick={onClose} />
     </div>
   );
 }

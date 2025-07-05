@@ -5,6 +5,7 @@ import { useAuthStore } from "@/store/auth-store";
 import { useMutation } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
 import { toast } from "react-hot-toast";
+import { User } from "@/types/auth";
 
 interface LoginPayload {
   email: string;
@@ -19,7 +20,7 @@ export function useLogin() {
   return useMutation({
     mutationFn: async (payload: LoginPayload) => {
       const { data } = await api.post("/api/v1/auth/login", payload);
-      return data.data as { accessToken: string; user: any };
+      return data.data as { accessToken: string; user: User };
     },
     onSuccess: ({ accessToken, user }) => {
       setAccessToken(accessToken);
@@ -27,8 +28,9 @@ export function useLogin() {
       toast.success("Logged in successfully");
       router.push("/");
     },
-    onError: (err: any) => {
-      const message = err?.response?.data?.message || "Login failed";
+    onError: (err: Error) => {
+      const axiosError = err as any;
+      const message = axiosError?.response?.data?.message || "Login failed";
       toast.error(message);
     },
   });

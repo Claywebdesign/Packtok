@@ -51,7 +51,7 @@ api.interceptors.response.use(
     ];
 
     const isUnauthEndpoint = unauthenticatedEndpoints.some((ep) =>
-      originalRequest?.url?.endsWith(ep)
+      originalRequest?.url?.endsWith(ep),
     );
 
     if (isUnauthEndpoint || !useAuthStore.getState().accessToken) {
@@ -107,7 +107,7 @@ api.interceptors.response.use(
     }
 
     return Promise.reject(error);
-  }
+  },
 );
 
 export default api;

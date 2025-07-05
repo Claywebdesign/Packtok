@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useCallback, useEffect, useRef } from "react";
+import React from "react";
 import useEmblaCarousel from "embla-carousel-react";
 import Image from "next/image";
 import { ChevronLeft, ChevronRight, Play, Maximize2 } from "lucide-react";
@@ -235,7 +236,9 @@ export default function ProductCarousel({
             </button>
             <button
               className={`absolute right-2 top-1/2 -translate-y-1/2 w-10 h-10 bg-white bg-opacity-80 hover:bg-opacity-90 flex items-center justify-center transition-all duration-300 z-10 shadow-md opacity-0 group-hover:opacity-100 ${
-                selectedIndex === mediaItems.length - 1 ? "opacity-30 cursor-not-allowed" : ""
+                selectedIndex === mediaItems.length - 1
+                  ? "opacity-30 cursor-not-allowed"
+                  : ""
               }`}
               onClick={scrollNext}
               disabled={selectedIndex === mediaItems.length - 1}
@@ -313,7 +316,7 @@ export default function ProductCarousel({
                           fill
                           className="object-cover"
                           sizes="100px"
-                          onError={(e) => {
+                          onError={(_e) => {
                             console.log(
                               `Failed to load image thumbnail: ${item.thumbnail}`
                             );
