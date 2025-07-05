@@ -75,6 +75,9 @@ importers:
       '@packtok/config':
         specifier: workspace:*
         version: link:../../packages/config
+      '@tanstack/react-query-devtools':
+        specifier: ^5.81.5
+        version: 5.81.5(@tanstack/react-query@5.81.5(react@18.3.1))(react@18.3.1)
       '@types/node':
         specifier: ^20.0.0
         version: 20.19.1
