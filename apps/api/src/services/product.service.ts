@@ -28,6 +28,14 @@ const sanitizePriceForPublic = (
   if (copy.productType === ProductType.MACHINERY) {
     delete copy.price;
   }
+  // Parse specifications JSON string if present
+  if (copy.specifications && typeof copy.specifications === "string") {
+    try {
+      copy.specifications = JSON.parse(copy.specifications);
+    } catch (err) {
+      // leave as-is if parsing fails
+    }
+  }
   return copy;
 };
 

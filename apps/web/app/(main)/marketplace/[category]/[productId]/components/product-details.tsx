@@ -165,14 +165,11 @@ export default function ProductDetails({ product }: ProductDetailsProps) {
             </div>
             <span className="text-sm text-gray-600">11 Reviews</span>
           </div>
-
           {/* Product Title */}
           <h1 className="text-2xl font-bold text-gray-900">{product.title}</h1>
-
           {/* Product Description */}
           <p className="text-gray-600 leading-relaxed">{product.description}</p>
-
-          {/* Specifications
+        
           <div className="space-y-2">
             <h3 className="font-semibold text-lg">Specifications</h3>
             <div className="space-y-1 text-sm text-gray-600">
@@ -185,8 +182,7 @@ export default function ProductDetails({ product }: ProductDetailsProps) {
                 </div>
               ))}
             </div>
-          </div> */}
-
+          </div>
           {/* Quantity Selector */}
           <div className="space-y-2">
             <label className="block text-sm font-medium text-gray-700">
@@ -218,7 +214,6 @@ export default function ProductDetails({ product }: ProductDetailsProps) {
               </button>
             </div>
           </div>
-
           {/* Action Buttons */}
           <div className="space-y-4">
             <button className="w-full bg-gray-100 text-gray-700 py-3 rounded-lg hover:bg-gray-200 transition-colors flex items-center justify-center gap-2">
@@ -243,7 +238,6 @@ export default function ProductDetails({ product }: ProductDetailsProps) {
               </a>
             )}
           </div>
-
           {/* Product Details */}
           <div className="space-y-4">
             <div className="flex justify-between items-center">
@@ -281,7 +275,6 @@ export default function ProductDetails({ product }: ProductDetailsProps) {
               <span className="font-medium">{product.condition}</span>
             </div>
           </div>
-
           {/* Additional Info */}
           {product.additionalInfo && (
             <div className="border-t pt-4">

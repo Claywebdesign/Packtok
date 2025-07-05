@@ -63,6 +63,14 @@ export const adminCreateProduct = asyncHandler(
     const { imagesUrls, videoUrl, pdfUrl, imagesThumbnail, videoThumbnail } =
       await processUploadedMedia(req.files);
     const body: any = { ...req.body, images: imagesUrls, videoUrl };
+    // Parse JSON strings to proper types
+    if (body.specifications && typeof body.specifications === "string") {
+      try {
+        body.specifications = JSON.parse(body.specifications);
+      } catch (err) {
+        throw new Error("Invalid JSON in specifications field");
+      }
+    }
     if (body.quantity) body.quantity = Number(body.quantity);
     if (body.year) body.year = Number(body.year);
     if (pdfUrl) body.pdfUrl = pdfUrl;
@@ -81,6 +89,14 @@ export const adminUpdateProduct = asyncHandler(
     const { imagesUrls, videoUrl, pdfUrl, imagesThumbnail, videoThumbnail } =
       await processUploadedMedia(req.files);
     const data: any = { ...req.body };
+    // Parse JSON strings to proper types
+    if (data.specifications && typeof data.specifications === "string") {
+      try {
+        data.specifications = JSON.parse(data.specifications);
+      } catch (err) {
+        throw new Error("Invalid JSON in specifications field");
+      }
+    }
     if (data.quantity) data.quantity = Number(data.quantity);
     if (data.year) data.year = Number(data.year);
     if (imagesUrls.length) data.images = imagesUrls;
