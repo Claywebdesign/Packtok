@@ -1,21 +1,21 @@
-import Image from "next/image";
-import footerlogo from "@/assets/footer-logo.png";
-import Link from "next/link";
+import footerlogo1 from "@/assets/footer-logo1.png";
 import { Facebook, Instagram, Twitter } from "lucide-react";
+import Image from "next/image";
+import Link from "next/link";
 
 export default function Footer() {
   return (
     <footer className="border-t-4 border-orange-500 bg-black text-white md:px-18 px-6">
       <div className="flex flex-col md:flex-row items-center justify-between py-8 border-b border-gray-500">
-        <div className="bg-white w-[150px]">
+        <Link href="/" className="block w-[150px]">
           <Image
-            src={footerlogo}
-            alt="logo"
-            height={100}
-            width={100}
-            className="mx-auto"
+            src={footerlogo1}
+            alt="Packtok logo"
+            height={50}
+            width={150}
+            className="h-auto w-full object-contain"
           />
-        </div>
+        </Link>
         <div className="flex md:flex-row flex-col items-center md:gap-8 gap-2 text-sm mt-5">
           <Link href={"/"}>Home</Link>
           <Link href={"/"}>Marketplace</Link>
