@@ -1,4 +1,7 @@
-import React from "react";
+import features1 from "@/assets/features1.png";
+import features2 from "@/assets/features2.png";
+import features3 from "@/assets/features3.png";
+import features4 from "@/assets/features4.png";
 import {
   ChevronRight,
   DollarSign,
@@ -6,7 +9,6 @@ import {
   Phone,
   TruckElectric,
 } from "lucide-react";
-import machinery from "@/assets/machinery.png";
 import Image from "next/image";
 
 const GridSection = () => {
@@ -15,18 +17,22 @@ const GridSection = () => {
     {
       id: 1,
       heading: "Turnkey Projects",
+      image: features1,
     },
     {
       id: 2,
       heading: "Maintainance & Servicing",
+      image: features2,
     },
     {
       id: 3,
       heading: "Consultancy Services",
+      image: features3,
     },
     {
       id: 4,
       heading: "Sell Old Machinery",
+      image: features4,
     },
   ];
 
@@ -65,7 +71,7 @@ const GridSection = () => {
         {mainGridItems.map((item) => (
           <div
             key={item.id}
-            className="bg-gray-100 p-4 sm:p-6 h-64 sm:h-80 md:h-96 flex md:flex-row flex-col items-center justify-between transition-all duration-300 hover:shadow-lg hover:bg-gray-50 overflow-hidden"
+            className="bg-gray-100 p-4 sm:p-6 h-72 sm:h-80 md:h-96 lg:h-[28rem] flex md:flex-row flex-col items-center justify-between transition-all duration-300 hover:shadow-lg hover:bg-gray-50 overflow-hidden"
           >
             {/* Left side - Text content */}
             <div className="flex-1 pr-0 sm:pr-4">
@@ -81,11 +87,11 @@ const GridSection = () => {
             {/* Right side - Image placeholder */}
             <div className="flex-shrink-0 mt-4 md:mt-0">
               <Image
-                src={machinery}
-                alt="Machinery"
-                height={200}
-                width={200}
-                className="w-[180px] h-[180px] sm:w-[200px] sm:h-[200px] md:w-[220px] md:h-[220px] lg:w-[280px] lg:h-[280px] xl:w-[300px] xl:h-[300px] object-contain"
+                src={item.image}
+                alt={item.heading}
+                height={225}
+                width={400}
+                className="w-40 sm:w-56 md:w-64 lg:w-72 xl:w-96 h-auto object-cover"
               />
             </div>
           </div>

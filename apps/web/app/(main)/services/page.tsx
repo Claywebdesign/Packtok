@@ -1,3 +1,4 @@
+import services from "@/assets/services.png";
 import { CategoryList, Newsletter, PageHeader } from "@/components";
 import { serviceCategories } from "@/constant";
 
@@ -8,7 +9,7 @@ export default function Services() {
         <PageHeader
           title="Services"
           subtitle="We delivers machinery maintenance, consultancy, and turnkey project execution"
-          image="/services.png"
+          image={services}
         />
         <CategoryList categoryDataList={serviceCategories} />
       </div>
