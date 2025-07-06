@@ -71,6 +71,7 @@ export const serviceCategories = [
     description:
       "PackTok delivers end-to-end turnkey project solutions for industrial clients, handling everything from initial planning and machinery procurement to installation, testing, and final handover—all tailored to your specific requirements. Our expert team ensures seamless execution with cost-efficient, timely delivery, backed by professional training and ongoing support, so you can focus on your core operations while we bring your industrial vision to life",
     image: "/services.png",
+    isServiceCard: true,
   },
   {
     title: "Maintenance",
@@ -79,6 +80,7 @@ export const serviceCategories = [
     description:
       "At PackTok, we specialize in predictive and preventive maintenance services designed to keep your industrial machinery operating at peak performance. Our expert technicians utilize advanced diagnostics, real-time monitoring, and scheduled servicing to identify potential issues before they escalate, reducing costly downtime and extending equipment lifespan. From lubrication and calibration to wear-and-tear assessments, we offer tailored maintenance plans that align with your production schedules and operational demands.",
     image: "/services.png",
+    isServiceCard: true,
   },
 
   {
@@ -88,6 +90,7 @@ export const serviceCategories = [
     description:
       "PackTok provides expert industrial consultancy services, offering tailored solutions to optimize your operations, reduce costs, and drive sustainable growth. Our seasoned consultants deliver data-driven insights, process audits, and customized strategies—from machinery upgrades and automation integration to waste reduction and regulatory compliance—helping you make informed decisions for scalable, future-ready operations. Partner with us to transform challenges into opportunities with actionable roadmaps and trusted expertise.",
     image: "/services.png",
+    isServiceCard: true,
   },
   {
     title: "Sell Old Items",
@@ -96,6 +99,7 @@ export const serviceCategories = [
     description:
       "Unlock the value of your underutilized machinery, surplus spare parts, and excess raw materials. Our expert consultancy provides tailored strategies for efficient asset valuation, responsible disposal, and remarketing, transforming idle inventory into capital and optimizing your operational footprint. We guide you through process audits and compliance, ensuring cost-effective and sustainable solutions",
     image: "/services.png",
+    isServiceCard: true,
   },
   {
     title: "Investment and Takeover",
@@ -104,5 +108,6 @@ export const serviceCategories = [
     description:
       "List your factory for equity investment or outright sale. We connect asset owners with vetted buyers and investors, delivering tailored deals—from partial stake placements to full acquisitions—with data-driven valuations and seamless transaction support.",
     image: "/services.png",
+    isServiceCard: true,
   },
 ];
