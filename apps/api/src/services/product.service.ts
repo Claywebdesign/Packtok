@@ -1,9 +1,10 @@
 import {
   MarketplaceProductStatus,
   Prisma,
-  ProductType,
-  UserSubmissionStatus,
   prisma,
+  ProductType,
+  Role,
+  UserSubmissionStatus,
 } from "@packtok/db";
 import { ApiError } from "../utils/apiError";
 
@@ -290,4 +291,29 @@ export const getPublicProductById = async (id: string) => {
     throw new ApiError(404, "Product not found");
   }
   return sanitizePriceForPublic(product);
+};
+
+export const deleteProduct = async (
+  productId: string,
+  requesterId: string,
+  requesterRole: Role
+) => {
+  const product = await prisma.marketplaceProduct.findUnique({
+    where: { id: productId },
+  });
+  if (!product) {
+    throw new ApiError(404, "Product not found");
+  }
+  // Only SUPER_ADMIN can delete any product. Other admins may delete their own.
+  if (
+    requesterRole !== Role.SUPER_ADMIN &&
+    product.createdById !== requesterId
+  ) {
+    throw new ApiError(
+      403,
+      "You do not have permission to delete this product"
+    );
+  }
+  // Deleting the product will cascade delete QuoteRequests via FK constraint.
+  return prisma.marketplaceProduct.delete({ where: { id: productId } });
 };
