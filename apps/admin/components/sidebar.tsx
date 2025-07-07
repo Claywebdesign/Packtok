@@ -7,6 +7,7 @@ import { useAuthStore } from "../store/auth-store";
 import { useUiStore } from "../store/ui-store";
 import { useRouter, usePathname } from "next/navigation";
 import { navigation } from "../constants/navigation";
+import { Tooltip } from "./tooltip";
 
 export function Sidebar() {
   const logout = useAuthStore((state) => state.logout);
@@ -56,30 +57,30 @@ export function Sidebar() {
         {navigation.map((item) => {
           const isActive = pathname === item.href;
           return (
-            <Link
-              key={item.name}
-              href={item.href}
-              className={`flex items-center ${sidebarCollapsed ? "justify-center" : "justify-between"} px-3 py-2 text-sm font-medium rounded-lg transition-colors ${
-                isActive
-                  ? "bg-blue-100 text-blue-700 "
-                  : "text-gray-600 hover:bg-gray-50 hover:text-gray-900"
-              }`}
-              title={sidebarCollapsed ? item.name : undefined}
-            >
-              <div className="flex items-center">
-                <item.icon
-                  className={`${sidebarCollapsed ? "" : "mr-3"} h-5 w-5 ${
-                    isActive ? "text-blue-700" : "text-gray-400"
-                  }`}
-                />
-                {!sidebarCollapsed && item.name}
-              </div>
-              {item.badge && !sidebarCollapsed && (
-                <span className="inline-flex items-center justify-center px-2 py-1 text-xs font-bold leading-none text-red-100 bg-red-600 rounded-full">
-                  {item.badge}
-                </span>
-              )}
-            </Link>
+            <Tooltip key={item.name} content={item.name} disabled={!sidebarCollapsed}>
+              <Link
+                href={item.href}
+                className={`flex items-center ${sidebarCollapsed ? "justify-center" : "justify-between"} px-3 py-2 text-sm font-medium rounded-lg transition-colors ${
+                  isActive
+                    ? "bg-blue-100 text-blue-700 "
+                    : "text-gray-600 hover:bg-gray-50 hover:text-gray-900"
+                }`}
+              >
+                <div className="flex items-center">
+                  <item.icon
+                    className={`${sidebarCollapsed ? "" : "mr-3"} h-5 w-5 ${
+                      isActive ? "text-blue-700" : "text-gray-400"
+                    }`}
+                  />
+                  {!sidebarCollapsed && item.name}
+                </div>
+                {item.badge && !sidebarCollapsed && (
+                  <span className="inline-flex items-center justify-center px-2 py-1 text-xs font-bold leading-none text-red-100 bg-red-600 rounded-full">
+                    {item.badge}
+                  </span>
+                )}
+              </Link>
+            </Tooltip>
           );
         })}
       </nav>
@@ -104,14 +105,15 @@ export function Sidebar() {
           </div>
         )}
 
-        <button
-          onClick={handleLogout}
-          className="flex items-center w-full px-1 py-2 text-sm font-medium text-red-600 rounded-lg hover:bg-red-50 transition-colors"
-          title={sidebarCollapsed ? "Logout" : undefined}
-        >
-          <LogOut className={`${sidebarCollapsed ? "" : "mr-3"} h-4 w-4`} />
-          {!sidebarCollapsed && "Logout"}
-        </button>
+        <Tooltip content="Logout" disabled={!sidebarCollapsed}>
+          <button
+            onClick={handleLogout}
+            className="flex items-center w-full px-1 py-2 text-sm font-medium text-red-600 rounded-lg hover:bg-red-50 transition-colors"
+          >
+            <LogOut className={`${sidebarCollapsed ? "" : "mr-3"} h-4 w-4`} />
+            {!sidebarCollapsed && "Logout"}
+          </button>
+        </Tooltip>
       </div>
     </div>
   );
