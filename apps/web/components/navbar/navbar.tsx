@@ -43,17 +43,20 @@ export default function Navbar() {
   };
 
   // Handle search functionality
-  const handleSearch = useCallback((searchTerm: string) => {
-    if (searchTerm.trim()) {
-      // Navigate to marketplace with search term - default to machinery category
-      const searchParams = new URLSearchParams();
-      searchParams.set('searchTerm', searchTerm.trim());
-      router.push(`/marketplace/machinery?${searchParams.toString()}`);
-      setSearchInput("");
-      setIsSearchOpen(false);
-      setToggle(false);
-    }
-  }, [router]);
+  const handleSearch = useCallback(
+    (searchTerm: string) => {
+      if (searchTerm.trim()) {
+        // Navigate to marketplace with search term - default to machinery category
+        const searchParams = new URLSearchParams();
+        searchParams.set("searchTerm", searchTerm.trim());
+        router.push(`/marketplace/machinery?${searchParams.toString()}`);
+        setSearchInput("");
+        setIsSearchOpen(false);
+        setToggle(false);
+      }
+    },
+    [router]
+  );
 
   const handleSearchSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -75,14 +78,14 @@ export default function Navbar() {
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       const target = event.target as Element;
-      if (isSearchOpen && !target.closest('.search-container')) {
+      if (isSearchOpen && !target.closest(".search-container")) {
         setIsSearchOpen(false);
         setSearchInput("");
       }
     };
 
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => document.removeEventListener('mousedown', handleClickOutside);
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
   }, [isSearchOpen]);
 
   return (
@@ -126,7 +129,10 @@ export default function Navbar() {
             {/* Desktop Search */}
             <div className="relative search-container">
               {isSearchOpen ? (
-                <form onSubmit={handleSearchSubmit} className="flex items-center">
+                <form
+                  onSubmit={handleSearchSubmit}
+                  className="flex items-center"
+                >
                   <div className="relative">
                     <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
                     <Input
@@ -149,8 +155,8 @@ export default function Navbar() {
                   </Button>
                 </form>
               ) : (
-                <Search 
-                  className="h-5 w-5 text-gray-700 cursor-pointer hover:text-gray-900" 
+                <Search
+                  className="h-5 w-5 text-gray-700 cursor-pointer hover:text-gray-900"
                   onClick={toggleSearch}
                 />
               )}

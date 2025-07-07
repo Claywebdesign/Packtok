@@ -3,6 +3,7 @@
 import React, { useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useAuthStore, useHasHydrated } from "../../store/auth-store";
+import { useUiStore } from "../../store/ui-store";
 import { useCurrentUser } from "../../hooks/useCurrentUser";
 import { Sidebar } from "../../components/sidebar";
 
@@ -13,6 +14,7 @@ export default function DashboardLayout({
 }) {
   const router = useRouter();
   const accessToken = useAuthStore((state) => state.accessToken);
+  const sidebarCollapsed = useUiStore((state) => state.sidebarCollapsed);
   const hasHydrated = useHasHydrated();
 
   // Fetch current user if we have a token
@@ -41,7 +43,9 @@ export default function DashboardLayout({
   return (
     <div className="flex h-screen bg-gray-100">
       <Sidebar />
-      <main className="flex-1 overflow-y-auto">{children}</main>
+      <main className={`flex-1 overflow-y-auto transition-all duration-300 ${sidebarCollapsed ? 'ml-0' : 'ml-0'}`}>
+        {children}
+      </main>
     </div>
   );
 }

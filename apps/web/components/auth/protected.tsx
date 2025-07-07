@@ -19,7 +19,7 @@ export default function Protected({ children }: { children: ReactNode }) {
 
   if (!token || isLoading)
     return (
-      <div className="flex justify-center items-center py-20">
+      <div className="flex justify-center items-center py-20 h-screen">
         <Loader2 className="h-6 w-6 animate-spin" />
       </div>
     );

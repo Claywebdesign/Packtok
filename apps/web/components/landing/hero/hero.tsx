@@ -10,7 +10,8 @@ export default function Hero() {
         </h1>
         <p className="text-gray-500 text-sm sm:text-base md:text-lg">
           <span className="font-bold md:w-auto w-full">PackTok</span> is
-          specialized in factory machinery, spare parts, and <br className="hidden sm:inline" />
+          specialized in factory machinery, spare parts, and{" "}
+          <br className="hidden sm:inline" />
           industrial maintenance{" "}
           <span className="md:inline hidden">
             - trusted by manufacturers for <br /> reliable performance and

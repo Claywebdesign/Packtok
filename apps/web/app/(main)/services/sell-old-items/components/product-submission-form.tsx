@@ -57,7 +57,8 @@ export function ProductSubmissionForm() {
   const [currentStep, setCurrentStep] = useState<"details" | "address">(
     "details"
   );
-  const [selectedProductType, setSelectedProductType] = useState<string>("MACHINERY");
+  const [selectedProductType, setSelectedProductType] =
+    useState<string>("MACHINERY");
 
   const { data: categories } = useCategories();
   const submitProduct = useSubmitProduct();
@@ -391,18 +392,31 @@ export function ProductSubmissionForm() {
                   {/* Machine Type - Only show for MACHINERY products */}
                   {selectedProductType === "MACHINERY" && (
                     <div>
-                      <Label htmlFor="machineType">Machine Type (Optional)</Label>
+                      <Label htmlFor="machineType">
+                        Machine Type (Optional)
+                      </Label>
                       <Select
                         onValueChange={(value) =>
-                          setValue("machineType", value as "MONO_CARTON" | "MASTER_CARTON" | "BOTH" | "OTHER")
+                          setValue(
+                            "machineType",
+                            value as
+                              | "MONO_CARTON"
+                              | "MASTER_CARTON"
+                              | "BOTH"
+                              | "OTHER"
+                          )
                         }
                       >
                         <SelectTrigger>
                           <SelectValue placeholder="Select machine type" />
                         </SelectTrigger>
                         <SelectContent>
-                          <SelectItem value="MONO_CARTON">Mono Carton</SelectItem>
-                          <SelectItem value="MASTER_CARTON">Master Carton</SelectItem>
+                          <SelectItem value="MONO_CARTON">
+                            Mono Carton
+                          </SelectItem>
+                          <SelectItem value="MASTER_CARTON">
+                            Master Carton
+                          </SelectItem>
                           <SelectItem value="BOTH">Both</SelectItem>
                           <SelectItem value="OTHER">Other</SelectItem>
                         </SelectContent>

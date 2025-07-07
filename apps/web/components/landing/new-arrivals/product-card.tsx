@@ -40,9 +40,13 @@ export default function ProductCard({ product }: ProductCardProps) {
       </Card>
       <div className="pt-4 space-y-2 text-left">
         <StarRating rating={product.rating} />
-        <h3 className="text-base sm:text-lg font-semibold text-gray-800">{product.name}</h3>
+        <h3 className="text-base sm:text-lg font-semibold text-gray-800">
+          {product.name}
+        </h3>
         <div className="flex items-baseline gap-2">
-          <p className="text-lg sm:text-xl font-bold text-gray-900">${product.price}</p>
+          <p className="text-lg sm:text-xl font-bold text-gray-900">
+            ${product.price}
+          </p>
           <p className="text-sm sm:text-base text-gray-400 line-through">
             ${product.originalPrice}
           </p>

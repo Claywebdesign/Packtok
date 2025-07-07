@@ -12,9 +12,17 @@ interface CategoryContentProps {
   initialSearchTerm?: string;
 }
 
-export default function CategoryContent({ category, initialSearchTerm }: CategoryContentProps) {
-  const { filters, updateFilter, resetFilters, hasActiveFilters, setSearchTerm } =
-    useMarketplaceFilters();
+export default function CategoryContent({
+  category,
+  initialSearchTerm,
+}: CategoryContentProps) {
+  const {
+    filters,
+    updateFilter,
+    resetFilters,
+    hasActiveFilters,
+    setSearchTerm,
+  } = useMarketplaceFilters();
   const [isMobileFilterOpen, setIsMobileFilterOpen] = useState(false);
 
   // Set initial search term from URL if provided
@@ -32,21 +40,26 @@ export default function CategoryContent({ category, initialSearchTerm }: Categor
     filters.productTypes.length +
     filters.priceRanges.length +
     (filters.searchTerm ? 1 : 0) +
-    Object.values(filters.customFilters).reduce((acc, values) => acc + values.length, 0);
+    Object.values(filters.customFilters).reduce(
+      (acc, values) => acc + values.length,
+      0
+    );
 
   return (
     <div className="py-8">
       <div className="flex lg:flex-row flex-col gap-8">
         {/* Desktop Filters Sidebar */}
         <div className="hidden lg:block lg:w-80 flex-shrink-0">
-          <CategorySidebar
-            category={category}
-            filters={filters}
-            onFilterChange={updateFilter}
-            onResetFilters={resetFilters}
-            hasActiveFilters={hasActiveFilters}
-            onSearchChange={setSearchTerm}
-          />
+          <div className="sticky top-4 max-h-[calc(100vh-2rem)] overflow-y-auto">
+            <CategorySidebar
+              category={category}
+              filters={filters}
+              onFilterChange={updateFilter}
+              onResetFilters={resetFilters}
+              hasActiveFilters={hasActiveFilters}
+              onSearchChange={setSearchTerm}
+            />
+          </div>
         </div>
 
         {/* Products Grid */}
@@ -57,6 +70,7 @@ export default function CategoryContent({ category, initialSearchTerm }: Categor
             onOpenMobileFilters={() => setIsMobileFilterOpen(true)}
             hasActiveFilters={hasActiveFilters}
             activeFilterCount={activeFilterCount}
+            onResetFilters={resetFilters}
           />
         </div>
       </div>

@@ -1,5 +1,6 @@
 import { Footer, Navbar } from "@/components";
 import "@packtok/ui/globals.css";
+import "../styles/globals.css";
 import type { Metadata } from "next";
 import { Poppins } from "next/font/google";
 import React from "react";

@@ -1,7 +1,11 @@
 "use client";
 
 import { useState, useCallback } from "react";
-import { MachineType, ProductCondition, ProductType } from "@/types/marketplace";
+import {
+  MachineType,
+  ProductCondition,
+  ProductType,
+} from "@/types/marketplace";
 
 export interface PriceRange {
   min: string;
@@ -71,7 +75,7 @@ export function useMarketplaceFilters() {
 
         if (filterType === "customFilters") {
           // Handle custom filters with nested structure
-          const [key, filterValue] = value.split(':');
+          const [key, filterValue] = value.split(":");
           const currentCustom = prev.customFilters[key] || [];
           if (checked) {
             return {
@@ -121,17 +125,20 @@ export function useMarketplaceFilters() {
       filters.productTypes.length > 0 ||
       filters.priceRanges.length > 0 ||
       filters.searchTerm !== "" ||
-      Object.values(filters.customFilters).some(values => values.length > 0)
+      Object.values(filters.customFilters).some((values) => values.length > 0)
     );
   }, [filters]);
 
   const setSearchTerm = useCallback((term: string) => {
-    setFilters(prev => ({ ...prev, searchTerm: term }));
+    setFilters((prev) => ({ ...prev, searchTerm: term }));
   }, []);
 
-  const updateCustomFilter = useCallback((key: string, value: string, checked: boolean) => {
-    updateFilter("customFilters", `${key}:${value}`, checked);
-  }, [updateFilter]);
+  const updateCustomFilter = useCallback(
+    (key: string, value: string, checked: boolean) => {
+      updateFilter("customFilters", `${key}:${value}`, checked);
+    },
+    [updateFilter]
+  );
 
   return {
     filters,

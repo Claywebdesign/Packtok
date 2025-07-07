@@ -1,0 +1,14 @@
+/* Phone input country list width fix */
+.react-tel-input .country-list {
+  width: 280px !important;
+}
+
+/* Hide scrollbars globally */
+* {
+  -ms-overflow-style: none; /* IE and Edge */
+  scrollbar-width: none; /* Firefox */
+}
+
+*::-webkit-scrollbar {
+  display: none; /* Chrome, Safari and Opera */
+}

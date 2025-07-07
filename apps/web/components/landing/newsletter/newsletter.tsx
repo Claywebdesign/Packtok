@@ -33,24 +33,24 @@ export default function Newsletter() {
       </div>
 
       {/* Left image absolute */}
-      <div className="absolute left-0 top-1/2 transform -translate-x-1/2 -translate-y-1/2 overflow-visible md:block hidden">
+      <div className="absolute left-0 top-1/2 transform -translate-x-1/4 -translate-y-1/2 overflow-visible hidden xl:block">
         <Image
           src={newsletterLeft}
           alt="Newsletter Left Image"
           className="object-contain"
-          width={700}
-          height={700}
+          width={500}
+          height={500}
         />
       </div>
 
       {/* Right image absolute */}
-      <div className="absolute right-0 top-1/2 transform translate-x-1/2 -translate-y-1/2 overflow-visible md:block hidden">
+      <div className="absolute right-0 top-1/2 transform translate-x-1/4 -translate-y-1/2 overflow-visible hidden xl:block">
         <Image
           src={newsletterRight}
           alt="Newsletter Right Image"
           className="object-contain"
-          width={600}
-          height={600}
+          width={450}
+          height={450}
         />
       </div>
     </div>
