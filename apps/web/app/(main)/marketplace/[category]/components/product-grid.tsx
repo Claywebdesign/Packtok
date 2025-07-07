@@ -22,6 +22,7 @@ interface ProductGridProps {
   onOpenMobileFilters?: () => void;
   hasActiveFilters?: boolean;
   activeFilterCount?: number;
+  onResetFilters?: () => void;
 }
 
 export default function ProductGrid({
@@ -30,6 +31,7 @@ export default function ProductGrid({
   onOpenMobileFilters,
   hasActiveFilters,
   activeFilterCount,
+  onResetFilters,
 }: ProductGridProps) {
   const router = useRouter();
   const [currentPage, setCurrentPage] = useState(1);
@@ -52,26 +54,38 @@ export default function ProductGrid({
     // Calculate price range from multiple selected ranges
     let priceMin: number | undefined;
     let priceMax: number | undefined;
-    
+
     if (filters.priceRanges.length > 0) {
-      const allMins = filters.priceRanges.map(r => parseInt(r.min)).filter(n => !isNaN(n));
-      const allMaxs = filters.priceRanges.map(r => r.max ? parseInt(r.max) : Infinity).filter(n => !isNaN(n));
-      
+      const allMins = filters.priceRanges
+        .map((r) => parseInt(r.min))
+        .filter((n) => !isNaN(n));
+      const allMaxs = filters.priceRanges
+        .map((r) => (r.max ? parseInt(r.max) : Infinity))
+        .filter((n) => !isNaN(n));
+
       priceMin = allMins.length > 0 ? Math.min(...allMins) : undefined;
-      priceMax = allMaxs.length > 0 && allMaxs.some(m => m !== Infinity) ? Math.max(...allMaxs.filter(m => m !== Infinity)) : undefined;
+      priceMax =
+        allMaxs.length > 0 && allMaxs.some((m) => m !== Infinity)
+          ? Math.max(...allMaxs.filter((m) => m !== Infinity))
+          : undefined;
     }
 
     return {
       productType,
-      categoryId: filters.categories.length > 0 ? filters.categories : undefined,
-      condition: [
-        ...(selectedCondition !== "ALL" ? [selectedCondition] : []),
-        ...filters.conditions
-      ].length > 0 ? [
-        ...(selectedCondition !== "ALL" ? [selectedCondition] : []),
-        ...filters.conditions
-      ] : undefined,
-      machineType: filters.machineType.length > 0 ? filters.machineType : undefined,
+      categoryId:
+        filters.categories.length > 0 ? filters.categories : undefined,
+      condition:
+        [
+          ...(selectedCondition !== "ALL" ? [selectedCondition] : []),
+          ...filters.conditions,
+        ].length > 0
+          ? [
+              ...(selectedCondition !== "ALL" ? [selectedCondition] : []),
+              ...filters.conditions,
+            ]
+          : undefined,
+      machineType:
+        filters.machineType.length > 0 ? filters.machineType : undefined,
       priceMin,
       priceMax,
       searchTerm: filters.searchTerm || undefined,
@@ -101,18 +115,28 @@ export default function ProductGrid({
   return (
     <div>
       {/* Mobile Filter Button */}
-      <div className="lg:hidden mb-4">
+      <div className="lg:hidden mb-4 flex justify-end items-center gap-2">
+        {hasActiveFilters && (
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={onResetFilters}
+            className="text-blue-600 hover:text-blue-800 text-sm px-2"
+          >
+            Clear All
+          </Button>
+        )}
         <Button
           variant="outline"
           onClick={onOpenMobileFilters}
-          className="w-full flex items-center justify-center gap-2"
+          size="sm"
+          className="relative p-2"
         >
           <Filter className="h-4 w-4" />
-          Filters
           {hasActiveFilters && activeFilterCount && (
             <Badge
               variant="secondary"
-              className="ml-2 bg-blue-100 text-blue-800"
+              className="absolute -top-2 -right-2 h-5 w-5 rounded-full p-0 flex items-center justify-center bg-blue-100 text-blue-800 text-xs"
             >
               {activeFilterCount}
             </Badge>
@@ -122,7 +146,7 @@ export default function ProductGrid({
 
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4">
         <h2 className="text-xl lg:text-2xl font-semibold">{category.title}</h2>
-        
+
         {/* Mobile: Horizontal scrollable filter tabs */}
         <div className="sm:hidden w-full">
           <div className="flex gap-2 overflow-x-auto pb-2 no-scrollbar">
@@ -152,7 +176,7 @@ export default function ProductGrid({
             </Button>
           </div>
         </div>
-        
+
         {/* Desktop: Regular filter tabs */}
         <div className="hidden sm:flex gap-2">
           <Button

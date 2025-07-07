@@ -27,7 +27,9 @@ export default function SplitSection({
 
         {/* Right side - Text content */}
         <div className="w-full lg:w-1/2 bg-gray-100 p-4 sm:p-6 md:p-8 lg:p-12 flex flex-col justify-center">
-          <h2 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl text-gray-900 mb-3 sm:mb-4 font-bold">{title}</h2>
+          <h2 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl text-gray-900 mb-3 sm:mb-4 font-bold">
+            {title}
+          </h2>
           <p className="text-gray-600 text-sm sm:text-base md:text-lg mb-6 sm:mb-8 leading-relaxed">
             {description}
           </p>

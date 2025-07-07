@@ -6,7 +6,6 @@ import rawmaterials from "@/assets/raw-materials2.png";
 import spareparts from "@/assets/spare-parts2.png";
 import tunkeryprojects from "@/assets/tunkery-projects.png";
 
-
 export const navbarLinks: {
   title: string;
   href: string;

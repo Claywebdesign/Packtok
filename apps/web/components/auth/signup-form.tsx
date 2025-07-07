@@ -136,8 +136,8 @@ export default function SignUpForm() {
                   enableSearch
                   placeholder="Enter phone number"
                   containerClass="relative w-full"
-                  inputClass="!w-full !bg-transparent !border-0 !border-b !border-border !px-0 !pl-14 focus:!border-primary focus:!outline-none"
-                  buttonClass="!absolute !left-0 !top-1/2 -translate-y-1/2 !bg-transparent !border-0 !pl-0"
+                  inputClass="!w-full !bg-transparent !border-0 !border-b !border-border !px-0 !pl-12 sm:!pl-14 focus:!border-primary focus:!outline-none"
+                  buttonClass="!absolute !left-0 !top-1/2 -translate-y-1/2 !bg-transparent !border-0 !pl-0 !w-10 sm:!w-12 !min-w-0 !max-w-10 sm:!max-w-12"
                   inputProps={{
                     ref: undefined,
                     name: "phone_number",

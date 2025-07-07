@@ -12,7 +12,9 @@ export default function ShopNow() {
       {/* Left Rectangle - Full Height */}
       <div className="w-1/2 bg-gray-100 p-2 sm:p-4 md:p-8 flex flex-col justify-between">
         <div>
-          <h2 className="text-lg sm:text-xl md:text-2xl lg:text-4xl mb-2 font-bold">Machinery</h2>
+          <h2 className="text-lg sm:text-xl md:text-2xl lg:text-4xl mb-2 font-bold">
+            Machinery
+          </h2>
           <Link
             href={"/marketplace/machinery"}
             className="text-xs sm:text-sm md:text-base lg:text-lg leading-relaxed border-b border-gray-800 inline-flex items-center gap-1"

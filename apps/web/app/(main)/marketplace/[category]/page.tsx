@@ -13,7 +13,10 @@ interface CategoryPageProps {
   };
 }
 
-export default function CategoryPage({ params, searchParams }: CategoryPageProps) {
+export default function CategoryPage({
+  params,
+  searchParams,
+}: CategoryPageProps) {
   const categorySlug = params.category;
   const category = marketplaceCategories.find(
     (cat) => cat.slug === categorySlug
@@ -31,7 +34,10 @@ export default function CategoryPage({ params, searchParams }: CategoryPageProps
           subtitle={category.subtitle}
           image={category.image}
         />
-        <CategoryContent category={category} initialSearchTerm={searchParams.searchTerm} />
+        <CategoryContent
+          category={category}
+          initialSearchTerm={searchParams.searchTerm}
+        />
       </div>
       <Newsletter />
     </main>

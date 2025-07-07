@@ -15,43 +15,47 @@ export function useProducts(filters: ProductFilters = {}) {
       // Add filters to query params
       if (filters.page) params.append("page", filters.page.toString());
       if (filters.limit) params.append("limit", filters.limit.toString());
-      
+
       // Handle single or multiple category IDs
       if (filters.categoryId) {
         if (Array.isArray(filters.categoryId)) {
-          filters.categoryId.forEach(id => params.append("categoryId", id));
+          filters.categoryId.forEach((id) => params.append("categoryId", id));
         } else {
           params.append("categoryId", filters.categoryId);
         }
       }
-      
+
       // Handle single or multiple product types
       if (filters.productType) {
         if (Array.isArray(filters.productType)) {
-          filters.productType.forEach(type => params.append("productType", type));
+          filters.productType.forEach((type) =>
+            params.append("productType", type)
+          );
         } else {
           params.append("productType", filters.productType);
         }
       }
-      
+
       // Handle single or multiple machine types
       if (filters.machineType) {
         if (Array.isArray(filters.machineType)) {
-          filters.machineType.forEach(type => params.append("machineType", type));
+          filters.machineType.forEach((type) =>
+            params.append("machineType", type)
+          );
         } else {
           params.append("machineType", filters.machineType);
         }
       }
-      
+
       // Handle single or multiple conditions
       if (filters.condition) {
         if (Array.isArray(filters.condition)) {
-          filters.condition.forEach(cond => params.append("condition", cond));
+          filters.condition.forEach((cond) => params.append("condition", cond));
         } else {
           params.append("condition", filters.condition);
         }
       }
-      
+
       if (filters.priceMin)
         params.append("priceMin", filters.priceMin.toString());
       if (filters.priceMax)

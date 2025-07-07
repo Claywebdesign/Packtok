@@ -17,24 +17,29 @@ export const productSubmissionSchema = z.object({
   price: z.string().min(1, {
     message: "Price is required.",
   }),
-  productType: z.enum(["MACHINERY", "SPARE_PARTS", "CONSUMABLES", "RAW_MATERIALS"], {
-    message: "Please select a product type.",
-  }),
+  productType: z.enum(
+    ["MACHINERY", "SPARE_PARTS", "CONSUMABLES", "RAW_MATERIALS"],
+    {
+      message: "Please select a product type.",
+    }
+  ),
   condition: z.enum(["NEW", "USED"], {
     message: "Please select product condition.",
   }),
   categoryName: z.string().min(1, {
     message: "Category is required.",
   }),
-  machineType: z.enum(["MONO_CARTON", "MASTER_CARTON", "BOTH", "OTHER"]).optional(),
-  
+  machineType: z
+    .enum(["MONO_CARTON", "MASTER_CARTON", "BOTH", "OTHER"])
+    .optional(),
+
   // Optional fields
   manufacturer: z.string().optional(),
   model: z.string().optional(),
   year: z.string().optional(),
   specifications: z.string().optional(),
   additionalInfo: z.string().optional(),
-  
+
   // Address information
   legalBusinessName: z.string().min(2, {
     message: "Legal business name must be at least 2 characters.",
@@ -55,7 +60,7 @@ export const productSubmissionSchema = z.object({
   state: z.string().min(2, {
     message: "State is required.",
   }),
-  
+
   // Files - will be handled separately in state
   images: z.array(z.instanceof(File)).optional(),
   thumbnail: z.instanceof(File).optional(),
