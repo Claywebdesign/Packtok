@@ -199,7 +199,12 @@ export default function Navbar() {
               </div>
             ) : (
               <Button
-                className={`${scrolled ? "bg-gray-800 text-white" : "bg-white text-gray-800"} `}
+                className={cn(
+                  "transition-colors duration-500 ease-in-out",
+                  scrolled
+                    ? "bg-gray-800 text-white hover:bg-gray-700"
+                    : "bg-white text-gray-800 hover:bg-gray-100"
+                )}
                 asChild
               >
                 <Link href="/auth/signin">Sign In</Link>
