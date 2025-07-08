@@ -53,7 +53,7 @@ export default function HeroCarousel() {
                 width={1920}
                 height={740}
                 sizes="(max-width: 768px) 100vw, 1920px"
-                className="object-cover w-full h-[300px] sm:h-[400px] md:h-[500px] lg:h-[657px] xl:h-[740px]"
+                className="object-cover w-full h-[200px] sm:h-[280px] md:h-[350px] lg:h-[420px] xl:h-[480px]"
                 priority={idx == 0}
               />
             </div>

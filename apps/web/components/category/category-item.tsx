@@ -33,7 +33,7 @@ export default function CategoryItem({
           alt={title}
           width={600}
           height={600}
-          className="group-hover:scale-105 transition-transform duration-300 w-full h-auto max-w-md lg:max-w-lg"
+          className="group-hover:scale-105 transition-transform duration-300 w-full h-auto max-w-md lg:max-w-lg border-2 border-black"
         />
         <div className="flex flex-col text-center mx-auto">
           <h3 className="md:text-4xl text-2xl font-bold group-hover:text-blue-600 transition-colors">

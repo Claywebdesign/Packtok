@@ -75,7 +75,7 @@ export default function MobileFilterOverlay({
 
       {/* Sidebar */}
       <div
-        className={`fixed inset-y-0 left-0 z-40 w-80 max-w-[85vw] bg-white shadow-xl transform transition-transform duration-300 ease-in-out lg:hidden flex flex-col ${
+        className={`fixed inset-y-0 left-0 z-40 w-80 max-w-[50vw] bg-white shadow-xl transform transition-transform duration-300 ease-in-out lg:hidden flex flex-col ${
           isOpen ? "translate-x-0" : "-translate-x-full"
         }`}
       >

@@ -9,7 +9,7 @@ import {
 
 export default function Home() {
   return (
-    <main>
+    <main className="mt-16">
       <Hero />
       <ShopNow />
       <NewArrivals />
