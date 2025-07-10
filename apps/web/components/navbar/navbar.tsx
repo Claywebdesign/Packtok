@@ -1,6 +1,7 @@
 "use client";
 import React from "react";
 import logo from "@/assets/navbar-logo.png";
+import navbarLogoDark from "@/assets/navbar-logo-dark.png";
 import LogoutButton from "@/components/auth/logout-button";
 import { navbarLinks } from "@/constant/index";
 import { useCurrentUser } from "@/hooks/useCurrentUser";
@@ -26,7 +27,7 @@ export default function Navbar() {
 
   useEffect(() => {
     const handleScroll = () => {
-      const isScrolled = window.scrollY > 540;
+      const isScrolled = window.scrollY > 400;
       if (isScrolled !== scrolled) {
         setScrolled(isScrolled);
       }
@@ -91,8 +92,10 @@ export default function Navbar() {
   return (
     <div
       className={cn(
-        "fixed top-0 left-0 right-0 z-50 transition-all duration-300 ease-in-out",
-        scrolled || toggle ? "shadow-md bg-white" : "bg-white"
+        "fixed top-0 left-0 right-0 z-50  transition-all duration-500 ease-in-out",
+        scrolled || toggle
+          ? "shadow-md bg-white"
+          : "bg-black border-b-3 border-orange-500"
       )}
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -101,11 +104,11 @@ export default function Navbar() {
           <div className="flex-shrink-0">
             <Link href="/" onClick={handleLinkClick}>
               <Image
-                src={logo}
+                src={scrolled ? logo : navbarLogoDark}
                 alt="logo"
                 width={120}
                 height={50}
-                className="h-auto"
+                className="h-auto transition-all duration-500 ease-in-out"
               />
             </Link>
           </div>
@@ -116,7 +119,12 @@ export default function Navbar() {
               <Button variant="link" key={idx} asChild>
                 <Link
                   href={link.href}
-                  className="text-gray-700 hover:text-gray-900"
+                  className={cn(
+                    "transition-colors duration-500 ease-in-out",
+                    scrolled
+                      ? "text-gray-700 hover:text-gray-900"
+                      : "text-white hover:text-gray-300"
+                  )}
                 >
                   {link.title}
                 </Link>
@@ -156,24 +164,49 @@ export default function Navbar() {
                 </form>
               ) : (
                 <Search
-                  className="h-5 w-5 text-gray-700 cursor-pointer hover:text-gray-900"
+                  className={cn(
+                    "h-5 w-5 cursor-pointer transition-colors duration-500 ease-in-out",
+                    scrolled
+                      ? "text-gray-700 hover:text-gray-900"
+                      : "text-white hover:text-gray-300"
+                  )}
                   onClick={toggleSearch}
                 />
               )}
             </div>
-            <ShoppingBag className="h-5 w-5 text-gray-700 cursor-pointer hover:text-gray-900" />
+            <ShoppingBag
+              className={cn(
+                "h-5 w-5 cursor-pointer transition-colors duration-500 ease-in-out",
+                scrolled
+                  ? "text-gray-700 hover:text-gray-900"
+                  : "text-white hover:text-gray-300"
+              )}
+            />
             {accessToken && user ? (
               <div className="flex items-center gap-4">
                 <Link
                   href="/account"
-                  className="text-sm font-medium hover:underline"
+                  className={cn(
+                    "text-sm font-medium hover:underline transition-colors duration-500 ease-in-out",
+                    scrolled
+                      ? "text-gray-700 hover:text-gray-900"
+                      : "text-white hover:text-gray-300"
+                  )}
                 >
                   {user.name?.split(" ")[0] || user.email}
                 </Link>
                 <LogoutButton />
               </div>
             ) : (
-              <Button asChild>
+              <Button
+                className={cn(
+                  "transition-colors duration-500 ease-in-out",
+                  scrolled
+                    ? "bg-gray-800 text-white hover:bg-gray-700"
+                    : "bg-white text-gray-800 hover:bg-gray-100"
+                )}
+                asChild
+              >
                 <Link href="/auth/signin">Sign In</Link>
               </Button>
             )}
@@ -183,7 +216,12 @@ export default function Navbar() {
           <div className="md:hidden">
             <button
               onClick={() => setToggle(!toggle)}
-              className="p-2 rounded-md text-gray-700 hover:text-gray-900 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-blue-500"
+              className={cn(
+                "p-2 rounded-md focus:outline-none focus:ring-2 focus:ring-inset focus:ring-blue-500 transition-colors duration-500 ease-in-out",
+                scrolled
+                  ? "text-gray-700 hover:text-gray-900"
+                  : "text-white hover:text-gray-300"
+              )}
             >
               {toggle ? <X size={24} /> : <Menu size={24} />}
             </button>
@@ -192,7 +230,12 @@ export default function Navbar() {
 
         {/* Mobile Navigation Menu */}
         {toggle && (
-          <div className="md:hidden border-t border-gray-200 bg-white">
+          <div
+            className={cn(
+              "md:hidden border-t transition-all duration-500 ease-in-out",
+              scrolled ? "border-gray-200 bg-white" : "border-gray-700 bg-black"
+            )}
+          >
             <div className="py-2 space-y-1">
               {navbarLinks.map((link, idx) => (
                 <Button
@@ -204,7 +247,12 @@ export default function Navbar() {
                   <Link
                     href={link.href}
                     onClick={handleLinkClick}
-                    className="block px-3 py-2 text-gray-700 hover:text-gray-900"
+                    className={cn(
+                      "block px-3 py-2 transition-colors duration-500 ease-in-out",
+                      scrolled
+                        ? "text-gray-700 hover:text-gray-900"
+                        : "text-white hover:text-gray-300"
+                    )}
                   >
                     {link.title}
                   </Link>
@@ -212,7 +260,12 @@ export default function Navbar() {
               ))}
 
               {/* Mobile Search */}
-              <div className="pt-4 pb-4 border-t border-gray-200">
+              <div
+                className={cn(
+                  "pt-4 pb-4 border-t transition-all duration-500 ease-in-out",
+                  scrolled ? "border-gray-200" : "border-gray-700"
+                )}
+              >
                 <form onSubmit={handleSearchSubmit} className="px-3">
                   <div className="relative">
                     <Search className="absolute left-6 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
@@ -229,18 +282,35 @@ export default function Navbar() {
 
               {/* Mobile Icons */}
               <div className="flex items-center justify-center space-x-6 pt-2 pb-2">
-                <ShoppingBag className="h-6 w-6 text-gray-700 cursor-pointer" />
+                <ShoppingBag
+                  className={cn(
+                    "h-6 w-6 cursor-pointer transition-colors duration-500 ease-in-out",
+                    scrolled
+                      ? "text-gray-700 hover:text-gray-900"
+                      : "text-white hover:text-gray-300"
+                  )}
+                />
               </div>
 
               {/* Mobile Authentication */}
-              <div className="pt-4 pb-2 border-t border-gray-200">
+              <div
+                className={cn(
+                  "pt-4 pb-2 border-t transition-all duration-500 ease-in-out",
+                  scrolled ? "border-gray-200" : "border-gray-700"
+                )}
+              >
                 {accessToken && user ? (
                   <div className="space-y-2">
                     <div className="px-3 py-2">
                       <Link
                         href="/account"
                         onClick={handleLinkClick}
-                        className="block text-sm font-medium text-gray-900 hover:text-gray-700"
+                        className={cn(
+                          "block text-sm font-medium transition-colors duration-500 ease-in-out",
+                          scrolled
+                            ? "text-gray-900 hover:text-gray-700"
+                            : "text-white hover:text-gray-300"
+                        )}
                       >
                         Welcome, {user.name?.split(" ")[0] || user.email}
                       </Link>

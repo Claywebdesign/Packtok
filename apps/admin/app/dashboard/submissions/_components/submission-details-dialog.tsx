@@ -97,7 +97,7 @@ export function SubmissionDetailsDialog({
             <div className="flex gap-2">
               <Badge
                 variant={getStatusBadgeVariant(
-                  submission.submissionStatus || "PENDING_APPROVAL"
+                  submission.submissionStatus || "PENDING_APPROVAL",
                 )}
               >
                 {submission.submissionStatus?.replace("_", " ") ||
