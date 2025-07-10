@@ -2,25 +2,36 @@
 
 import { MoreHorizontal } from "lucide-react";
 import { Button } from "@packtok/ui/components/button";
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell } from 'recharts';
+import {
+  LineChart,
+  Line,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  ResponsiveContainer,
+  PieChart,
+  Pie,
+  Cell,
+} from "recharts";
 
 const salesData = [
-  { name: 'Jan', value: 4000 },
-  { name: 'Feb', value: 3000 },
-  { name: 'Mar', value: 5000 },
-  { name: 'Apr', value: 2780 },
-  { name: 'May', value: 1890 },
-  { name: 'Jun', value: 2390 },
-  { name: 'Jul', value: 3490 },
+  { name: "Jan", value: 4000 },
+  { name: "Feb", value: 3000 },
+  { name: "Mar", value: 5000 },
+  { name: "Apr", value: 2780 },
+  { name: "May", value: 1890 },
+  { name: "Jun", value: 2390 },
+  { name: "Jul", value: 3490 },
 ];
 
 const analyticsData = [
-  { name: 'Sale', value: 65, color: '#3B82F6' },
-  { name: 'Distribute', value: 20, color: '#10B981' },
-  { name: 'Return', value: 15, color: '#EC4899' },
+  { name: "Sale", value: 65, color: "#3B82F6" },
+  { name: "Distribute", value: 20, color: "#10B981" },
+  { name: "Return", value: 15, color: "#EC4899" },
 ];
 
-const COLORS = ['#3B82F6', '#10B981', '#EC4899'];
+const COLORS = ["#3B82F6", "#10B981", "#EC4899"];
 
 export function DashboardCharts() {
   return (
@@ -40,12 +51,12 @@ export function DashboardCharts() {
               <XAxis dataKey="name" />
               <YAxis />
               <Tooltip />
-              <Line 
-                type="monotone" 
-                dataKey="value" 
-                stroke="#8B5CF6" 
+              <Line
+                type="monotone"
+                dataKey="value"
+                stroke="#8B5CF6"
                 strokeWidth={2}
-                dot={{ fill: '#8B5CF6' }}
+                dot={{ fill: "#8B5CF6" }}
               />
             </LineChart>
           </ResponsiveContainer>
@@ -73,7 +84,10 @@ export function DashboardCharts() {
                 dataKey="value"
               >
                 {analyticsData.map((_, index) => (
-                  <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                  <Cell
+                    key={`cell-${index}`}
+                    fill={COLORS[index % COLORS.length]}
+                  />
                 ))}
               </Pie>
               <Tooltip />

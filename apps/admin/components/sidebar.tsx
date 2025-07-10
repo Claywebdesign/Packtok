@@ -57,7 +57,11 @@ export function Sidebar() {
         {navigation.map((item) => {
           const isActive = pathname === item.href;
           return (
-            <Tooltip key={item.name} content={item.name} disabled={!sidebarCollapsed}>
+            <Tooltip
+              key={item.name}
+              content={item.name}
+              disabled={!sidebarCollapsed}
+            >
               <Link
                 href={item.href}
                 className={`flex items-center ${sidebarCollapsed ? "justify-center" : "justify-between"} px-3 py-2 text-sm font-medium rounded-lg transition-colors ${

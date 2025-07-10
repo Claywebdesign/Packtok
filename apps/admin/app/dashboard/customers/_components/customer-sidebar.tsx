@@ -2,7 +2,16 @@
 
 import { Button } from "@packtok/ui/components/button";
 import { Mail, Phone, MapPin, MoreHorizontal } from "lucide-react";
-import { BarChart, Bar, XAxis, YAxis, ResponsiveContainer, PieChart, Pie, Cell } from 'recharts';
+import {
+  BarChart,
+  Bar,
+  XAxis,
+  YAxis,
+  ResponsiveContainer,
+  PieChart,
+  Pie,
+  Cell,
+} from "recharts";
 
 interface CustomerDetail {
   name: string;

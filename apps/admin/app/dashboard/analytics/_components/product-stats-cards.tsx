@@ -1,15 +1,21 @@
 "use client";
 
-import { LineChart, Line, ResponsiveContainer } from 'recharts';
-import { Package, TrendingUp, DollarSign } from 'lucide-react';
-import { ProductStats } from 'types/analytics';
+import { LineChart, Line, ResponsiveContainer } from "recharts";
+import { Package, TrendingUp, DollarSign } from "lucide-react";
+import { ProductStats } from "types/analytics";
 
 interface ProductStatsCardsProps {
   stats: ProductStats;
 }
 
 const miniChartData = [
-  { value: 20 }, { value: 30 }, { value: 25 }, { value: 40 }, { value: 35 }, { value: 50 }, { value: 45 }
+  { value: 20 },
+  { value: 30 },
+  { value: 25 },
+  { value: 40 },
+  { value: 35 },
+  { value: 50 },
+  { value: 45 },
 ];
 
 export function ProductStatsCards({ stats }: ProductStatsCardsProps) {
@@ -35,10 +41,10 @@ export function ProductStatsCards({ stats }: ProductStatsCardsProps) {
           <div className="mt-4 h-16">
             <ResponsiveContainer width="100%" height="100%">
               <LineChart data={miniChartData}>
-                <Line 
-                  type="monotone" 
-                  dataKey="value" 
-                  stroke="#3B82F6" 
+                <Line
+                  type="monotone"
+                  dataKey="value"
+                  stroke="#3B82F6"
                   strokeWidth={2}
                   dot={false}
                 />
@@ -66,10 +72,10 @@ export function ProductStatsCards({ stats }: ProductStatsCardsProps) {
           <div className="mt-4 h-16">
             <ResponsiveContainer width="100%" height="100%">
               <LineChart data={miniChartData}>
-                <Line 
-                  type="monotone" 
-                  dataKey="value" 
-                  stroke="#8B5CF6" 
+                <Line
+                  type="monotone"
+                  dataKey="value"
+                  stroke="#8B5CF6"
                   strokeWidth={2}
                   dot={false}
                 />
@@ -99,10 +105,10 @@ export function ProductStatsCards({ stats }: ProductStatsCardsProps) {
           <div className="mt-4 h-16">
             <ResponsiveContainer width="100%" height="100%">
               <LineChart data={miniChartData}>
-                <Line 
-                  type="monotone" 
-                  dataKey="value" 
-                  stroke="#EC4899" 
+                <Line
+                  type="monotone"
+                  dataKey="value"
+                  stroke="#EC4899"
                   strokeWidth={2}
                   dot={false}
                 />

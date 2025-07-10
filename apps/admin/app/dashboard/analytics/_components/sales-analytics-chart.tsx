@@ -1,38 +1,38 @@
 "use client";
 
-import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip } from 'recharts';
-import { MoreHorizontal } from 'lucide-react';
-import { Button } from '@packtok/ui/components/button';
-import { SalesAnalytics } from 'types/analytics';
+import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip } from "recharts";
+import { MoreHorizontal } from "lucide-react";
+import { Button } from "@packtok/ui/components/button";
+import { SalesAnalytics } from "types/analytics";
 
 interface SalesAnalyticsChartProps {
   data: SalesAnalytics;
 }
 
-const COLORS = ['#3B82F6', '#10B981', '#F472B6'];
+const COLORS = ["#3B82F6", "#10B981", "#F472B6"];
 
 export function SalesAnalyticsChart({ data }: SalesAnalyticsChartProps) {
   const chartData = [
-    { name: 'Total Sales', value: data.totalSales, color: COLORS[0] },
-    { name: 'Total Orders', value: data.totalOrders, color: COLORS[1] },
-    { name: 'Orders Canceled', value: data.ordersCanceled, color: COLORS[2] },
+    { name: "Total Sales", value: data.totalSales, color: COLORS[0] },
+    { name: "Total Orders", value: data.totalOrders, color: COLORS[1] },
+    { name: "Orders Canceled", value: data.ordersCanceled, color: COLORS[2] },
   ];
 
   const renderCustomizedLabel = (props: any) => {
     const { cx, cy, midAngle, innerRadius, outerRadius, percent } = props;
     if (midAngle === undefined) return null;
-    
+
     const RADIAN = Math.PI / 180;
     const radius = innerRadius + (outerRadius - innerRadius) * 0.5;
     const x = cx + radius * Math.cos(-midAngle * RADIAN);
     const y = cy + radius * Math.sin(-midAngle * RADIAN);
 
     return (
-      <text 
-        x={x} 
-        y={y} 
-        fill="white" 
-        textAnchor={x > cx ? 'start' : 'end'} 
+      <text
+        x={x}
+        y={y}
+        fill="white"
+        textAnchor={x > cx ? "start" : "end"}
         dominantBaseline="central"
         fontSize="12"
         fontWeight="bold"
@@ -52,7 +52,7 @@ export function SalesAnalyticsChart({ data }: SalesAnalyticsChartProps) {
           <MoreHorizontal className="h-4 w-4" />
         </Button>
       </div>
-      
+
       <div className="h-64">
         <ResponsiveContainer width="100%" height="100%">
           <PieChart>
@@ -67,14 +67,17 @@ export function SalesAnalyticsChart({ data }: SalesAnalyticsChartProps) {
               dataKey="value"
             >
               {chartData.map((_, index) => (
-                <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                <Cell
+                  key={`cell-${index}`}
+                  fill={COLORS[index % COLORS.length]}
+                />
               ))}
             </Pie>
-            <Tooltip formatter={(value) => [`${value}%`, 'Percentage']} />
+            <Tooltip formatter={(value) => [`${value}%`, "Percentage"]} />
           </PieChart>
         </ResponsiveContainer>
       </div>
-      
+
       <div className="space-y-2 mt-4">
         <div className="flex items-center justify-between text-sm">
           <div className="flex items-center">

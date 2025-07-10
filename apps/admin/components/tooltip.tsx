@@ -9,7 +9,12 @@ interface TooltipProps {
   disabled?: boolean;
 }
 
-export function Tooltip({ content, children, side = "right", disabled = false }: TooltipProps) {
+export function Tooltip({
+  content,
+  children,
+  side = "right",
+  disabled = false,
+}: TooltipProps) {
   const [isVisible, setIsVisible] = useState(false);
   const [position, setPosition] = useState({ x: 0, y: 0 });
   const containerRef = useRef<HTMLDivElement>(null);
@@ -19,25 +24,29 @@ export function Tooltip({ content, children, side = "right", disabled = false }:
     if (isVisible && containerRef.current && tooltipRef.current) {
       const containerRect = containerRef.current.getBoundingClientRect();
       const tooltipRect = tooltipRef.current.getBoundingClientRect();
-      
+
       let x = 0;
       let y = 0;
 
       switch (side) {
         case "right":
           x = containerRect.right + 8;
-          y = containerRect.top + (containerRect.height - tooltipRect.height) / 2;
+          y =
+            containerRect.top + (containerRect.height - tooltipRect.height) / 2;
           break;
         case "left":
           x = containerRect.left - tooltipRect.width - 8;
-          y = containerRect.top + (containerRect.height - tooltipRect.height) / 2;
+          y =
+            containerRect.top + (containerRect.height - tooltipRect.height) / 2;
           break;
         case "top":
-          x = containerRect.left + (containerRect.width - tooltipRect.width) / 2;
+          x =
+            containerRect.left + (containerRect.width - tooltipRect.width) / 2;
           y = containerRect.top - tooltipRect.height - 8;
           break;
         case "bottom":
-          x = containerRect.left + (containerRect.width - tooltipRect.width) / 2;
+          x =
+            containerRect.left + (containerRect.width - tooltipRect.width) / 2;
           y = containerRect.bottom + 8;
           break;
       }
@@ -60,7 +69,7 @@ export function Tooltip({ content, children, side = "right", disabled = false }:
       >
         {children}
       </div>
-      
+
       {isVisible && (
         <div
           ref={tooltipRef}

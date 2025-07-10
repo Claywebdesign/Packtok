@@ -62,7 +62,7 @@ export function SubmissionsTable({
 
   const handleApproval = async (
     submissionId: string,
-    action: "approve" | "reject"
+    action: "approve" | "reject",
   ) => {
     try {
       if (action === "approve") {
@@ -72,7 +72,7 @@ export function SubmissionsTable({
       }
 
       toast.success(
-        `Submission ${action === "approve" ? "approved" : "rejected"} successfully`
+        `Submission ${action === "approve" ? "approved" : "rejected"} successfully`,
       );
     } catch (error) {
       toast.error(`Failed to ${action} submission`);
@@ -170,7 +170,7 @@ export function SubmissionsTable({
               </TableCell>
               <TableCell className="py-4 px-6">
                 {getStatusBadge(
-                  submission.submissionStatus || "PENDING_APPROVAL"
+                  submission.submissionStatus || "PENDING_APPROVAL",
                 )}
               </TableCell>
               <TableCell className="py-4 px-6">
