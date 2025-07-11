@@ -1,6 +1,7 @@
 generator client {
   provider = "prisma-client-js"
 }
+
 datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
@@ -28,6 +29,13 @@ enum ProductType {
   SPARE_PARTS
   CONSUMABLES
   RAW_MATERIALS
+}
+
+enum MachineType {
+  MONO_CARTON
+  MASTER_CARTON
+  BOTH
+  OTHER
 }
 
 enum ProductCondition {
@@ -59,41 +67,180 @@ enum ServiceType {
   MAINTENANCE
   CONSULTANCY
   TURNKEY_PROJECT
-  BUSINESS_ACQUISITION
-  UNUSED_RAW_MATERIALS
-  EMPLOYMENT
+  COMPANY_ACQUISITION
+  MANPOWER_HIRING
+  JOB_SEEKER_SUBMISSION
 }
 
-enum ServiceInquiryStatus {
+enum ServiceStatus {
   SUBMITTED
+  AWAITING_ASSIGNMENT
+  IN_REVIEW
+  ACTION_REQUIRED
+  APPROVED
+  REJECTED
   IN_PROGRESS
-  RESOLVED
+  COMPLETED
   CLOSED
+  CANCELLED
 }
 
-enum MachineType {
-  MONO_CARTON
-  MASTER_CARTON
-  BOTH // For versatile machines that can be configured for both
+enum MaintenanceRequestType {
+  PREVENTIVE
+  CORRECTIVE
+  PREDICTIVE
+  EMERGENCY
+}
+
+// Enums specific to Consultancy service
+enum IndustryType {
+  MANUFACTURING
+  AUTOMOTIVE
+  FOOD_PROCESSING
+  PHARMACEUTICALS
+  AGRICULTURE
+  CHEMICALS
+  PETROCHEMICALS
+  TEXTILE
+  PLASTICS_PACKAGING
+  ELECTRONICS
   OTHER
 }
 
+enum ConsultancyServiceType {
+  MACHINE_OPTIMIZATION
+  AUTOMATION_INTEGRATION
+  MAINTENANCE_SUPPORT
+  PROCESS_IMPROVEMENT
+  CUSTOM_MACHINE_DESIGN
+  OPERATOR_TECHNICIAN_TRAINING
+  PREDICTIVE_MAINTENANCE_SETUP
+  TECHNOLOGY_INTEGRATION_AI_IOT_ROBOTICS
+  ENERGY_EFFICIENCY_SUSTAINABILITY
+  OTHER
+}
+
+enum ConsultancyProjectGoal {
+  INCREASE_MACHINE_PRODUCTIVITY
+  REDUCE_DOWNTIME
+  UPGRADE_OLD_MACHINERY
+  IMPROVE_WORKER_TRAINING
+  ENHANCE_ENERGY_EFFICIENCY
+  INTEGRATE_AUTOMATION_AI
+  COMPLY_WITH_INDUSTRY_STANDARDS
+  OTHER
+}
+
+enum TurnkeyFacilityType {
+  NEW_PRODUCTION_PLANT
+  EXPANSION_OF_EXISTING_FACILITY
+  MODERNIZATION_AUTOMATION
+  OTHER
+}
+
+enum TurnkeyTimeline {
+  MONTHS_0_6
+  MONTHS_6_12
+  YEARS_1_2
+  FLEXIBLE_TO_BE_DISCUSSED
+}
+
+enum SiteAvailability {
+  YES
+  NO
+  IN_PLANNING
+}
+
+enum TurnkeyServiceNeeded {
+  FEASIBILITY_STUDY
+  PLANT_DESIGN_ENGINEERING
+  EQUIPMENT_PROCUREMENT
+  MACHINERY_INSTALLATION
+  AUTOMATION_SOFTWARE_INTEGRATION
+  PROCESS_OPTIMIZATION
+  EMPLOYEE_TRAINING
+  MAINTENANCE_AFTER_SALES_SUPPORT
+  REGULATORY_COMPLIANCE_SETUP
+  OTHER
+}
+
+enum TurnkeyBudget {
+  UNDER_1M
+  M1_5
+  M5_10
+  OVER_10M
+  TO_BE_DISCUSSED
+}
+
+enum FundingStatus {
+  FULLY_FUNDED
+  PARTIALLY_FUNDED
+  SEEKING_FINANCING
+  OTHER
+}
+
+// Enums specific to Company Acquisition service
+enum InquirerType {
+  BUYER
+  SELLER
+  ADVISOR_CONSULTANT
+}
+
+enum TransactionType {
+  ASSET_SALE
+  STOCK_SHARE_SALE
+  MERGER
+  ACQUISITION_TAKEOVER
+  NOT_SURE
+}
+
+
+enum LegalStructure {
+  SOLE_PROPRIETORSHIP
+  PARTNERSHIP
+  PVT_LTD
+  PUBLIC
+  LLP
+  OTHER
+}
+
+enum ManpowerType {
+  MACHINE_OPERATORS
+  TECHNICIANS
+  MAINTENANCE_WORKERS
+  SUPERVISORS
+  OTHER
+}
+
+enum HiringDuration {
+  PERMANENT
+  CONTRACT
+}
+
+enum UrgencyLevel {
+  HIGH
+  MEDIUM
+  LOW
+}
+
 model User {
-  id             String        @id // Supabase auth.users UUID
-  createdAt      DateTime      @default(now())
-  updatedAt      DateTime      @updatedAt
-  name           String
-  email          String        @unique
-  phone_number   String?       @unique  // Full E.164 number like +918800244925
-  country        String?       @default("IN")
-  role           Role          @default(NORMAL_USER)
-  otp            Otp?
-  adminPermissions AdminPermission[]
+  id                      String                   @id // Supabase auth.users UUID
+  createdAt               DateTime                 @default(now())
+  updatedAt               DateTime                 @updatedAt
+  name                    String
+  email                   String                   @unique
+  phone_number            String?                  @unique
+  country                 String?                  @default("IN")
+  role                    Role                     @default(NORMAL_USER)
+  otp                     Otp?
+  adminPermissions        AdminPermission[]
 
   // --- Relations ---
-  quoteRequests    QuoteRequest[]
-  serviceInquiries ServiceInquiry[]
-  createdProducts  MarketplaceProduct[] @relation("ProductsCreatedByUser")
+  quoteRequests           QuoteRequest[]
+  createdProducts         MarketplaceProduct[]     @relation("ProductsCreatedByUser")
+  serviceRequests         ServiceRequest[]         @relation("SubmittedByUser")
+  assignedServiceRequests ServiceRequest[]         @relation("AssignedToAdmin")
+  serviceActionLogs       ServiceActionLog[]       @relation("ActionByActor")
 
   @@map("users")
 }
@@ -116,53 +263,45 @@ model Otp {
 
   @@map("otps")
 }
-
 model Category {
-  id        String   @id @default(cuid())
-  name      String   @unique
-  createdAt DateTime @default(now())
+  id        String               @id @default(cuid())
+  name      String               @unique
+  createdAt DateTime             @default(now())
   products  MarketplaceProduct[]
 
   @@map("categories")
 }
 
 model MarketplaceProduct {
-  id             String   @id @default(cuid())
-  createdAt      DateTime @default(now())
-  updatedAt      DateTime @updatedAt
-  title          String
-  description    String   @db.Text
-  price          Decimal  @db.Decimal(12, 2)
-  quantity       Int      @default(1)
-  productType    ProductType
+  id              String                   @id @default(cuid())
+  createdAt       DateTime                 @default(now())
+  updatedAt       DateTime                 @updatedAt
+  title           String
+  description     String                   @db.Text
+  price           Decimal                  @db.Decimal(12, 2)
+  quantity        Int                      @default(1)
+  productType     ProductType
   machineType    MachineType?
-  images         String[]  // this will be array of images of the product in different angles
-  imagesThumbnail String? // this will be main  image of the product
-  videoUrl       String?
-  videoThumbnail String?
-  pdfUrl         String?
-  specifications Json
-  condition      ProductCondition
-  status         MarketplaceProductStatus @default(AVAILABLE)
-  additionalInfo String?  @db.Text
-  manufacturer   String?
-  model          String?
-  year           Int?
+  images          String[]
+  imagesThumbnail String?
+  videoUrl        String?
+  videoThumbnail  String?
+  pdfUrl          String?
+  specifications  Json
+  condition       ProductCondition
+  status          MarketplaceProductStatus @default(AVAILABLE)
+  additionalInfo  String?                  @db.Text
+  manufacturer    String?
+  model           String?
+  year            Int?
 
   // --- Relations ---
-  category       Category @relation(fields: [categoryId], references: [id])
-  categoryId     String
-
-
-  // This field is now mandatory and universally tracks the creator of the product.
-  createdByUser  User     @relation("ProductsCreatedByUser", fields: [createdById], references: [id])
-  createdById    String
-
-
-  // This field remains. Its presence or absence tells us if this was a user submission.
+  category    Category @relation(fields: [categoryId], references: [id])
+  categoryId  String
+  createdByUser User     @relation("ProductsCreatedByUser", fields: [createdById], references: [id])
+  createdById String
   submissionStatus UserSubmissionStatus?
-
-  quoteRequests  QuoteRequest[]
+  quoteRequests QuoteRequest[]
 
   @@map("marketplace_products")
 }
@@ -171,7 +310,6 @@ model QuoteRequest {
   id             String      @id @default(cuid())
   createdAt      DateTime    @default(now())
   updatedAt      DateTime    @updatedAt
-
   companyName    String
   address        String
   message        String      @db.Text
@@ -179,34 +317,223 @@ model QuoteRequest {
   status         QuoteStatus @default(PENDING)
 
   // --- Relations ---
-  user           User        @relation(fields: [userId], references: [id], onDelete: Cascade)
-  userId         String
-
-  product        MarketplaceProduct @relation(fields: [productId], references: [id], onDelete: Cascade)
-  productId      String
+  user      User               @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId    String
+  product   MarketplaceProduct @relation(fields: [productId], references: [id], onDelete: Cascade)
+  productId String
 
   @@map("quote_requests")
 }
 
-model ServiceInquiry {
+model ServiceRequest {
   id          String      @id @default(cuid())
   createdAt   DateTime    @default(now())
   updatedAt   DateTime    @updatedAt
   serviceType ServiceType
-  details     String      @db.Text
-  address     String?
-  machineType MachineType? // For machines
-  productType ProductType? // For products
-  quantity    Int? // For products
-  peopleCount Int? // For services
-  budget      Decimal? @db.Decimal(12, 2) // For products
-  additionalInfo String? @db.Text
-
-  status      ServiceInquiryStatus @default(SUBMITTED)
+  status      ServiceStatus @default(SUBMITTED)
 
   // --- Relations ---
-  user        User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user        User        @relation("SubmittedByUser", fields: [userId], references: [id], onDelete: Cascade)
   userId      String
 
-  @@map("service_inquiries")
+  assignedTo  User?       @relation("AssignedToAdmin", fields: [assignedToId], references: [id], onDelete: SetNull)
+  assignedToId String?
+
+  maintenanceRequest        MaintenanceRequest?
+  consultancyRequest        ConsultancyRequest?
+  turnkeyProjectInquiry     TurnkeyProjectInquiry?
+  companyAcquisitionInquiry CompanyAcquisitionInquiry?
+  manpowerHiringRequest     ManpowerHiringRequest?
+  jobSeekerProfile          JobSeekerProfile?
+
+  actionLogs                ServiceActionLog[]
+
+  @@map("service_requests")
+}
+// timeline for service request-to show important events
+model ServiceActionLog {
+  id         String   @id @default(cuid())
+  createdAt  DateTime @default(now())
+  action     String   // e.g., "Status changed to IN_PROGRESS", "Assigned to Admin Y"
+  notes      String?  @db.Text
+
+  // --- Relations ---
+  request    ServiceRequest @relation(fields: [requestId], references: [id], onDelete: Cascade)
+  requestId  String
+  actor      User           @relation("ActionByActor", fields: [actorId], references: [id], onDelete:Restrict)
+  actorId    String
+
+  @@map("service_action_logs")
+}
+
+model MaintenanceRequest {
+  id                      String                 @id @default(cuid())
+  maintenanceType         MaintenanceRequestType
+  companyName             String
+  address                 String
+  machineName             String
+  machineIdOrSerialNumber String
+  locationInFacility      String
+  manufacturer            String?
+  installationDate        DateTime?
+  checklistDetails        Json?
+  partsReplaced           Json?
+  technicianNotes         String?                @db.Text
+  supervisorApprovalName  String?
+
+  // --- Relation to parent ---
+  serviceRequest        ServiceRequest         @relation(fields: [serviceRequestId], references: [id], onDelete: Cascade)
+  serviceRequestId      String                 @unique
+
+  @@map("maintenance_requests")
+}
+
+model ConsultancyRequest {
+  id                           String                     @id @default(cuid())
+  companyName                  String
+  contactPerson                String
+  designation                  String
+  phone                        String
+  email                        String
+  companyAddress               String
+  industryType                 IndustryType
+  industryOther                String?
+  employeesOperatingMachines   Int?
+  machineTypesInUse            String                     @db.Text
+  yearsInOperation             Int?
+  servicesRequired             ConsultancyServiceType[]
+  currentChallenges            String                     @db.Text
+  projectGoals                 ConsultancyProjectGoal[]
+  preferredStartDate           DateTime?
+  expectedCompletionDate       DateTime?
+  estimatedBudget              String?
+  additionalNotes              String?                    @db.Text
+
+  // --- Relation to parent ---
+  serviceRequest               ServiceRequest             @relation(fields: [serviceRequestId], references: [id], onDelete: Cascade)
+  serviceRequestId             String                     @unique
+
+  @@map("consultancy_requests")
+}
+
+model TurnkeyProjectInquiry {
+  id                           String                 @id @default(cuid())
+  contactName                  String
+  companyName                  String
+  role                         String
+  email                        String
+  phone                        String
+  website                      String?
+  industry                     IndustryType[]
+  facilityType                 TurnkeyFacilityType
+  projectDescription           String                 @db.Text
+  targetProductionCapacity     String
+  completionTimeline           TurnkeyTimeline
+  siteAvailableStatus          SiteAvailability
+  servicesNeeded               TurnkeyServiceNeeded[]
+  powerSupplyAvailable         String?
+  utilitiesAvailable           Boolean
+  machineryPreferences         String?                @db.Text
+  estimatedBudget              TurnkeyBudget
+  fundingStatus                FundingStatus
+  requiresOngoingSupport       Boolean
+  interestedInFutureUpgrades   Boolean
+  specialRequirements          String?                @db.Text
+
+  // --- Relation to parent ---
+  serviceRequest               ServiceRequest         @relation(fields: [serviceRequestId], references: [id], onDelete: Cascade)
+  serviceRequestId             String                 @unique
+
+  @@map("turnkey_project_inquiries")
+}
+
+model CompanyAcquisitionInquiry {
+  id                          String                @id @default(cuid())
+  contactName                 String
+  companyName                 String
+  role                        String
+  email                       String
+  phone                       String
+  inquirerType                InquirerType
+  transactionType             TransactionType
+  intendedOutcome             String?               @db.Text
+  sellerBusinessDescription String?               @db.Text
+  sellerLegalStructure      LegalStructure?
+  sellerIndustrySector      String?
+  sellerYearEstablished     Int?
+  sellerAnnualRevenue       String?
+  sellerEbitda              String?
+  sellerKeyAssets           String?               @db.Text
+  buyerPreferredBusinessType String?               @db.Text
+  buyerTargetSize           String?
+  buyerGeographicPreference String?
+  buyerOwnershipInterest    String?
+  advisorsEngaged           String[]
+  isValued                  Boolean?
+  hasOngoingLitigation      Boolean?
+  litigationDetails         String?               @db.Text
+  hasChangeOfControlClauses Boolean?
+  wantsNda                  Boolean
+  additionalNotes           String?               @db.Text
+
+  // --- Relation to parent ---
+  serviceRequest              ServiceRequest        @relation(fields: [serviceRequestId], references: [id], onDelete: Cascade)
+  serviceRequestId            String                @unique
+
+  @@map("company_acquisition_inquiries")
+}
+
+model ManpowerHiringRequest {
+  id                           String           @id @default(cuid())
+  companyName                  String
+  contactPerson                String
+  designation                  String
+  phone                        String
+  email                        String
+  companyAddress               String
+  industryType                 IndustryType
+  machineryInvolved            String           @db.Text
+  workLocation                 String
+  workingHours                 String
+  manpowerType                 ManpowerType[]
+  skilledWorkersRequired       Int              @default(0)
+  semiSkilledWorkersRequired   Int              @default(0)
+  unskilledWorkersRequired     Int              @default(0)
+  hiringDuration               HiringDuration
+  contractDurationDetails      String?
+  requiredCertsAndExp          String?          @db.Text
+  expectedJoiningDate          DateTime
+  hiringUrgency                UrgencyLevel
+  additionalNotes              String?          @db.Text
+
+  // --- Relation to parent ---
+  serviceRequest               ServiceRequest   @relation(fields: [serviceRequestId], references: [id], onDelete: Cascade)
+  serviceRequestId             String           @unique
+
+  @@map("manpower_hiring_requests")
+}
+
+model JobSeekerProfile {
+  id                          String     @id @default(cuid())
+  firstName                   String
+  lastName                    String
+  address                     String
+  city                        String
+  state                       String
+  postalCode                  String
+  stateOfResidence            String
+  phone                       String
+  alternatePhone              String?
+  positionSought              String
+  otherPosition               String?
+  preferredWorkingMode        String
+  hasPreviouslyWorkedWithUs   Boolean
+  previousWorkEndDate         DateTime?
+  cvUrl                       String
+
+  // --- Relation to parent ---
+  serviceRequest              ServiceRequest @relation(fields: [serviceRequestId], references: [id], onDelete: Cascade)
+  serviceRequestId            String         @unique
+
+  @@map("job_seeker_profiles")
 }

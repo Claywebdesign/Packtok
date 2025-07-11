@@ -20,7 +20,13 @@ export const getAllQuoteRequests = async () => {
   return prisma.quoteRequest.findMany({
     include: {
       user: {
-        select: { id: true, name: true, email: true, phone_number: true, country: true },
+        select: {
+          id: true,
+          name: true,
+          email: true,
+          phone_number: true,
+          country: true,
+        },
       },
       product: true,
     },

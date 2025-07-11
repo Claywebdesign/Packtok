@@ -33,6 +33,7 @@ const sanitizePriceForPublic = (
   if (copy.specifications && typeof copy.specifications === "string") {
     try {
       copy.specifications = JSON.parse(copy.specifications);
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
     } catch (err) {
       // leave as-is if parsing fails
     }
@@ -209,7 +210,7 @@ export const getPublicProducts = async (options: PublicProductQueryOptions) => {
   const where: Prisma.MarketplaceProductWhereInput = {
     ...publicVisibilityWhere,
   };
-  
+
   // Handle multiple category IDs
   if (options.categoryId) {
     if (Array.isArray(options.categoryId)) {
@@ -218,7 +219,7 @@ export const getPublicProducts = async (options: PublicProductQueryOptions) => {
       where.categoryId = options.categoryId;
     }
   }
-  
+
   // Handle multiple conditions
   if (options.condition) {
     if (Array.isArray(options.condition)) {
@@ -227,7 +228,7 @@ export const getPublicProducts = async (options: PublicProductQueryOptions) => {
       (where as any).condition = options.condition;
     }
   }
-  
+
   // Handle multiple machine types
   if (options.machineType) {
     if (Array.isArray(options.machineType)) {
@@ -236,7 +237,7 @@ export const getPublicProducts = async (options: PublicProductQueryOptions) => {
       (where as any).machineType = options.machineType;
     }
   }
-  
+
   // Handle multiple product types
   if (options.productType) {
     if (Array.isArray(options.productType)) {
@@ -245,7 +246,7 @@ export const getPublicProducts = async (options: PublicProductQueryOptions) => {
       (where as any).productType = options.productType;
     }
   }
-  
+
   // Handle price range filtering
   if (options.priceMin !== undefined || options.priceMax !== undefined) {
     where.price = {};
@@ -256,14 +257,14 @@ export const getPublicProducts = async (options: PublicProductQueryOptions) => {
       (where.price as any).lte = options.priceMax;
     }
   }
-  
+
   // Handle search term
   if (options.searchTerm) {
     where.OR = [
-      { title: { contains: options.searchTerm, mode: 'insensitive' } },
-      { description: { contains: options.searchTerm, mode: 'insensitive' } },
-      { manufacturer: { contains: options.searchTerm, mode: 'insensitive' } },
-      { model: { contains: options.searchTerm, mode: 'insensitive' } },
+      { title: { contains: options.searchTerm, mode: "insensitive" } },
+      { description: { contains: options.searchTerm, mode: "insensitive" } },
+      { manufacturer: { contains: options.searchTerm, mode: "insensitive" } },
+      { model: { contains: options.searchTerm, mode: "insensitive" } },
     ];
   }
 

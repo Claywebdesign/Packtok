@@ -13,6 +13,11 @@ export const productMediaUpload = multer({
   { name: "videoThumbnail", maxCount: 1 },
 ]);
 
+export const cvUpload = multer({
+  storage,
+  limits: { fileSize: 20 * 1024 * 1024 }, // 20MB CV size limit
+}).single("cv");
+
 declare global {
   namespace Express {
     interface Request {

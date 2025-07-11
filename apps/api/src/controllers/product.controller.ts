@@ -15,24 +15,24 @@ import {
 
 export const listProducts = asyncHandler(
   async (req: Request, res: Response) => {
-    const { 
-      categoryId, 
-      condition, 
-      machineType, 
-      productType, 
-      priceMin, 
-      priceMax, 
-      searchTerm, 
-      page, 
-      limit 
+    const {
+      categoryId,
+      condition,
+      machineType,
+      productType,
+      priceMin,
+      priceMax,
+      searchTerm,
+      page,
+      limit,
     } = req.query;
 
     // Helper function to parse array parameters
     const parseArrayParam = (param: any): string[] | string | undefined => {
       if (!param) return undefined;
       if (Array.isArray(param)) return param as string[];
-      if (typeof param === 'string' && param.includes(',')) {
-        return param.split(',').map(item => item.trim());
+      if (typeof param === "string" && param.includes(",")) {
+        return param.split(",").map((item) => item.trim());
       }
       return param as string;
     };
@@ -112,7 +112,7 @@ export const submitProduct = asyncHandler(
     if (body.specifications && typeof body.specifications === "string") {
       try {
         body.specifications = JSON.parse(body.specifications);
-      } catch (err) {
+      } catch {
         throw new Error("Invalid JSON in specifications field");
       }
     }

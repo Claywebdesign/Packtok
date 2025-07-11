@@ -1,0 +1,100 @@
+import { Request, Response } from "express";
+import {
+  createCompanyAcquisitionInquiry,
+  createConsultancyRequest,
+  createJobSeekerProfile,
+  createMaintenanceRequest,
+  createManpowerHiringRequest,
+  createTurnkeyProjectInquiry,
+  getUserServiceRequests,
+} from "../services/user/serviceRequests.service";
+import { ApiResponse } from "../utils/apiResponse";
+import { asyncHandler } from "../utils/asyncHandler";
+import { uploadDocumentToSupabase } from "../utils/storage.service";
+
+export const submitMaintenance = asyncHandler(
+  async (req: Request, res: Response) => {
+    const data = req.body; // expect all MaintenanceRequest fields
+    const request = await createMaintenanceRequest(req.user!.id, data as any);
+    res
+      .status(201)
+      .json(new ApiResponse(201, request, "Maintenance request submitted"));
+  }
+);
+export const submitConsultancy = asyncHandler(
+  async (req: Request, res: Response) => {
+    const data = req.body;
+    const request = await createConsultancyRequest(req.user!.id, data as any);
+    res
+      .status(201)
+      .json(new ApiResponse(201, request, "Consultancy request submitted"));
+  }
+);
+
+export const submitTurnkey = asyncHandler(
+  async (req: Request, res: Response) => {
+    const data = req.body;
+    const request = await createTurnkeyProjectInquiry(
+      req.user!.id,
+      data as any
+    );
+    res
+      .status(201)
+      .json(new ApiResponse(201, request, "Turnkey project inquiry submitted"));
+  }
+);
+
+export const submitAcquisition = asyncHandler(
+  async (req: Request, res: Response) => {
+    const data = req.body;
+    const request = await createCompanyAcquisitionInquiry(
+      req.user!.id,
+      data as any
+    );
+    res
+      .status(201)
+      .json(
+        new ApiResponse(201, request, "Company acquisition inquiry submitted")
+      );
+  }
+);
+
+export const submitManpower = asyncHandler(
+  async (req: Request, res: Response) => {
+    const data = req.body;
+    const request = await createManpowerHiringRequest(
+      req.user!.id,
+      data as any
+    );
+    res
+      .status(201)
+      .json(new ApiResponse(201, request, "Manpower hiring request submitted"));
+  }
+);
+
+export const submitJobSeeker = asyncHandler(
+  async (req: Request, res: Response) => {
+    const rest = { ...req.body } as any;
+    let cvUrl: string | undefined;
+    if ((req as any).file) {
+      const file = (req as any).file as any;
+      cvUrl = await uploadDocumentToSupabase(file.buffer, file.mimetype, "cvs");
+    }
+    const request = await createJobSeekerProfile(req.user!.id, {
+      ...rest,
+      cvUrl,
+    } as any);
+    res
+      .status(201)
+      .json(new ApiResponse(201, request, "Job seeker profile submitted"));
+  }
+);
+
+export const listMyServiceRequests = asyncHandler(
+  async (req: Request, res: Response) => {
+    const requests = await getUserServiceRequests(req.user!.id);
+    res
+      .status(200)
+      .json(new ApiResponse(200, requests, "Service requests fetched"));
+  }
+);

@@ -5,7 +5,6 @@ import config from "../config";
 import { ApiError } from "../utils/apiError";
 import supabase from "../utils/supabaseClient";
 
-
 const resend = new Resend(config.resend.apiKey);
 
 const hashOtp = (otp: string) =>

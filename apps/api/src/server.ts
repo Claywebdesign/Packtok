@@ -14,6 +14,8 @@ import authRouter from "./routers/auth.routes";
 import categoryRouter from "./routers/category.routes";
 import productRouter from "./routers/product.routes";
 import quoteRouter from "./routers/quote.routes";
+import serviceRouter from "./routers/service.routes";
+import adminServiceRouter from "./routers/admin.services.routes";
 import { ApiError } from "./utils/apiError";
 import logger from "./utils/logger";
 
@@ -46,6 +48,8 @@ app.use("/api/v1/admins", adminRouter);
 app.use("/api/v1/products", productRouter);
 app.use("/api/v1/quotes", quoteRouter);
 app.use("/api/v1/categories", categoryRouter);
+app.use("/api/v1/services", serviceRouter);
+app.use("/api/v1/admins/services", adminServiceRouter);
 
 // Global Error Handler
 const errorHandler: ErrorRequestHandler = (err, req, res, _next) => {
