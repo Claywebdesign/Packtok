@@ -1,41 +1,47 @@
 "use client";
 
-import { ServiceRequest, ServiceStatus, ServiceType } from "../../../../types/service";
+import { ServiceStatus, ServiceType } from "../../../../types/service";
 import { Card, CardContent, CardHeader, CardTitle } from "@packtok/ui/card";
-import { 
-  Settings, 
-  Users, 
-  Building, 
-  Briefcase, 
-  Clock, 
-  CheckCircle, 
-  AlertCircle
+import {
+  Settings,
+  Users,
+  Building,
+  Briefcase,
+  Clock,
+  CheckCircle,
+  AlertCircle,
 } from "lucide-react";
 import { useServices } from "../../../../hooks/useServices";
 
 export function ServicesStats() {
-  const { data: services = [], isLoading } = useServices();
-  
+  const { data: services = [] } = useServices();
+
   const totalServices = services.length;
-  const pendingServices = services.filter(s => 
-    s.status === ServiceStatus.SUBMITTED || 
-    s.status === ServiceStatus.AWAITING_ASSIGNMENT
+  const pendingServices = services.filter(
+    (s) =>
+      s.status === ServiceStatus.SUBMITTED ||
+      s.status === ServiceStatus.AWAITING_ASSIGNMENT,
   ).length;
-  const inReviewServices = services.filter(s => 
-    s.status === ServiceStatus.IN_REVIEW ||
-    s.status === ServiceStatus.ACTION_REQUIRED ||
-    s.status === ServiceStatus.IN_PROGRESS
+  const inReviewServices = services.filter(
+    (s) =>
+      s.status === ServiceStatus.IN_REVIEW ||
+      s.status === ServiceStatus.ACTION_REQUIRED ||
+      s.status === ServiceStatus.IN_PROGRESS,
   ).length;
-  const completedServices = services.filter(s => 
-    s.status === ServiceStatus.COMPLETED ||
-    s.status === ServiceStatus.APPROVED ||
-    s.status === ServiceStatus.CLOSED
+  const completedServices = services.filter(
+    (s) =>
+      s.status === ServiceStatus.COMPLETED ||
+      s.status === ServiceStatus.APPROVED ||
+      s.status === ServiceStatus.CLOSED,
   ).length;
 
-  const servicesByType = services.reduce((acc, service) => {
-    acc[service.serviceType] = (acc[service.serviceType] || 0) + 1;
-    return acc;
-  }, {} as Record<ServiceType, number>);
+  const servicesByType = services.reduce(
+    (acc, service) => {
+      acc[service.serviceType] = (acc[service.serviceType] || 0) + 1;
+      return acc;
+    },
+    {} as Record<ServiceType, number>,
+  );
 
   const getServiceTypeIcon = (type: ServiceType) => {
     switch (type) {
@@ -84,9 +90,7 @@ export function ServicesStats() {
         </CardHeader>
         <CardContent>
           <div className="text-2xl font-bold">{totalServices}</div>
-          <p className="text-xs text-muted-foreground">
-            All service requests
-          </p>
+          <p className="text-xs text-muted-foreground">All service requests</p>
         </CardContent>
       </Card>
 
@@ -97,9 +101,7 @@ export function ServicesStats() {
         </CardHeader>
         <CardContent>
           <div className="text-2xl font-bold">{pendingServices}</div>
-          <p className="text-xs text-muted-foreground">
-            Awaiting review
-          </p>
+          <p className="text-xs text-muted-foreground">Awaiting review</p>
         </CardContent>
       </Card>
 
@@ -110,9 +112,7 @@ export function ServicesStats() {
         </CardHeader>
         <CardContent>
           <div className="text-2xl font-bold">{inReviewServices}</div>
-          <p className="text-xs text-muted-foreground">
-            Being processed
-          </p>
+          <p className="text-xs text-muted-foreground">Being processed</p>
         </CardContent>
       </Card>
 
@@ -123,9 +123,7 @@ export function ServicesStats() {
         </CardHeader>
         <CardContent>
           <div className="text-2xl font-bold">{completedServices}</div>
-          <p className="text-xs text-muted-foreground">
-            Successfully finished
-          </p>
+          <p className="text-xs text-muted-foreground">Successfully finished</p>
         </CardContent>
       </Card>
 
@@ -140,8 +138,12 @@ export function ServicesStats() {
               <div key={type} className="flex items-center space-x-2">
                 {getServiceTypeIcon(type as ServiceType)}
                 <div>
-                  <p className="text-sm font-medium">{getServiceTypeLabel(type as ServiceType)}</p>
-                  <p className="text-xs text-muted-foreground">{count} requests</p>
+                  <p className="text-sm font-medium">
+                    {getServiceTypeLabel(type as ServiceType)}
+                  </p>
+                  <p className="text-xs text-muted-foreground">
+                    {count} requests
+                  </p>
                 </div>
               </div>
             ))}

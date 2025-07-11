@@ -1,11 +1,11 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import api from "../lib/axios";
-import { 
-  ServiceRequest, 
-  UpdateServiceStatusRequest, 
-  AssignServiceRequest, 
+import {
+  ServiceRequest,
+  UpdateServiceStatusRequest,
+  AssignServiceRequest,
   ServiceStatsResponse,
-  ServiceStatus 
+  ServiceStatus,
 } from "../types/service";
 import { QK } from "../utils/queryKeys";
 
@@ -24,14 +24,26 @@ const servicesApi = {
   },
 
   // Update service status
-  updateServiceStatus: async (id: string, request: UpdateServiceStatusRequest): Promise<ServiceRequest> => {
-    const { data } = await api.put(`/api/v1/admins/services/${id}/status`, request);
+  updateServiceStatus: async (
+    id: string,
+    request: UpdateServiceStatusRequest,
+  ): Promise<ServiceRequest> => {
+    const { data } = await api.put(
+      `/api/v1/admins/services/${id}/status`,
+      request,
+    );
     return data.data || data;
   },
 
   // Assign service to admin
-  assignService: async (id: string, request: AssignServiceRequest): Promise<ServiceRequest> => {
-    const { data } = await api.put(`/api/v1/admins/services/${id}/assign`, request);
+  assignService: async (
+    id: string,
+    request: AssignServiceRequest,
+  ): Promise<ServiceRequest> => {
+    const { data } = await api.put(
+      `/api/v1/admins/services/${id}/assign`,
+      request,
+    );
     return data.data || data;
   },
 

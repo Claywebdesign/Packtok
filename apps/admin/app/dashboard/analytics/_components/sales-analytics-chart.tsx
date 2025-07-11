@@ -18,6 +18,7 @@ export function SalesAnalyticsChart({ data }: SalesAnalyticsChartProps) {
     { name: "Orders Canceled", value: data.ordersCanceled, color: COLORS[2] },
   ];
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const renderCustomizedLabel = (props: any) => {
     const { cx, cy, midAngle, innerRadius, outerRadius, percent } = props;
     if (midAngle === undefined) return null;

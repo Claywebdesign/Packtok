@@ -11,7 +11,9 @@ interface ServiceDetailPageProps {
 
 async function getService(id: string): Promise<ServiceRequest | null> {
   try {
-    const response = await fetchJson<{ data: ServiceRequest }>(`/api/v1/admins/services/${id}`);
+    const response = await fetchJson<{ data: ServiceRequest }>(
+      `/api/v1/admins/services/${id}`,
+    );
     return response.data;
   } catch (error) {
     console.error("Failed to fetch service:", error);
@@ -19,7 +21,9 @@ async function getService(id: string): Promise<ServiceRequest | null> {
   }
 }
 
-export default async function ServiceDetailPage({ params }: ServiceDetailPageProps) {
+export default async function ServiceDetailPage({
+  params,
+}: ServiceDetailPageProps) {
   const service = await getService(params.id);
 
   if (!service) {

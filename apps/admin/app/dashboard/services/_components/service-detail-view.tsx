@@ -6,7 +6,7 @@ import { ArrowLeft, UserPlus, Edit, Trash2, Download } from "lucide-react";
 import { Button } from "@packtok/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@packtok/ui/card";
 import { Badge } from "@packtok/ui/badge";
-import { 
+import {
   AlertDialog,
   AlertDialogAction,
   AlertDialogCancel,
@@ -18,15 +18,15 @@ import {
   AlertDialogTrigger,
 } from "@packtok/ui/components/alert-dialog";
 import { toast } from "react-hot-toast";
-import { 
-  ServiceRequest, 
-  ServiceStatus, 
-  ServiceType 
+import {
+  ServiceRequest,
+  ServiceStatus,
+  ServiceType,
 } from "../../../../types/service";
-import { 
-  useUpdateServiceStatus, 
-  useAssignService, 
-  useDeleteService 
+import {
+  useUpdateServiceStatus,
+  useAssignService,
+  useDeleteService,
 } from "../../../../hooks/useServices";
 import { AssignServiceDialog } from "./assign-service-dialog";
 import { UpdateStatusDialog } from "./update-status-dialog";
@@ -37,16 +37,25 @@ interface ServiceDetailViewProps {
 
 export function ServiceDetailView({ service }: ServiceDetailViewProps) {
   const router = useRouter();
-  const [assigningService, setAssigningService] = useState<ServiceRequest | null>(null);
-  const [updatingService, setUpdatingService] = useState<ServiceRequest | null>(null);
+  const [assigningService, setAssigningService] =
+    useState<ServiceRequest | null>(null);
+  const [updatingService, setUpdatingService] = useState<ServiceRequest | null>(
+    null,
+  );
 
   const updateStatusMutation = useUpdateServiceStatus();
   const assignServiceMutation = useAssignService();
   const deleteServiceMutation = useDeleteService();
 
-  const handleStatusUpdate = async (serviceId: string, newStatus: ServiceStatus) => {
+  const handleStatusUpdate = async (
+    serviceId: string,
+    newStatus: ServiceStatus,
+  ) => {
     try {
-      await updateStatusMutation.mutateAsync({ id: serviceId, status: newStatus });
+      await updateStatusMutation.mutateAsync({
+        id: serviceId,
+        status: newStatus,
+      });
       toast.success("Service status updated successfully");
     } catch (error) {
       toast.error("Failed to update service status");
@@ -81,11 +90,17 @@ export function ServiceDetailView({ service }: ServiceDetailViewProps) {
       case ServiceType.TURNKEY_PROJECT:
         return service.turnkeyProjectInquiry?.companyName || "Turnkey Project";
       case ServiceType.COMPANY_ACQUISITION:
-        return service.companyAcquisitionInquiry?.companyName || "Company Acquisition";
+        return (
+          service.companyAcquisitionInquiry?.companyName ||
+          "Company Acquisition"
+        );
       case ServiceType.MANPOWER_HIRING:
         return service.manpowerHiringRequest?.companyName || "Manpower Hiring";
       case ServiceType.JOB_SEEKER_SUBMISSION:
-        return `${service.jobSeekerProfile?.firstName} ${service.jobSeekerProfile?.lastName}` || "Job Seeker";
+        return (
+          `${service.jobSeekerProfile?.firstName} ${service.jobSeekerProfile?.lastName}` ||
+          "Job Seeker"
+        );
       default:
         return "Service Request";
     }
@@ -165,11 +180,12 @@ export function ServiceDetailView({ service }: ServiceDetailViewProps) {
           <div>
             <h1 className="text-2xl font-bold">{getServiceTitle()}</h1>
             <p className="text-muted-foreground">
-              {getServiceTypeBadge(service.serviceType)} • Created {new Date(service.createdAt).toLocaleDateString()}
+              {getServiceTypeBadge(service.serviceType)} • Created{" "}
+              {new Date(service.createdAt).toLocaleDateString()}
             </p>
           </div>
         </div>
-        
+
         <div className="flex items-center gap-2">
           <Button
             variant="outline"
@@ -189,7 +205,10 @@ export function ServiceDetailView({ service }: ServiceDetailViewProps) {
           </Button>
           <AlertDialog>
             <AlertDialogTrigger asChild>
-              <Button variant="outline" className="text-red-600 hover:text-red-800">
+              <Button
+                variant="outline"
+                className="text-red-600 hover:text-red-800"
+              >
                 <Trash2 className="h-4 w-4" />
                 Delete
               </Button>
@@ -198,7 +217,8 @@ export function ServiceDetailView({ service }: ServiceDetailViewProps) {
               <AlertDialogHeader>
                 <AlertDialogTitle>Delete Service Request?</AlertDialogTitle>
                 <AlertDialogDescription>
-                  Are you sure you want to delete this service request? This action cannot be undone.
+                  Are you sure you want to delete this service request? This
+                  action cannot be undone.
                 </AlertDialogDescription>
               </AlertDialogHeader>
               <AlertDialogFooter>
@@ -238,7 +258,9 @@ export function ServiceDetailView({ service }: ServiceDetailViewProps) {
           <CardContent>
             <div className="space-y-2">
               <p className="font-medium">{service.user.name}</p>
-              <p className="text-sm text-muted-foreground">{service.user.email}</p>
+              <p className="text-sm text-muted-foreground">
+                {service.user.email}
+              </p>
             </div>
           </CardContent>
         </Card>
@@ -252,7 +274,9 @@ export function ServiceDetailView({ service }: ServiceDetailViewProps) {
               {service.assignedTo ? (
                 <>
                   <p className="font-medium">{service.assignedTo.name}</p>
-                  <p className="text-sm text-muted-foreground">{service.assignedTo.email}</p>
+                  <p className="text-sm text-muted-foreground">
+                    {service.assignedTo.email}
+                  </p>
                 </>
               ) : (
                 <p className="text-muted-foreground">Unassigned</p>
@@ -267,9 +291,7 @@ export function ServiceDetailView({ service }: ServiceDetailViewProps) {
         <CardHeader>
           <CardTitle>Service Details</CardTitle>
         </CardHeader>
-        <CardContent>
-          {renderServiceDetails()}
-        </CardContent>
+        <CardContent>{renderServiceDetails()}</CardContent>
       </Card>
 
       {/* Activity Timeline */}
@@ -286,10 +308,13 @@ export function ServiceDetailView({ service }: ServiceDetailViewProps) {
                   <div className="flex-1 min-w-0">
                     <p className="text-sm font-medium">{log.action}</p>
                     <p className="text-xs text-muted-foreground">
-                      by {log.actor.name} on {new Date(log.createdAt).toLocaleDateString()}
+                      by {log.actor.name} on{" "}
+                      {new Date(log.createdAt).toLocaleDateString()}
                     </p>
                     {log.notes && (
-                      <p className="text-sm text-muted-foreground mt-1">{log.notes}</p>
+                      <p className="text-sm text-muted-foreground mt-1">
+                        {log.notes}
+                      </p>
                     )}
                   </div>
                 </div>
@@ -326,18 +351,31 @@ function MaintenanceDetails({ service }: { service: ServiceRequest }) {
       <div>
         <h3 className="font-medium mb-3">Company Information</h3>
         <div className="space-y-2 text-sm">
-          <div><strong>Company:</strong> {maintenance.companyName}</div>
-          <div><strong>Address:</strong> {maintenance.address}</div>
+          <div>
+            <strong>Company:</strong> {maintenance.companyName}
+          </div>
+          <div>
+            <strong>Address:</strong> {maintenance.address}
+          </div>
         </div>
       </div>
-      
+
       <div>
         <h3 className="font-medium mb-3">Machine Details</h3>
         <div className="space-y-2 text-sm">
-          <div><strong>Machine:</strong> {maintenance.machineName}</div>
-          <div><strong>Serial Number:</strong> {maintenance.machineIdOrSerialNumber}</div>
-          <div><strong>Location:</strong> {maintenance.locationInFacility}</div>
-          <div><strong>Manufacturer:</strong> {maintenance.manufacturer || "N/A"}</div>
+          <div>
+            <strong>Machine:</strong> {maintenance.machineName}
+          </div>
+          <div>
+            <strong>Serial Number:</strong>{" "}
+            {maintenance.machineIdOrSerialNumber}
+          </div>
+          <div>
+            <strong>Location:</strong> {maintenance.locationInFacility}
+          </div>
+          <div>
+            <strong>Manufacturer:</strong> {maintenance.manufacturer || "N/A"}
+          </div>
         </div>
       </div>
     </div>
@@ -354,28 +392,46 @@ function ConsultancyDetails({ service }: { service: ServiceRequest }) {
         <div>
           <h3 className="font-medium mb-3">Company Information</h3>
           <div className="space-y-2 text-sm">
-            <div><strong>Company:</strong> {consultancy.companyName}</div>
-            <div><strong>Contact:</strong> {consultancy.contactPerson}</div>
-            <div><strong>Email:</strong> {consultancy.email}</div>
-            <div><strong>Phone:</strong> {consultancy.phone}</div>
+            <div>
+              <strong>Company:</strong> {consultancy.companyName}
+            </div>
+            <div>
+              <strong>Contact:</strong> {consultancy.contactPerson}
+            </div>
+            <div>
+              <strong>Email:</strong> {consultancy.email}
+            </div>
+            <div>
+              <strong>Phone:</strong> {consultancy.phone}
+            </div>
           </div>
         </div>
-        
+
         <div>
           <h3 className="font-medium mb-3">Industry Details</h3>
           <div className="space-y-2 text-sm">
-            <div><strong>Industry:</strong> {consultancy.industryType}</div>
-            <div><strong>Years in Operation:</strong> {consultancy.yearsInOperation || "N/A"}</div>
-            <div><strong>Employees:</strong> {consultancy.employeesOperatingMachines || "N/A"}</div>
+            <div>
+              <strong>Industry:</strong> {consultancy.industryType}
+            </div>
+            <div>
+              <strong>Years in Operation:</strong>{" "}
+              {consultancy.yearsInOperation || "N/A"}
+            </div>
+            <div>
+              <strong>Employees:</strong>{" "}
+              {consultancy.employeesOperatingMachines || "N/A"}
+            </div>
           </div>
         </div>
       </div>
-      
+
       <div>
         <h3 className="font-medium mb-3">Services Required</h3>
         <div className="flex flex-wrap gap-2">
           {consultancy.servicesRequired.map((service, index) => (
-            <Badge key={index} variant="secondary">{service.replace(/_/g, " ")}</Badge>
+            <Badge key={index} variant="secondary">
+              {service.replace(/_/g, " ")}
+            </Badge>
           ))}
         </div>
       </div>
@@ -393,23 +449,40 @@ function TurnkeyDetails({ service }: { service: ServiceRequest }) {
         <div>
           <h3 className="font-medium mb-3">Contact Information</h3>
           <div className="space-y-2 text-sm">
-            <div><strong>Company:</strong> {turnkey.companyName}</div>
-            <div><strong>Contact:</strong> {turnkey.contactName}</div>
-            <div><strong>Email:</strong> {turnkey.email}</div>
-            <div><strong>Phone:</strong> {turnkey.phone}</div>
+            <div>
+              <strong>Company:</strong> {turnkey.companyName}
+            </div>
+            <div>
+              <strong>Contact:</strong> {turnkey.contactName}
+            </div>
+            <div>
+              <strong>Email:</strong> {turnkey.email}
+            </div>
+            <div>
+              <strong>Phone:</strong> {turnkey.phone}
+            </div>
           </div>
         </div>
-        
+
         <div>
           <h3 className="font-medium mb-3">Project Details</h3>
           <div className="space-y-2 text-sm">
-            <div><strong>Facility Type:</strong> {turnkey.facilityType.replace(/_/g, " ")}</div>
-            <div><strong>Timeline:</strong> {turnkey.completionTimeline.replace(/_/g, " ")}</div>
-            <div><strong>Budget:</strong> {turnkey.estimatedBudget.replace(/_/g, " ")}</div>
+            <div>
+              <strong>Facility Type:</strong>{" "}
+              {turnkey.facilityType.replace(/_/g, " ")}
+            </div>
+            <div>
+              <strong>Timeline:</strong>{" "}
+              {turnkey.completionTimeline.replace(/_/g, " ")}
+            </div>
+            <div>
+              <strong>Budget:</strong>{" "}
+              {turnkey.estimatedBudget.replace(/_/g, " ")}
+            </div>
           </div>
         </div>
       </div>
-      
+
       <div>
         <h3 className="font-medium mb-3">Project Description</h3>
         <p className="text-sm">{turnkey.projectDescription}</p>
@@ -428,23 +501,39 @@ function AcquisitionDetails({ service }: { service: ServiceRequest }) {
         <div>
           <h3 className="font-medium mb-3">Contact Information</h3>
           <div className="space-y-2 text-sm">
-            <div><strong>Company:</strong> {acquisition.companyName}</div>
-            <div><strong>Contact:</strong> {acquisition.contactName}</div>
-            <div><strong>Email:</strong> {acquisition.email}</div>
-            <div><strong>Phone:</strong> {acquisition.phone}</div>
+            <div>
+              <strong>Company:</strong> {acquisition.companyName}
+            </div>
+            <div>
+              <strong>Contact:</strong> {acquisition.contactName}
+            </div>
+            <div>
+              <strong>Email:</strong> {acquisition.email}
+            </div>
+            <div>
+              <strong>Phone:</strong> {acquisition.phone}
+            </div>
           </div>
         </div>
-        
+
         <div>
           <h3 className="font-medium mb-3">Transaction Details</h3>
           <div className="space-y-2 text-sm">
-            <div><strong>Inquirer Type:</strong> {acquisition.inquirerType}</div>
-            <div><strong>Transaction Type:</strong> {acquisition.transactionType.replace(/_/g, " ")}</div>
-            <div><strong>Legal Structure:</strong> {acquisition.sellerLegalStructure?.replace(/_/g, " ") || "N/A"}</div>
+            <div>
+              <strong>Inquirer Type:</strong> {acquisition.inquirerType}
+            </div>
+            <div>
+              <strong>Transaction Type:</strong>{" "}
+              {acquisition.transactionType.replace(/_/g, " ")}
+            </div>
+            <div>
+              <strong>Legal Structure:</strong>{" "}
+              {acquisition.sellerLegalStructure?.replace(/_/g, " ") || "N/A"}
+            </div>
           </div>
         </div>
       </div>
-      
+
       {acquisition.intendedOutcome && (
         <div>
           <h3 className="font-medium mb-3">Intended Outcome</h3>
@@ -465,29 +554,49 @@ function ManpowerDetails({ service }: { service: ServiceRequest }) {
         <div>
           <h3 className="font-medium mb-3">Company Information</h3>
           <div className="space-y-2 text-sm">
-            <div><strong>Company:</strong> {manpower.companyName}</div>
-            <div><strong>Contact:</strong> {manpower.contactPerson}</div>
-            <div><strong>Email:</strong> {manpower.email}</div>
-            <div><strong>Phone:</strong> {manpower.phone}</div>
+            <div>
+              <strong>Company:</strong> {manpower.companyName}
+            </div>
+            <div>
+              <strong>Contact:</strong> {manpower.contactPerson}
+            </div>
+            <div>
+              <strong>Email:</strong> {manpower.email}
+            </div>
+            <div>
+              <strong>Phone:</strong> {manpower.phone}
+            </div>
           </div>
         </div>
-        
+
         <div>
           <h3 className="font-medium mb-3">Requirements</h3>
           <div className="space-y-2 text-sm">
-            <div><strong>Skilled Workers:</strong> {manpower.skilledWorkersRequired}</div>
-            <div><strong>Semi-skilled:</strong> {manpower.semiSkilledWorkersRequired}</div>
-            <div><strong>Unskilled:</strong> {manpower.unskilledWorkersRequired}</div>
-            <div><strong>Urgency:</strong> {manpower.hiringUrgency}</div>
+            <div>
+              <strong>Skilled Workers:</strong>{" "}
+              {manpower.skilledWorkersRequired}
+            </div>
+            <div>
+              <strong>Semi-skilled:</strong>{" "}
+              {manpower.semiSkilledWorkersRequired}
+            </div>
+            <div>
+              <strong>Unskilled:</strong> {manpower.unskilledWorkersRequired}
+            </div>
+            <div>
+              <strong>Urgency:</strong> {manpower.hiringUrgency}
+            </div>
           </div>
         </div>
       </div>
-      
+
       <div>
         <h3 className="font-medium mb-3">Manpower Types</h3>
         <div className="flex flex-wrap gap-2">
           {manpower.manpowerType.map((type, index) => (
-            <Badge key={index} variant="secondary">{type.replace(/_/g, " ")}</Badge>
+            <Badge key={index} variant="secondary">
+              {type.replace(/_/g, " ")}
+            </Badge>
           ))}
         </div>
       </div>
@@ -505,26 +614,40 @@ function JobSeekerDetails({ service }: { service: ServiceRequest }) {
         <div>
           <h3 className="font-medium mb-3">Personal Information</h3>
           <div className="space-y-2 text-sm">
-            <div><strong>Name:</strong> {jobSeeker.firstName} {jobSeeker.lastName}</div>
-            <div><strong>Phone:</strong> {jobSeeker.phone}</div>
-            <div><strong>Address:</strong> {jobSeeker.address}, {jobSeeker.city}, {jobSeeker.state} {jobSeeker.postalCode}</div>
+            <div>
+              <strong>Name:</strong> {jobSeeker.firstName} {jobSeeker.lastName}
+            </div>
+            <div>
+              <strong>Phone:</strong> {jobSeeker.phone}
+            </div>
+            <div>
+              <strong>Address:</strong> {jobSeeker.address}, {jobSeeker.city},{" "}
+              {jobSeeker.state} {jobSeeker.postalCode}
+            </div>
           </div>
         </div>
-        
+
         <div>
           <h3 className="font-medium mb-3">Job Preferences</h3>
           <div className="space-y-2 text-sm">
-            <div><strong>Position Sought:</strong> {jobSeeker.positionSought}</div>
-            <div><strong>Working Mode:</strong> {jobSeeker.preferredWorkingMode}</div>
-            <div><strong>Previously Worked:</strong> {jobSeeker.hasPreviouslyWorkedWithUs ? "Yes" : "No"}</div>
+            <div>
+              <strong>Position Sought:</strong> {jobSeeker.positionSought}
+            </div>
+            <div>
+              <strong>Working Mode:</strong> {jobSeeker.preferredWorkingMode}
+            </div>
+            <div>
+              <strong>Previously Worked:</strong>{" "}
+              {jobSeeker.hasPreviouslyWorkedWithUs ? "Yes" : "No"}
+            </div>
           </div>
         </div>
       </div>
-      
+
       <div>
         <h3 className="font-medium mb-3">Resume</h3>
-        <Button 
-          variant="outline" 
+        <Button
+          variant="outline"
           onClick={() => window.open(jobSeeker.cvUrl, "_blank")}
           className="flex items-center gap-2"
         >

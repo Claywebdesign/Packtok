@@ -33,13 +33,17 @@ import {
   AlertDialogTrigger,
 } from "@packtok/ui/components/alert-dialog";
 import { toast } from "react-hot-toast";
-import { 
-  useServices, 
-  useUpdateServiceStatus, 
-  useAssignService, 
-  useDeleteService 
+import {
+  useServices,
+  useUpdateServiceStatus,
+  useAssignService,
+  useDeleteService,
 } from "../../../../hooks/useServices";
-import { ServiceRequest, ServiceStatus, ServiceType } from "../../../../types/service";
+import {
+  ServiceRequest,
+  ServiceStatus,
+  ServiceType,
+} from "../../../../types/service";
 import { ServiceDetailsDialog } from "./service-details-dialog";
 import { AssignServiceDialog } from "./assign-service-dialog";
 import { UpdateStatusDialog } from "./update-status-dialog";
@@ -52,9 +56,14 @@ export function ServicesTable({ initialServices = [] }: ServicesTableProps) {
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState<string>("all");
   const [typeFilter, setTypeFilter] = useState<string>("all");
-  const [selectedService, setSelectedService] = useState<ServiceRequest | null>(null);
-  const [assigningService, setAssigningService] = useState<ServiceRequest | null>(null);
-  const [updatingService, setUpdatingService] = useState<ServiceRequest | null>(null);
+  const [selectedService, setSelectedService] = useState<ServiceRequest | null>(
+    null,
+  );
+  const [assigningService, setAssigningService] =
+    useState<ServiceRequest | null>(null);
+  const [updatingService, setUpdatingService] = useState<ServiceRequest | null>(
+    null,
+  );
 
   const { data: services = initialServices, isLoading, error } = useServices();
   const updateStatusMutation = useUpdateServiceStatus();
@@ -67,9 +76,15 @@ export function ServicesTable({ initialServices = [] }: ServicesTableProps) {
     }
   }, [error]);
 
-  const handleStatusUpdate = async (serviceId: string, newStatus: ServiceStatus) => {
+  const handleStatusUpdate = async (
+    serviceId: string,
+    newStatus: ServiceStatus,
+  ) => {
     try {
-      await updateStatusMutation.mutateAsync({ id: serviceId, status: newStatus });
+      await updateStatusMutation.mutateAsync({
+        id: serviceId,
+        status: newStatus,
+      });
       toast.success("Service status updated successfully");
     } catch (error) {
       toast.error("Failed to update service status");
@@ -95,15 +110,17 @@ export function ServicesTable({ initialServices = [] }: ServicesTableProps) {
   };
 
   const filteredServices = services.filter((service) => {
-    const matchesSearch = 
+    const matchesSearch =
       service.user?.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
       service.user?.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
       service.serviceType.toLowerCase().includes(searchTerm.toLowerCase()) ||
       getServiceTitle(service).toLowerCase().includes(searchTerm.toLowerCase());
-    
-    const matchesStatus = statusFilter === "all" || service.status === statusFilter;
-    const matchesType = typeFilter === "all" || service.serviceType === typeFilter;
-    
+
+    const matchesStatus =
+      statusFilter === "all" || service.status === statusFilter;
+    const matchesType =
+      typeFilter === "all" || service.serviceType === typeFilter;
+
     return matchesSearch && matchesStatus && matchesType;
   });
 
@@ -116,11 +133,17 @@ export function ServicesTable({ initialServices = [] }: ServicesTableProps) {
       case ServiceType.TURNKEY_PROJECT:
         return service.turnkeyProjectInquiry?.companyName || "Turnkey Project";
       case ServiceType.COMPANY_ACQUISITION:
-        return service.companyAcquisitionInquiry?.companyName || "Company Acquisition";
+        return (
+          service.companyAcquisitionInquiry?.companyName ||
+          "Company Acquisition"
+        );
       case ServiceType.MANPOWER_HIRING:
         return service.manpowerHiringRequest?.companyName || "Manpower Hiring";
       case ServiceType.JOB_SEEKER_SUBMISSION:
-        return `${service.jobSeekerProfile?.firstName} ${service.jobSeekerProfile?.lastName}` || "Job Seeker";
+        return (
+          `${service.jobSeekerProfile?.firstName} ${service.jobSeekerProfile?.lastName}` ||
+          "Job Seeker"
+        );
       default:
         return "Service Request";
     }
@@ -197,9 +220,13 @@ export function ServicesTable({ initialServices = [] }: ServicesTableProps) {
             >
               <option value="all">All Status</option>
               <option value={ServiceStatus.SUBMITTED}>Submitted</option>
-              <option value={ServiceStatus.AWAITING_ASSIGNMENT}>Awaiting Assignment</option>
+              <option value={ServiceStatus.AWAITING_ASSIGNMENT}>
+                Awaiting Assignment
+              </option>
               <option value={ServiceStatus.IN_REVIEW}>In Review</option>
-              <option value={ServiceStatus.ACTION_REQUIRED}>Action Required</option>
+              <option value={ServiceStatus.ACTION_REQUIRED}>
+                Action Required
+              </option>
               <option value={ServiceStatus.APPROVED}>Approved</option>
               <option value={ServiceStatus.REJECTED}>Rejected</option>
               <option value={ServiceStatus.IN_PROGRESS}>In Progress</option>
@@ -215,10 +242,18 @@ export function ServicesTable({ initialServices = [] }: ServicesTableProps) {
               <option value="all">All Types</option>
               <option value={ServiceType.MAINTENANCE}>Maintenance</option>
               <option value={ServiceType.CONSULTANCY}>Consultancy</option>
-              <option value={ServiceType.TURNKEY_PROJECT}>Turnkey Project</option>
-              <option value={ServiceType.COMPANY_ACQUISITION}>Company Acquisition</option>
-              <option value={ServiceType.MANPOWER_HIRING}>Manpower Hiring</option>
-              <option value={ServiceType.JOB_SEEKER_SUBMISSION}>Job Seeker</option>
+              <option value={ServiceType.TURNKEY_PROJECT}>
+                Turnkey Project
+              </option>
+              <option value={ServiceType.COMPANY_ACQUISITION}>
+                Company Acquisition
+              </option>
+              <option value={ServiceType.MANPOWER_HIRING}>
+                Manpower Hiring
+              </option>
+              <option value={ServiceType.JOB_SEEKER_SUBMISSION}>
+                Job Seeker
+              </option>
             </select>
           </div>
         </div>
@@ -244,13 +279,13 @@ export function ServicesTable({ initialServices = [] }: ServicesTableProps) {
                 <TableCell>
                   {getServiceTypeBadge(service.serviceType)}
                 </TableCell>
-                <TableCell>
-                  {getStatusBadge(service.status)}
-                </TableCell>
+                <TableCell>{getStatusBadge(service.status)}</TableCell>
                 <TableCell>
                   <div>
                     <div className="font-medium">{service.user?.name}</div>
-                    <div className="text-sm text-muted-foreground">{service.user?.email}</div>
+                    <div className="text-sm text-muted-foreground">
+                      {service.user?.email}
+                    </div>
                   </div>
                 </TableCell>
                 <TableCell>
@@ -302,9 +337,12 @@ export function ServicesTable({ initialServices = [] }: ServicesTableProps) {
                       </AlertDialogTrigger>
                       <AlertDialogContent>
                         <AlertDialogHeader>
-                          <AlertDialogTitle>Delete Service Request?</AlertDialogTitle>
+                          <AlertDialogTitle>
+                            Delete Service Request?
+                          </AlertDialogTitle>
                           <AlertDialogDescription>
-                            Are you sure you want to delete this service request? This action cannot be undone.
+                            Are you sure you want to delete this service
+                            request? This action cannot be undone.
                           </AlertDialogDescription>
                         </AlertDialogHeader>
                         <AlertDialogFooter>
@@ -313,7 +351,9 @@ export function ServicesTable({ initialServices = [] }: ServicesTableProps) {
                             onClick={() => handleDeleteService(service.id)}
                             className="bg-red-600 hover:bg-red-700"
                           >
-                            {deleteServiceMutation.isPending ? "Deleting..." : "Delete"}
+                            {deleteServiceMutation.isPending
+                              ? "Deleting..."
+                              : "Delete"}
                           </AlertDialogAction>
                         </AlertDialogFooter>
                       </AlertDialogContent>

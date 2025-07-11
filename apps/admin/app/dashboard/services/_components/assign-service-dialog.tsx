@@ -1,10 +1,21 @@
 "use client";
 
 import { useState } from "react";
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@packtok/ui/dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@packtok/ui/dialog";
 import { Button } from "@packtok/ui/button";
 import { Label } from "@packtok/ui/label";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@packtok/ui/select";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@packtok/ui/select";
 import { ServiceRequest } from "../../../../types/service";
 import { useQuery } from "@tanstack/react-query";
 import api from "../../../../lib/axios";
@@ -21,7 +32,11 @@ interface Admin {
   email: string;
 }
 
-export function AssignServiceDialog({ service, onClose, onAssign }: AssignServiceDialogProps) {
+export function AssignServiceDialog({
+  service,
+  onClose,
+  onAssign,
+}: AssignServiceDialogProps) {
   const [selectedAdminId, setSelectedAdminId] = useState<string>("");
   const [isAssigning, setIsAssigning] = useState(false);
 
@@ -60,20 +75,28 @@ export function AssignServiceDialog({ service, onClose, onAssign }: AssignServic
         <DialogHeader>
           <DialogTitle>Assign Service Request</DialogTitle>
         </DialogHeader>
-        
+
         <div className="space-y-4">
           <div>
             <Label className="text-sm font-medium text-gray-500">Service</Label>
-            <p className="text-sm">{service.serviceType.replace(/_/g, " ")} - {service.id}</p>
+            <p className="text-sm">
+              {service.serviceType.replace(/_/g, " ")} - {service.id}
+            </p>
           </div>
 
           <div>
-            <Label className="text-sm font-medium text-gray-500">Customer</Label>
-            <p className="text-sm">{service.user.name} ({service.user.email})</p>
+            <Label className="text-sm font-medium text-gray-500">
+              Customer
+            </Label>
+            <p className="text-sm">
+              {service.user.name} ({service.user.email})
+            </p>
           </div>
 
           <div>
-            <Label className="text-sm font-medium text-gray-500">Current Assignment</Label>
+            <Label className="text-sm font-medium text-gray-500">
+              Current Assignment
+            </Label>
             <p className="text-sm">
               {service.assignedTo ? service.assignedTo.name : "Unassigned"}
             </p>
@@ -81,8 +104,8 @@ export function AssignServiceDialog({ service, onClose, onAssign }: AssignServic
 
           <div className="space-y-2">
             <Label htmlFor="admin-select">Assign to Admin</Label>
-            <Select 
-              value={selectedAdminId} 
+            <Select
+              value={selectedAdminId}
               onValueChange={setSelectedAdminId}
               disabled={isLoading}
             >
@@ -103,8 +126,8 @@ export function AssignServiceDialog({ service, onClose, onAssign }: AssignServic
             <Button variant="outline" onClick={handleClose}>
               Cancel
             </Button>
-            <Button 
-              onClick={handleAssign} 
+            <Button
+              onClick={handleAssign}
               disabled={!selectedAdminId || isAssigning}
             >
               {isAssigning ? "Assigning..." : "Assign"}
