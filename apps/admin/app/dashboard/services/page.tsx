@@ -27,7 +27,7 @@ export default async function ServicesPage() {
         </div>
       </div>
 
-      <ServicesStats services={services} />
+      <ServicesStats />
       <ServicesTable initialServices={services} />
     </div>
   );

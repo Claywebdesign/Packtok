@@ -11,16 +11,26 @@ import {
   CheckCircle, 
   AlertCircle
 } from "lucide-react";
+import { useServices } from "../../../../hooks/useServices";
 
-interface ServicesStatsProps {
-  services: ServiceRequest[];
-}
-
-export function ServicesStats({ services }: ServicesStatsProps) {
+export function ServicesStats() {
+  const { data: services = [], isLoading } = useServices();
+  
   const totalServices = services.length;
-  const pendingServices = services.filter(s => s.status === ServiceStatus.SUBMITTED).length;
-  const inReviewServices = services.filter(s => s.status === ServiceStatus.IN_REVIEW).length;
-  const completedServices = services.filter(s => s.status === ServiceStatus.COMPLETED).length;
+  const pendingServices = services.filter(s => 
+    s.status === ServiceStatus.SUBMITTED || 
+    s.status === ServiceStatus.AWAITING_ASSIGNMENT
+  ).length;
+  const inReviewServices = services.filter(s => 
+    s.status === ServiceStatus.IN_REVIEW ||
+    s.status === ServiceStatus.ACTION_REQUIRED ||
+    s.status === ServiceStatus.IN_PROGRESS
+  ).length;
+  const completedServices = services.filter(s => 
+    s.status === ServiceStatus.COMPLETED ||
+    s.status === ServiceStatus.APPROVED ||
+    s.status === ServiceStatus.CLOSED
+  ).length;
 
   const servicesByType = services.reduce((acc, service) => {
     acc[service.serviceType] = (acc[service.serviceType] || 0) + 1;
