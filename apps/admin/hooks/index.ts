@@ -26,5 +26,15 @@ export {
 
 export { useQuotes, useUpdateQuoteStatus, useQuote } from "./useQuotes";
 
+// Services hooks
+export {
+  useServices,
+  useService,
+  useServiceStats,
+  useUpdateServiceStatus,
+  useAssignService,
+  useDeleteService,
+} from "./useServices";
+
 // Re-export types
 export type { Submission } from "./useSubmissions";

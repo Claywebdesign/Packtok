@@ -7,4 +7,5 @@ export const QK = {
   submissions: ["submissions"] as const,
   analytics: ["analytics"] as const,
   currentUser: ["currentUser"] as const,
+  services: ["services"] as const,
 } as const;

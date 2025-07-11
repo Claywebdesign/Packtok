@@ -11,3 +11,6 @@ export * from "./useCreateQuote";
 export * from "./useSubmitProduct";
 export * from "./useCreateCategory";
 export * from "./useMarketplaceFilters";
+
+// Service hooks
+export * from "./useServiceSubmission";

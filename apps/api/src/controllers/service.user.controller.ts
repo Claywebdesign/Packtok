@@ -80,10 +80,15 @@ export const submitJobSeeker = asyncHandler(
       const file = (req as any).file as any;
       cvUrl = await uploadDocumentToSupabase(file.buffer, file.mimetype, "cvs");
     }
-    const request = await createJobSeekerProfile(req.user!.id, {
+    
+    // Convert string boolean to actual boolean for multipart form data
+    const jobSeekerData = {
       ...rest,
       cvUrl,
-    } as any);
+      hasPreviouslyWorkedWithUs: rest.hasPreviouslyWorkedWithUs === "true" || rest.hasPreviouslyWorkedWithUs === true
+    };
+    
+    const request = await createJobSeekerProfile(req.user!.id, jobSeekerData as any);
     res
       .status(201)
       .json(new ApiResponse(201, request, "Job seeker profile submitted"));
