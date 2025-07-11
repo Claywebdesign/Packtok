@@ -1,5 +1,4 @@
 import { useMutation, useQuery } from "@tanstack/react-query";
-import { toast } from "react-hot-toast";
 import api from "@/lib/axios";
 import { MaintenanceFormData } from "@/schemas/maintenance-schema";
 import { ConsultancyFormData } from "@/schemas/consultancy-schema";
@@ -9,15 +8,15 @@ import { ManpowerHiringFormData } from "@/schemas/manpower-hiring-schema";
 import { JobSeekerFormData } from "@/schemas/job-seeker-schema";
 
 // Service Types
-export type ServiceType = 
+export type ServiceType =
   | "MAINTENANCE"
-  | "CONSULTANCY" 
+  | "CONSULTANCY"
   | "TURNKEY_PROJECT"
   | "COMPANY_ACQUISITION"
   | "MANPOWER_HIRING"
   | "JOB_SEEKER";
 
-export type ServiceStatus = 
+export type ServiceStatus =
   | "SUBMITTED"
   | "AWAITING_ASSIGNMENT"
   | "IN_REVIEW"
@@ -37,7 +36,7 @@ export interface ServiceRequest {
   status: ServiceStatus;
   userId: string;
   assignedToId?: string;
-  
+
   // Service-specific data (one of these will be populated)
   maintenanceRequest?: any;
   consultancyRequest?: any;
@@ -51,15 +50,11 @@ export interface ServiceRequest {
 export const useMaintenanceSubmission = () => {
   return useMutation({
     mutationFn: async (data: MaintenanceFormData) => {
-      const { data: response } = await api.post("/api/v1/services/maintenance", data);
+      const { data: response } = await api.post(
+        "/api/v1/services/maintenance",
+        data
+      );
       return response.data;
-    },
-    onSuccess: () => {
-      toast.success("Maintenance request submitted successfully!");
-    },
-    onError: (error: any) => {
-      const message = error?.response?.data?.message || "Failed to submit maintenance request";
-      toast.error(message);
     },
   });
 };
@@ -68,15 +63,11 @@ export const useMaintenanceSubmission = () => {
 export const useConsultancySubmission = () => {
   return useMutation({
     mutationFn: async (data: ConsultancyFormData) => {
-      const { data: response } = await api.post("/api/v1/services/consultancy", data);
+      const { data: response } = await api.post(
+        "/api/v1/services/consultancy",
+        data
+      );
       return response.data;
-    },
-    onSuccess: () => {
-      toast.success("Consultancy request submitted successfully!");
-    },
-    onError: (error: any) => {
-      const message = error?.response?.data?.message || "Failed to submit consultancy request";
-      toast.error(message);
     },
   });
 };
@@ -85,15 +76,11 @@ export const useConsultancySubmission = () => {
 export const useTurnkeyProjectSubmission = () => {
   return useMutation({
     mutationFn: async (data: TurnkeyProjectFormData) => {
-      const { data: response } = await api.post("/api/v1/services/turnkey-project", data);
+      const { data: response } = await api.post(
+        "/api/v1/services/turnkey-project",
+        data
+      );
       return response.data;
-    },
-    onSuccess: () => {
-      toast.success("Turnkey project inquiry submitted successfully!");
-    },
-    onError: (error: any) => {
-      const message = error?.response?.data?.message || "Failed to submit turnkey project inquiry";
-      toast.error(message);
     },
   });
 };
@@ -102,15 +89,11 @@ export const useTurnkeyProjectSubmission = () => {
 export const useCompanyAcquisitionSubmission = () => {
   return useMutation({
     mutationFn: async (data: CompanyAcquisitionFormData) => {
-      const { data: response } = await api.post("/api/v1/services/company-acquisition", data);
+      const { data: response } = await api.post(
+        "/api/v1/services/company-acquisition",
+        data
+      );
       return response.data;
-    },
-    onSuccess: () => {
-      toast.success("Company acquisition inquiry submitted successfully!");
-    },
-    onError: (error: any) => {
-      const message = error?.response?.data?.message || "Failed to submit company acquisition inquiry";
-      toast.error(message);
     },
   });
 };
@@ -119,15 +102,11 @@ export const useCompanyAcquisitionSubmission = () => {
 export const useManpowerHiringSubmission = () => {
   return useMutation({
     mutationFn: async (data: ManpowerHiringFormData) => {
-      const { data: response } = await api.post("/api/v1/services/manpower-hiring", data);
+      const { data: response } = await api.post(
+        "/api/v1/services/manpower-hiring",
+        data
+      );
       return response.data;
-    },
-    onSuccess: () => {
-      toast.success("Manpower hiring request submitted successfully!");
-    },
-    onError: (error: any) => {
-      const message = error?.response?.data?.message || "Failed to submit manpower hiring request";
-      toast.error(message);
     },
   });
 };
@@ -155,7 +134,7 @@ export const useJobSeekerSubmission = () => {
       formData.append("preferredWorkingMode", data.preferredWorkingMode);
       formData.append(
         "hasPreviouslyWorkedWithUs",
-        data.hasPreviouslyWorkedWithUs.toString()
+        data.hasPreviouslyWorkedWithUs ? "true" : "false"
       );
       if (data.previousWorkEndDate)
         formData.append("previousWorkEndDate", data.previousWorkEndDate);
@@ -165,19 +144,16 @@ export const useJobSeekerSubmission = () => {
         formData.append("cv", data.cv);
       }
 
-      const { data: response } = await api.post("/api/v1/services/jobseeker", formData, {
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
-      });
+      const { data: response } = await api.post(
+        "/api/v1/services/jobseeker",
+        formData,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        }
+      );
       return response.data;
-    },
-    onSuccess: () => {
-      toast.success("Job seeker profile submitted successfully!");
-    },
-    onError: (error: any) => {
-      const message = error?.response?.data?.message || "Failed to submit job seeker profile";
-      toast.error(message);
     },
   });
 };

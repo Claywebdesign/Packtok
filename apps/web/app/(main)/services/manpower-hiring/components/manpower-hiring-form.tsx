@@ -27,6 +27,7 @@ import {
 } from "@packtok/ui/components/card";
 import { Checkbox } from "@packtok/ui/components/checkbox";
 import { cn } from "@packtok/ui/lib/utils";
+import ServiceSubmissionModal from "@/components/service-submission-modal";
 
 export function ManpowerHiringForm() {
   const manpowerSubmission = useManpowerHiringSubmission();
@@ -34,6 +35,9 @@ export function ManpowerHiringForm() {
     []
   );
   const [hiringDuration, setHiringDuration] = useState<string>("");
+  const [showModal, setShowModal] = useState(false);
+  const [isSuccess, setIsSuccess] = useState(false);
+  const [error, setError] = useState<string>("");
 
   const {
     register,
@@ -74,24 +78,49 @@ export function ManpowerHiringForm() {
 
   const onSubmit = async (data: ManpowerHiringFormData) => {
     try {
-      await manpowerSubmission.mutateAsync(data);
+      setError("");
+      // Convert expectedJoiningDate to ISO format and integer fields to numbers
+      const formattedData = {
+        ...data,
+        expectedJoiningDate: data.expectedJoiningDate 
+          ? new Date(data.expectedJoiningDate).toISOString()
+          : undefined,
+        skilledWorkersRequired: data.skilledWorkersRequired 
+          ? parseInt(data.skilledWorkersRequired.toString(), 10)
+          : 0,
+        semiSkilledWorkersRequired: data.semiSkilledWorkersRequired 
+          ? parseInt(data.semiSkilledWorkersRequired.toString(), 10)
+          : 0,
+        unskilledWorkersRequired: data.unskilledWorkersRequired 
+          ? parseInt(data.unskilledWorkersRequired.toString(), 10)
+          : 0
+      } as ManpowerHiringFormData;
+      await manpowerSubmission.mutateAsync(formattedData);
+      setIsSuccess(true);
+      setShowModal(true);
       reset();
       setSelectedManpowerTypes([]);
       setHiringDuration("");
-    } catch (error) {
-      console.error("Error submitting manpower hiring request:", error);
+    } catch (error: any) {
+      const message =
+        error?.response?.data?.message ||
+        "Failed to submit manpower hiring request";
+      setError(message);
+      setIsSuccess(false);
+      setShowModal(true);
     }
   };
 
   return (
-    <Card className="max-w-4xl mx-auto">
-      <CardHeader>
-        <CardTitle className="text-2xl font-bold">
-          Manpower Hiring Request
-        </CardTitle>
-      </CardHeader>
-      <CardContent>
-        <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+    <>
+      <Card className="max-w-4xl mx-auto">
+        <CardHeader>
+          <CardTitle className="text-2xl font-bold">
+            Manpower Hiring Request
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
           <div className="space-y-4">
             <h3 className="text-lg font-semibold">Company Information</h3>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -501,8 +530,19 @@ export function ManpowerHiringForm() {
                 : "Submit Request"}
             </Button>
           </div>
-        </form>
-      </CardContent>
-    </Card>
+          </form>
+        </CardContent>
+      </Card>
+      
+      <ServiceSubmissionModal
+        isOpen={showModal}
+        onClose={() => setShowModal(false)}
+        isSuccess={isSuccess}
+        error={error}
+        title="Manpower Hiring Request"
+        successMessage="Manpower Hiring Request Submitted Successfully!"
+        successDescription="Your manpower hiring request has been submitted. We'll get back to you soon."
+      />
+    </>
   );
 }

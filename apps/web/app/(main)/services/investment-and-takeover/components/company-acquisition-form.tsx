@@ -27,11 +27,15 @@ import {
 } from "@packtok/ui/components/card";
 import { Checkbox } from "@packtok/ui/components/checkbox";
 import { cn } from "@packtok/ui/lib/utils";
+import ServiceSubmissionModal from "@/components/service-submission-modal";
 
 export function CompanyAcquisitionForm() {
   const acquisitionSubmission = useCompanyAcquisitionSubmission();
   const [inquirerType, setInquirerType] = useState<string>("");
   const [advisors, setAdvisors] = useState<string[]>([]);
+  const [showModal, setShowModal] = useState(false);
+  const [isSuccess, setIsSuccess] = useState(false);
+  const [error, setError] = useState<string>("");
 
   const {
     register,
@@ -72,24 +76,40 @@ export function CompanyAcquisitionForm() {
 
   const onSubmit = async (data: CompanyAcquisitionFormData) => {
     try {
-      await acquisitionSubmission.mutateAsync(data);
+      setError("");
+      // Convert integer fields to numbers
+      const formattedData = {
+        ...data,
+        sellerYearEstablished: data.sellerYearEstablished 
+          ? parseInt(data.sellerYearEstablished.toString(), 10)
+          : undefined
+      } as CompanyAcquisitionFormData;
+      await acquisitionSubmission.mutateAsync(formattedData);
+      setIsSuccess(true);
+      setShowModal(true);
       reset();
       setAdvisors([]);
       setInquirerType("");
-    } catch (error) {
-      console.error("Error submitting company acquisition inquiry:", error);
+    } catch (error: any) {
+      const message =
+        error?.response?.data?.message ||
+        "Failed to submit company acquisition inquiry";
+      setError(message);
+      setIsSuccess(false);
+      setShowModal(true);
     }
   };
 
   return (
-    <Card className="max-w-4xl mx-auto">
-      <CardHeader>
-        <CardTitle className="text-2xl font-bold">
-          Company Acquisition Inquiry
-        </CardTitle>
-      </CardHeader>
-      <CardContent>
-        <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+    <>
+      <Card className="max-w-4xl mx-auto">
+        <CardHeader>
+          <CardTitle className="text-2xl font-bold">
+            Company Acquisition Inquiry
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
           <div className="space-y-4">
             <h3 className="text-lg font-semibold">Contact Information</h3>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -490,8 +510,19 @@ export function CompanyAcquisitionForm() {
                 : "Submit Inquiry"}
             </Button>
           </div>
-        </form>
-      </CardContent>
-    </Card>
+          </form>
+        </CardContent>
+      </Card>
+      
+      <ServiceSubmissionModal
+        isOpen={showModal}
+        onClose={() => setShowModal(false)}
+        isSuccess={isSuccess}
+        error={error}
+        title="Company Acquisition Inquiry"
+        successMessage="Company Acquisition Inquiry Submitted Successfully!"
+        successDescription="Your company acquisition inquiry has been submitted. We'll get back to you soon."
+      />
+    </>
   );
 }

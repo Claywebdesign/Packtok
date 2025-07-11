@@ -26,14 +26,17 @@ import {
   CardTitle,
 } from "@packtok/ui/components/card";
 import { Checkbox } from "@packtok/ui/components/checkbox";
-import { toast } from "react-hot-toast";
 import { cn } from "@packtok/ui/lib/utils";
 import { Upload, FileText, X } from "lucide-react";
+import ServiceSubmissionModal from "@/components/service-submission-modal";
 
 export function JobSeekerForm() {
   const jobSeekerSubmission = useJobSeekerSubmission();
   const [cv, setCv] = useState<File | null>(null);
   const [hasPreviousWork, setHasPreviousWork] = useState(false);
+  const [showModal, setShowModal] = useState(false);
+  const [isSuccess, setIsSuccess] = useState(false);
+  const [error, setError] = useState<string>("");
 
   const {
     register,
@@ -59,13 +62,17 @@ export function JobSeekerForm() {
         "text/plain",
       ];
       if (!allowedTypes.includes(file.type)) {
-        toast.error("Please upload a PDF, DOC, DOCX, or TXT file");
+        setError("Please upload a PDF, DOC, DOCX, or TXT file");
+        setIsSuccess(false);
+        setShowModal(true);
         return;
       }
 
       // Check file size (5MB limit)
       if (file.size > 5 * 1024 * 1024) {
-        toast.error("File size must be less than 5MB");
+        setError("File size must be less than 5MB");
+        setIsSuccess(false);
+        setShowModal(true);
         return;
       }
 
@@ -81,22 +88,37 @@ export function JobSeekerForm() {
 
   const onSubmit = async (data: JobSeekerFormData) => {
     try {
-      await jobSeekerSubmission.mutateAsync(data);
+      setError("");
+      // Convert previousWorkEndDate to ISO format if provided
+      const formattedData = {
+        ...data,
+        previousWorkEndDate: data.previousWorkEndDate 
+          ? new Date(data.previousWorkEndDate).toISOString()
+          : undefined
+      };
+      await jobSeekerSubmission.mutateAsync(formattedData);
+      setIsSuccess(true);
+      setShowModal(true);
       reset();
       setCv(null);
       setHasPreviousWork(false);
-    } catch (error) {
-      console.error("Error submitting job seeker profile:", error);
+    } catch (error: any) {
+      const message =
+        error?.response?.data?.message || "Failed to submit job seeker profile";
+      setError(message);
+      setIsSuccess(false);
+      setShowModal(true);
     }
   };
 
   return (
-    <Card className="max-w-4xl mx-auto">
-      <CardHeader>
-        <CardTitle className="text-2xl font-bold">Job Seeker Profile</CardTitle>
-      </CardHeader>
-      <CardContent>
-        <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+    <>
+      <Card className="max-w-4xl mx-auto">
+        <CardHeader>
+          <CardTitle className="text-2xl font-bold">Job Seeker Profile</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
           <div className="space-y-4">
             <h3 className="text-lg font-semibold">Personal Information</h3>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -422,8 +444,19 @@ export function JobSeekerForm() {
                 : "Submit Profile"}
             </Button>
           </div>
-        </form>
-      </CardContent>
-    </Card>
+          </form>
+        </CardContent>
+      </Card>
+      
+      <ServiceSubmissionModal
+        isOpen={showModal}
+        onClose={() => setShowModal(false)}
+        isSuccess={isSuccess}
+        error={error}
+        title="Job Seeker Profile"
+        successMessage="Job Seeker Profile Submitted Successfully!"
+        successDescription="Your job seeker profile has been submitted. We'll get back to you soon."
+      />
+    </>
   );
 }

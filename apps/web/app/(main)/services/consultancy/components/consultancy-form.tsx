@@ -27,12 +27,16 @@ import {
 } from "@packtok/ui/components/card";
 import { Checkbox } from "@packtok/ui/components/checkbox";
 import { cn } from "@packtok/ui/lib/utils";
+import ServiceSubmissionModal from "@/components/service-submission-modal";
 
 export function ConsultancyForm() {
   const consultancySubmission = useConsultancySubmission();
   const [selectedServices, setSelectedServices] = useState<string[]>([]);
   const [selectedGoals, setSelectedGoals] = useState<string[]>([]);
   const [showIndustryOther, setShowIndustryOther] = useState(false);
+  const [showModal, setShowModal] = useState(false);
+  const [isSuccess, setIsSuccess] = useState(false);
+  const [error, setError] = useState<string>("");
 
   const {
     register,
@@ -110,25 +114,50 @@ export function ConsultancyForm() {
 
   const onSubmit = async (data: ConsultancyFormData) => {
     try {
-      await consultancySubmission.mutateAsync(data);
+      setError("");
+      // Convert date fields to ISO format and integer fields to numbers
+      const formattedData = {
+        ...data,
+        preferredStartDate: data.preferredStartDate 
+          ? new Date(data.preferredStartDate).toISOString()
+          : undefined,
+        expectedCompletionDate: data.expectedCompletionDate 
+          ? new Date(data.expectedCompletionDate).toISOString()
+          : undefined,
+        employeesOperatingMachines: data.employeesOperatingMachines 
+          ? parseInt(data.employeesOperatingMachines.toString(), 10)
+          : undefined,
+        yearsInOperation: data.yearsInOperation 
+          ? parseInt(data.yearsInOperation.toString(), 10)
+          : undefined
+      } as ConsultancyFormData;
+      await consultancySubmission.mutateAsync(formattedData);
+      setIsSuccess(true);
+      setShowModal(true);
       reset();
       setSelectedServices([]);
       setSelectedGoals([]);
       setShowIndustryOther(false);
-    } catch (error) {
-      console.error("Error submitting consultancy request:", error);
+    } catch (error: any) {
+      const message =
+        error?.response?.data?.message ||
+        "Failed to submit consultancy request";
+      setError(message);
+      setIsSuccess(false);
+      setShowModal(true);
     }
   };
 
   return (
-    <Card className="max-w-4xl mx-auto">
-      <CardHeader>
-        <CardTitle className="text-2xl font-bold">
-          Consultancy Services Request
-        </CardTitle>
-      </CardHeader>
-      <CardContent>
-        <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+    <>
+      <Card className="max-w-4xl mx-auto">
+        <CardHeader>
+          <CardTitle className="text-2xl font-bold">
+            Consultancy Services Request
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
           <div className="space-y-4">
             <h3 className="text-lg font-semibold">Company Information</h3>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -449,8 +478,19 @@ export function ConsultancyForm() {
                 : "Submit Request"}
             </Button>
           </div>
-        </form>
-      </CardContent>
-    </Card>
+          </form>
+        </CardContent>
+      </Card>
+      
+      <ServiceSubmissionModal
+        isOpen={showModal}
+        onClose={() => setShowModal(false)}
+        isSuccess={isSuccess}
+        error={error}
+        title="Consultancy Request"
+        successMessage="Consultancy Request Submitted Successfully!"
+        successDescription="Your consultancy request has been submitted. We'll get back to you soon."
+      />
+    </>
   );
 }

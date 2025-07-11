@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
@@ -26,9 +26,13 @@ import {
   CardTitle,
 } from "@packtok/ui/components/card";
 import { cn } from "@packtok/ui/lib/utils";
+import ServiceSubmissionModal from "@/components/service-submission-modal";
 
 export function MaintenanceForm() {
   const maintenanceSubmission = useMaintenanceSubmission();
+  const [showModal, setShowModal] = useState(false);
+  const [isSuccess, setIsSuccess] = useState(false);
+  const [error, setError] = useState<string>("");
 
   const {
     register,
@@ -42,22 +46,38 @@ export function MaintenanceForm() {
 
   const onSubmit = async (data: MaintenanceFormData) => {
     try {
-      await maintenanceSubmission.mutateAsync(data);
+      setError("");
+      // Convert installationDate to ISO format if provided
+      const formattedData = {
+        ...data,
+        installationDate: data.installationDate 
+          ? new Date(data.installationDate).toISOString()
+          : undefined
+      } as MaintenanceFormData;
+      await maintenanceSubmission.mutateAsync(formattedData);
+      setIsSuccess(true);
+      setShowModal(true);
       reset();
-    } catch (error) {
-      console.error("Error submitting maintenance request:", error);
+    } catch (error: any) {
+      const message =
+        error?.response?.data?.message ||
+        "Failed to submit maintenance request";
+      setError(message);
+      setIsSuccess(false);
+      setShowModal(true);
     }
   };
 
   return (
-    <Card className="max-w-4xl mx-auto">
-      <CardHeader>
-        <CardTitle className="text-2xl font-bold">
-          Maintenance Request
-        </CardTitle>
-      </CardHeader>
-      <CardContent>
-        <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+    <>
+      <Card className="max-w-4xl mx-auto">
+        <CardHeader>
+          <CardTitle className="text-2xl font-bold">
+            Maintenance Request
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
               <Label htmlFor="maintenanceType">Maintenance Type</Label>
@@ -239,8 +259,19 @@ export function MaintenanceForm() {
                 : "Submit Request"}
             </Button>
           </div>
-        </form>
-      </CardContent>
-    </Card>
+          </form>
+        </CardContent>
+      </Card>
+      
+      <ServiceSubmissionModal
+        isOpen={showModal}
+        onClose={() => setShowModal(false)}
+        isSuccess={isSuccess}
+        error={error}
+        title="Maintenance Request"
+        successMessage="Maintenance Request Submitted Successfully!"
+        successDescription="Your maintenance request has been submitted. We'll get back to you soon."
+      />
+    </>
   );
 }
