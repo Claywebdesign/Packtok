@@ -118,4 +118,22 @@ export const serviceCategories = [
     image: "/services.png",
     isServiceCard: true,
   },
+  {
+    title: "Manpower Hiring",
+    slug: "manpower-hiring",
+    subtitle: "Skilled Equipment Specialists",
+    description:
+      "Find skilled workers and technicians for your industrial operations. We provide certified machine operators, technicians, maintenance workers, and supervisors with expertise in CNC, assembly lines, and heavy equipment. Our skilled, safety-trained manpower helps optimize your production with minimal downtime.",
+    image: "/services.png",
+    isServiceCard: true,
+  },
+  {
+    title: "Job Seeker",
+    slug: "job-seeker",
+    subtitle: "Career Opportunities",
+    description:
+      "Submit your profile to find exciting opportunities in the industrial sector. Whether you're a skilled machine operator, technician, or maintenance worker, we connect job seekers with leading industrial companies looking for talent.",
+    image: "/services.png",
+    isServiceCard: true,
+  },
 ];

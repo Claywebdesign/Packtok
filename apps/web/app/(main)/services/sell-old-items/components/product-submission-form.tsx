@@ -201,41 +201,45 @@ export function ProductSubmissionForm() {
 
   const onSubmit = async (data: ProductSubmissionFormData) => {
     try {
+      // Ensure we have required files
+      if (!thumbnail && uploadedImages.length === 0) {
+        toast.error("Please upload at least one image");
+        return;
+      }
+
+      // Add specifications if any valid ones exist
+      const validSpecs = specifications.filter(
+        (spec) => spec.key.trim() && spec.value.trim()
+      );
+      const specsString = validSpecs.length > 0 
+        ? JSON.stringify(validSpecs.reduce(
+            (acc, spec) => {
+              acc[spec.key] = spec.value;
+              return acc;
+            },
+            {} as Record<string, string>
+          ))
+        : undefined;
+
       // Create the submission data matching backend API format
-      const submissionData: any = {
+      const submissionData = {
         title: data.title,
         description: data.description,
         price: data.price,
-        quantity: 1, // Default quantity for customer submissions
         productType: data.productType,
         condition: data.condition,
         categoryName: data.categoryName,
-        machineType: data.machineType, // Include machine type if selected
         manufacturer: data.manufacturer,
         model: data.model,
         year: data.year,
         additionalInfo: data.additionalInfo,
         thumbnail: thumbnail || uploadedImages[0], // Use thumbnail or first image
         images: uploadedImages,
-        video: video,
-        videoThumbnail: videoThumbnail,
-        pdf: pdf,
+        video: video || undefined,
+        videoThumbnail: videoThumbnail || undefined,
+        pdf: pdf || undefined,
+        specifications: specsString,
       };
-
-      // Add specifications if any valid ones exist
-      const validSpecs = specifications.filter(
-        (spec) => spec.key.trim() && spec.value.trim()
-      );
-      if (validSpecs.length > 0) {
-        const specsObj = validSpecs.reduce(
-          (acc, spec) => {
-            acc[spec.key] = spec.value;
-            return acc;
-          },
-          {} as Record<string, string>
-        );
-        submissionData.specifications = JSON.stringify(specsObj);
-      }
 
       await submitProduct.mutateAsync(submissionData);
 
