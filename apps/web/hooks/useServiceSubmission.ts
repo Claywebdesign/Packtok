@@ -1,13 +1,12 @@
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { toast } from "react-hot-toast";
+import api from "@/lib/axios";
 import { MaintenanceFormData } from "@/schemas/maintenance-schema";
 import { ConsultancyFormData } from "@/schemas/consultancy-schema";
 import { TurnkeyProjectFormData } from "@/schemas/turnkey-project-schema";
 import { CompanyAcquisitionFormData } from "@/schemas/company-acquisition-schema";
 import { ManpowerHiringFormData } from "@/schemas/manpower-hiring-schema";
 import { JobSeekerFormData } from "@/schemas/job-seeker-schema";
-
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3001";
 
 // Service Types
 export type ServiceType = 
@@ -52,29 +51,15 @@ export interface ServiceRequest {
 export const useMaintenanceSubmission = () => {
   return useMutation({
     mutationFn: async (data: MaintenanceFormData) => {
-      const response = await fetch(
-        `${API_BASE_URL}/api/v1/services/maintenance`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${localStorage.getItem("access_token")}`,
-          },
-          body: JSON.stringify(data),
-        }
-      );
-
-      if (!response.ok) {
-        throw new Error("Failed to submit maintenance request");
-      }
-
-      return response.json();
+      const { data: response } = await api.post("/api/v1/services/maintenance", data);
+      return response.data;
     },
     onSuccess: () => {
       toast.success("Maintenance request submitted successfully!");
     },
-    onError: (error: Error) => {
-      toast.error(error.message || "Failed to submit maintenance request");
+    onError: (error: any) => {
+      const message = error?.response?.data?.message || "Failed to submit maintenance request";
+      toast.error(message);
     },
   });
 };
@@ -83,29 +68,15 @@ export const useMaintenanceSubmission = () => {
 export const useConsultancySubmission = () => {
   return useMutation({
     mutationFn: async (data: ConsultancyFormData) => {
-      const response = await fetch(
-        `${API_BASE_URL}/api/v1/services/consultancy`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${localStorage.getItem("access_token")}`,
-          },
-          body: JSON.stringify(data),
-        }
-      );
-
-      if (!response.ok) {
-        throw new Error("Failed to submit consultancy request");
-      }
-
-      return response.json();
+      const { data: response } = await api.post("/api/v1/services/consultancy", data);
+      return response.data;
     },
     onSuccess: () => {
       toast.success("Consultancy request submitted successfully!");
     },
-    onError: (error: Error) => {
-      toast.error(error.message || "Failed to submit consultancy request");
+    onError: (error: any) => {
+      const message = error?.response?.data?.message || "Failed to submit consultancy request";
+      toast.error(message);
     },
   });
 };
@@ -114,29 +85,15 @@ export const useConsultancySubmission = () => {
 export const useTurnkeyProjectSubmission = () => {
   return useMutation({
     mutationFn: async (data: TurnkeyProjectFormData) => {
-      const response = await fetch(
-        `${API_BASE_URL}/api/v1/services/turnkey-project`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${localStorage.getItem("access_token")}`,
-          },
-          body: JSON.stringify(data),
-        }
-      );
-
-      if (!response.ok) {
-        throw new Error("Failed to submit turnkey project request");
-      }
-
-      return response.json();
+      const { data: response } = await api.post("/api/v1/services/turnkey-project", data);
+      return response.data;
     },
     onSuccess: () => {
       toast.success("Turnkey project inquiry submitted successfully!");
     },
-    onError: (error: Error) => {
-      toast.error(error.message || "Failed to submit turnkey project inquiry");
+    onError: (error: any) => {
+      const message = error?.response?.data?.message || "Failed to submit turnkey project inquiry";
+      toast.error(message);
     },
   });
 };
@@ -145,31 +102,15 @@ export const useTurnkeyProjectSubmission = () => {
 export const useCompanyAcquisitionSubmission = () => {
   return useMutation({
     mutationFn: async (data: CompanyAcquisitionFormData) => {
-      const response = await fetch(
-        `${API_BASE_URL}/api/v1/services/company-acquisition`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${localStorage.getItem("access_token")}`,
-          },
-          body: JSON.stringify(data),
-        }
-      );
-
-      if (!response.ok) {
-        throw new Error("Failed to submit company acquisition inquiry");
-      }
-
-      return response.json();
+      const { data: response } = await api.post("/api/v1/services/company-acquisition", data);
+      return response.data;
     },
     onSuccess: () => {
       toast.success("Company acquisition inquiry submitted successfully!");
     },
-    onError: (error: Error) => {
-      toast.error(
-        error.message || "Failed to submit company acquisition inquiry"
-      );
+    onError: (error: any) => {
+      const message = error?.response?.data?.message || "Failed to submit company acquisition inquiry";
+      toast.error(message);
     },
   });
 };
@@ -178,29 +119,15 @@ export const useCompanyAcquisitionSubmission = () => {
 export const useManpowerHiringSubmission = () => {
   return useMutation({
     mutationFn: async (data: ManpowerHiringFormData) => {
-      const response = await fetch(
-        `${API_BASE_URL}/api/v1/services/manpower-hiring`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${localStorage.getItem("access_token")}`,
-          },
-          body: JSON.stringify(data),
-        }
-      );
-
-      if (!response.ok) {
-        throw new Error("Failed to submit manpower hiring request");
-      }
-
-      return response.json();
+      const { data: response } = await api.post("/api/v1/services/manpower-hiring", data);
+      return response.data;
     },
     onSuccess: () => {
       toast.success("Manpower hiring request submitted successfully!");
     },
-    onError: (error: Error) => {
-      toast.error(error.message || "Failed to submit manpower hiring request");
+    onError: (error: any) => {
+      const message = error?.response?.data?.message || "Failed to submit manpower hiring request";
+      toast.error(message);
     },
   });
 };
@@ -238,28 +165,19 @@ export const useJobSeekerSubmission = () => {
         formData.append("cv", data.cv);
       }
 
-      const response = await fetch(
-        `${API_BASE_URL}/api/v1/services/jobseeker`,
-        {
-          method: "POST",
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("access_token")}`,
-          },
-          body: formData,
-        }
-      );
-
-      if (!response.ok) {
-        throw new Error("Failed to submit job seeker profile");
-      }
-
-      return response.json();
+      const { data: response } = await api.post("/api/v1/services/jobseeker", formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      });
+      return response.data;
     },
     onSuccess: () => {
       toast.success("Job seeker profile submitted successfully!");
     },
-    onError: (error: Error) => {
-      toast.error(error.message || "Failed to submit job seeker profile");
+    onError: (error: any) => {
+      const message = error?.response?.data?.message || "Failed to submit job seeker profile";
+      toast.error(message);
     },
   });
 };
@@ -269,19 +187,8 @@ export const useMyServiceRequests = () => {
   return useQuery({
     queryKey: ["myServiceRequests"],
     queryFn: async () => {
-      const response = await fetch(`${API_BASE_URL}/api/v1/services/my`, {
-        method: "GET",
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("access_token")}`,
-        },
-      });
-
-      if (!response.ok) {
-        throw new Error("Failed to fetch service requests");
-      }
-
-      const result = await response.json();
-      return result.data as ServiceRequest[];
+      const { data } = await api.get("/api/v1/services/my");
+      return data.data as ServiceRequest[];
     },
     staleTime: 5 * 60 * 1000, // 5 minutes
     retry: 1,
