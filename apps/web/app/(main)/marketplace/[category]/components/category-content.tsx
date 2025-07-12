@@ -49,7 +49,7 @@ export default function CategoryContent({
     <div className="py-8">
       <div className="flex lg:flex-row flex-col gap-8">
         {/* Desktop Filters Sidebar */}
-        <div className="hidden lg:block lg:w-80 flex-shrink-0">
+        <div className="hidden lg:block lg:w-56 flex-shrink-0">
           <div className="sticky top-4 max-h-[calc(100vh-2rem)] overflow-y-auto">
             <CategorySidebar
               category={category}
