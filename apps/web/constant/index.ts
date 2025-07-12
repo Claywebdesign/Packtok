@@ -62,14 +62,14 @@ export const marketplaceCategories = [
       "Keep your operations running smoothly with our high-quality consumables, designed for efficiency and durability. From industrial lubricants and welding supplies to safety gear and cutting tools, we stock everything you need to minimize downtime and maximize productivity. Our competitively priced products come from trusted brands, ensuring consistent performance for workshops, factories, and job sites. Whether you need routine replacements or bulk orders, we deliver fast and hassle-free. Reduce waste and optimize costs with our carefully curated selection",
     image: consumables,
   },
-  {
-    title: "Man Power",
-    slug: "man-power",
-    subtitle: "Skilled Equipment Specialists",
-    description:
-      "Certified machine operators & technicians for factories—expert in CNC, assembly lines, and heavy equipment. We provide skilled, safety-trained manpower to optimize your production with minimal downtime. 24/7 staffing solutions.",
-    image: "/marketplace1.png",
-  },
+  // {
+  //   title: "Man Power",
+  //   slug: "man-power",
+  //   subtitle: "Skilled Equipment Specialists",
+  //   description:
+  //     "Certified machine operators & technicians for factories—expert in CNC, assembly lines, and heavy equipment. We provide skilled, safety-trained manpower to optimize your production with minimal downtime. 24/7 staffing solutions.",
+  //   image: "/marketplace1.png",
+  // },
 ];
 export const serviceCategories = [
   {
