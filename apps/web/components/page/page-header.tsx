@@ -12,7 +12,7 @@ export default function PageHeader({
   image,
 }: PageHeaderProps) {
   return (
-    <div className="relative h-[45vh] w-full mt-20">
+    <div className="relative h-[35vh] w-full mt-20">
       <Image src={image} alt={title} fill className="object-cover" />
       <div className="absolute inset-0 bg-white/50 z-10" />
 

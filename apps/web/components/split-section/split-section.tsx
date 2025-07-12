@@ -15,9 +15,9 @@ export default function SplitSection({
 }: SplitSectionProps) {
   return (
     <div>
-      <div className="flex flex-col lg:flex-row h-auto sm:h-[50vh] md:h-[55vh] lg:h-[65vh]">
+      <div className="flex flex-col lg:flex-row h-auto sm:h-[35vh] md:h-[40vh] lg:h-[45vh]">
         {/* Left side - Image */}
-        <div className="w-full lg:w-1/2 h-48 sm:h-64 md:h-80 lg:h-full">
+        <div className="w-full lg:w-1/2 h-24 sm:h-40 md:h-52 lg:h-full">
           <Image
             src={image}
             alt="Featured product"
